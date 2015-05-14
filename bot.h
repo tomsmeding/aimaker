@@ -4,6 +4,8 @@
 #include <vector>
 #include "lang/parser.h"
 #include "util.h"
+#include "board.h"
+#include "lang/parser.h"
 
 using namespace std;
 
@@ -12,10 +14,12 @@ private:
 	int curPage;
 	int curInstr;
 	void jumpTo(int, int);
+	const Parser::Program *program;
+	Board *board;
 
 public:
 	int id;
 	unordered_map<string, int> memoryMap;
 	vector<vector<Parser::Statement>> pages;
-	Bot();
+	Bot(const Parser::Program*, Board*);
 };

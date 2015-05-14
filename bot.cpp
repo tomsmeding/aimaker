@@ -2,11 +2,8 @@
 
 using namespace std;
 
-Bot::Bot() {
+Bot::Bot(const Parser::Program *_program, Board *_board) : curPage(0), curInstr(0), program(_program), board(_board) {
 	id = genid();
-
-	curPage = 0;
-	curInstr = 0;
 }
 
 void Bot::jumpTo(int page, int statement) {
