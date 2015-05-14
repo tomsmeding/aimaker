@@ -10,16 +10,18 @@ int genid(void) {
 	return id++;
 }
 
-vector<string> split(const string &s,const char delim){
+vector<string> split(const string &s,const char delim,int numsplits=-1){
 	string::size_type cursor=0;
 	string::size_type idx=s.find(delim);
 	vector<string> vec;
 	while(true){
 		vec.push_back(s.substr(cursor,idx-cursor));
-		if(idx==string::npos)break;
+		if(idx==string::npos||numsplits==0)break;
+		numsplits--;
 		cursor=idx+1;
 		idx=s.find(delim,cursor);
 	}
+	vec.push_back(s.substr(cursor,string::npos));
 	return vec;
 }
 
