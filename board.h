@@ -1,12 +1,15 @@
+#pragma once
+
 #include <vector>
 #include "bot.h"
 
-template <int S>
 class Board {
 private:
-	int board[S*S];
+	int size;
+	vector<int> board;
 	vector<Bot> bots;
 public:
+	Board(int);
 	int at(int, int);
 	void nextTick(void);
 };

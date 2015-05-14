@@ -6,7 +6,7 @@
 using namespace std;
 
 int genid(void) {
-	static id = 0;
+	static int id = 0;
 	return id++;
 }
 
