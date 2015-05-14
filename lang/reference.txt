@@ -1,0 +1,8 @@
+Function: move
+Description: Moves the current bot forwards (1) or backwards (-1).
+
+Function: rotate/rot
+Description: Rotates the current bot clockwise (1) or counter-clockwise (-1).
+
+Function: nop
+Description: Waits a tick.
