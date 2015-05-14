@@ -1,13 +1,17 @@
-namespace Parser{
+#include <vector>
 
-enum Instruction{
+using namespace std;
+
+namespace Parser {
+
+enum Instruction {
 	INSTR_MOVE,
 	INSTR_STO
-}
+};
 
 Instruction instr_string(string word);
 
-class Statement{
+class Statement {
 public:
 	Instruction instr;
 	vector<Argument> args;
