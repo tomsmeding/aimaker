@@ -27,13 +27,13 @@ namespace Parser {
 	typedef vector<Statement> Codepage;
 	typedef pair<int, int> Position;
 
-	struct ParseResult {
+	struct Program {
 		vector<Codepage> pages;
 		unordered_map<string, Position> labels;
 	};
 
 	Instruction convinstr(string word);
 
-	ParseResult parser(string);
+	Program parser(string);
 
 }

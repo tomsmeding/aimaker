@@ -11,30 +11,30 @@ namespace Parser {
 	/**
 	 * Takes the given `lines` and returns a parsed result of it.
 	 * @param lines {const vector<string>} The lines of code to parse.
-	 * @return {ParseResult}
+	 * @return {Program}
 	 */
-	ParseResult parser(const vector<string> lines) {
+	Program parser(const vector<string> lines) {
 		int currPage;
-		ParseResult parseResult;
+		Program program;
 
 		for (int i = 0; i < (int)lines.size(); i++) {
 			string line = lines[i];
 			string trimmed = trim(line);
 
 			if (trimmed.find("#page") == 0) { // page
-				parseResult.pages.push_back(* new Codepage());
+				program.pages.push_back(* new Codepage());
 				currPage++;
 			} else if (trimmed[trimmed.size() - 1] == ':') { // label
 				string labelName = trimmed.substr(0, trimmed.size() - 1);
 				pair<int, int> position = make_pair(currPage, i);
 
-				parseResult.labels.emplace(make_pair(labelName, position));
+				program.labels.emplace(make_pair(labelName, position));
 			} else {
 				string functionName = split(trimmed, ' ')[0];
 				convinstr()
 			}
 		}
 
-		return parseResult;
+		return program;
 	}
 }
