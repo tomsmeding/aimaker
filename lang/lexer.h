@@ -1,12 +1,19 @@
-namespace Parser {
+namespace Parser{
 
-class Statement {
-public:
-	Instruction instr;
-
+enum Instruction{
+	INSTR_MOVE,
+	INSTR_STO
 }
 
+Instruction instr_string(string word);
+
+class Statement{
+public:
+	Instruction instr;
+	vector<Argument> args;
+};
+
 vector<string> lex(string);
-Vector<Statement> parser(vector<string>);
+vector<Statement> parser(vector<string>);
 
 }
