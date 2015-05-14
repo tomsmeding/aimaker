@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include <vector>
 #include "bot.h"
 
@@ -12,4 +13,5 @@ public:
 	Board(int);
 	int at(int, int);
 	void nextTick(void);
+	string render(void);
 };
