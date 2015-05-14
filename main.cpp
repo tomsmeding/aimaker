@@ -73,7 +73,7 @@ int main(int argc,char **argv){
 			b.nextTick();
 		}
 		clearScreen();
-		board.draw();
+		cout<<board.render()<<endl;
 	}
 	return 0;
 }
