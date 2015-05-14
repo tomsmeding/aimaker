@@ -30,3 +30,7 @@ string trim(const string &s){
 	                  end=s.find_last_not_of(" \t");
 	return s.substr(begin,end-begin);
 }
+
+bool is_numberic(const string &s) {
+	return all_of(s.begin(), s.end(), isdigit);
+}
