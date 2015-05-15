@@ -16,10 +16,10 @@ private:
 	int curInstr;
 	int x, y, dir;
 	void jumpTo(int, int);
-	const Parser::Program *program;
 	Board *board;
 
 public:
+	const Parser::Program *program;
 	int id;
 	unordered_map<string, int> memoryMap;
 	vector<vector<Parser::Statement>> pages;
