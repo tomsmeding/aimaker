@@ -41,6 +41,6 @@ namespace Parser {
 
 	Instruction convertInstruction(string word);
 
-	Program parser(const char *const,const vector<string>&);
+	Program parse(const char *const,const vector<string>&);
 
 }

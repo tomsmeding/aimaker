@@ -44,7 +44,7 @@ int main(int argc,char **argv){
 	vector<Bot> bots;
 	for(i=1;i<argc;i++){
 		try {
-			programs.push_back(Parser::parser(argv[1],readFile(argv[i])));
+			programs.push_back(Parser::parse(argv[1],readFile(argv[i])));
 		} catch(const char *str){
 			cerr<<"ERROR: "<<str<<endl;
 			return 1;

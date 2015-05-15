@@ -9,12 +9,8 @@ namespace Parser {
 		else if (word == "sto")  return INSTR_STO;
 	}
 
-	/**
-	 * Takes the given `lines` and returns a parsed result of it.
-	 * @param lines {const vector<string>} The lines of code to parse.
-	 * @return {Program}
-	 */
-	Program parser(const char *const fname,const vector<string> &lines) {
+	// Parses the given `lines` with the given `fname`.
+	Program parse(const char *const fname, const vector<string> &lines) {
 		int curPage = 0;
 		bool seenPages[16];
 
