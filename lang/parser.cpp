@@ -8,16 +8,22 @@ namespace Parser {
 		to_lower(word); // Function calls are case insensitive.
 
 		     if (word == "move")                     return INSTR_MOVE;
-		else if (word == "sto")                      return INSTR_STO;
+		else if (word == "store" || word=="sto")     return INSTR_STO;
 		else if (word == "rotate" || word == "rot")  return INSTR_ROT;
 		else if (word == "nop")                      return INSTR_NOP;
 		else if (word == "ifgoto" || word == "if")   return INSTR_IFGOTO;
+		else return INSTR_INVALID;
 	}
 
-	// Parses the given `functionName` and `arugments` to a Statement.
-	Statement parseStatment(string functionName, string arguments) {
+	// Parses the given `functionName` and `arguments` to a Statement.
+	Statement parseStatement(string functionName, string arguments, int lineIndex) {
 		Statement statement;
 		statement.instr = convertInstruction(functionName);
+		if(statement.instr == INSTR_INVALID) {
+			char *message;
+			asprintf(&message,"Invalid instruction '%s'.", functionName.c_str());
+			throw_error(lineIndex, message);
+		}
 
 		vector<string> argsRaw = split(arguments, ',');
 		statement.args.resize(argsRaw.size());
@@ -72,7 +78,7 @@ namespace Parser {
 
 				program.labels.emplace(make_pair(labelName, position));
 			} else { // function call
-				program.pages[curPage].push_back(parseStatment(words[0], words[1]));
+				program.pages[curPage].push_back(parseStatement(words[0], words[1], lineIndex));
 			}
 		}
 

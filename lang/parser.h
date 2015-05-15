@@ -14,7 +14,9 @@ namespace Parser {
 		INSTR_ROT,
 		INSTR_NOP,
 		INSTR_IFGOTO,
-		INSTR_STO
+		INSTR_STO,
+
+		INSTR_INVALID=255
 	};
 
 	struct Argument {

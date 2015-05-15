@@ -15,6 +15,6 @@ string trim(const string&);
 
 bool is_numberic(const string&);
 
-void throw_error(int, char*);
+void throw_error(int, const char*);
 
 void to_lower(string &original);
