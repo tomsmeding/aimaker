@@ -14,12 +14,19 @@ namespace Parser {
 		INSTR_STO
 	};
 
-	class Argument {
-
+	struct Argument {
+		enum Type {
+			ARGT_NUMBER,
+			ARGT_VARIABLE
+		};
+		Type type;
+		union {
+			int intVal;
+			string stringVal;
+		};
 	};
 
-	class Statement {
-	public:
+	struct Statement {
 		Instruction instr;
 		vector<Argument> args;
 	};
@@ -28,12 +35,13 @@ namespace Parser {
 	typedef pair<int, int> Position;
 
 	struct Program {
+		int id;
 		vector<Codepage> pages;
 		unordered_map<string, Position> labels;
 	};
 
-	Instruction convinstr(string word);
+	Instruction convertInstruction(string word);
 
-	Program parser(string);
+	Program parser(const vector<string>);
 
 }
