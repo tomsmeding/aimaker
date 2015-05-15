@@ -1,7 +1,7 @@
 #include <string>
 #include <cstdio>
 #include "parser.h"
-#include "util.h"
+#include "../util.h"
 
 namespace Parser {
 	Instruction convertInstruction(string word) {
@@ -14,7 +14,7 @@ namespace Parser {
 	 * @param lines {const vector<string>} The lines of code to parse.
 	 * @return {Program}
 	 */
-	Program parser(const vector<string> lines) {
+	Program parser(const char *const fname,const vector<string> &lines) {
 		int curPage = 0;
 		bool seenPages[16];
 

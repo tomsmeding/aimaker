@@ -20,10 +20,8 @@ namespace Parser {
 			ARGT_VARIABLE
 		};
 		Type type;
-		union {
-			int intVal;
-			string stringVal;
-		};
+		int intVal;
+		string stringVal;
 	};
 
 	struct Statement {
@@ -36,12 +34,13 @@ namespace Parser {
 
 	struct Program {
 		int id;
+		string name;
 		vector<Codepage> pages;
 		unordered_map<string, Position> labels;
 	};
 
 	Instruction convertInstruction(string word);
 
-	Program parser(const vector<string>);
+	Program parser(const char *const,const vector<string>&);
 
 }
