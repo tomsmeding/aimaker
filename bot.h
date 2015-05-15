@@ -4,7 +4,7 @@
 #include <vector>
 #include "lang/parser.h"
 #include "util.h"
-#include "board.h"
+//#include "board.h"
 #include "lang/parser.h"
 
 using namespace std;
@@ -15,8 +15,8 @@ private:
 	int curPage;
 	int curInstr;
 	int x, y, dir;
-	void jumpTo(int, int);
 	Board *board;
+	void jumpTo(int, int);
 
 public:
 	const Parser::Program *program;
@@ -26,4 +26,5 @@ public:
 	Bot(const Parser::Program*, Board*);
 	pair<int, int> getPos(void);
 	int getDir(void);
+	void nextTick(void);
 };
