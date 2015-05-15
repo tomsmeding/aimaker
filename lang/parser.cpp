@@ -31,8 +31,8 @@ namespace Parser {
 					curPage = id;
 				} else {
 					char *message;
-					asprintf(&message, "Error at line %d: Page with ID '%d' already declared.", lineIndex, id);
-					throw message;
+					asprintf(&message, "Page with ID '%d' already declared.", id);
+					throw_error(lineIndex, message);
 				}
 			} else if (words[0] == "#name") { // name
 				program.name = words[1];

@@ -14,3 +14,5 @@ vector<string> split(const string&,const char,int numsplits=-1);
 string trim(const string&);
 
 bool is_numberic(const string&);
+
+void throw_error(int, char*);

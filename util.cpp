@@ -28,10 +28,16 @@ string trim(const string &s){
 	return s.substr(begin,end-begin);
 }
 
-bool charisdigit(const char c){
+bool char_is_digit(const char c){
 	return isdigit(c);
 }
 
 bool is_numberic(const string &s) {
-	return all_of(s.begin(), s.end(), charisdigit);
+	return all_of(s.begin(), s.end(), char_is_digit);
+}
+
+void throw_error(int lineNumber, char *message) {
+	char *error;
+	asprintf(&error, "Error at line %d: %s", lineNumber, message);
+	throw error;
 }
