@@ -36,6 +36,8 @@ namespace Parser {
 				}
 			} else if (words[0] == "#name") { // name
 				program.name = words[1];
+			} else if (words[0] == "#author") { // author
+				program.author = words[1];
 			} else if (words[0][0] == '#') { // meta attribute
 				continue;
 			} else if (trimmed[trimmed.size() - 1] == ':') { // label

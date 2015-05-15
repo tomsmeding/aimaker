@@ -35,6 +35,7 @@ namespace Parser {
 	struct Program {
 		int id;
 		string name;
+		string author;
 		vector<Codepage> pages;
 		unordered_map<string, Position> labels;
 	};
