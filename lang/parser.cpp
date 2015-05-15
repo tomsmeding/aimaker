@@ -9,6 +9,27 @@ namespace Parser {
 		else if (word == "sto")  return INSTR_STO;
 	}
 
+	// Parses the given `functionName` and `arugments` to a Statement.
+	Statement parseStatment(string functionName, string arguments) {
+		Statement statement;
+		statement.instr = convertInstruction(functionName);
+
+		vector<string> argsRaw = split(arguments, ',');
+		statement.args.resize(argsRaw.size());
+
+		for (int i = 0; i < (int)argsRaw.size(); i++) {
+			if (is_numberic(argsRaw[i])) {
+				statement.args[i].type = Argument::Type::ARGT_NUMBER;
+				statement.args[i].intVal = stoi(argsRaw[i]);
+			} else {
+				statement.args[i].type = Argument::Type::ARGT_VARIABLE;
+				statement.args[i].stringVal = argsRaw[i];
+			}
+		}
+
+		return statement;
+	}
+
 	// Parses the given `lines` with the given `fname`.
 	Program parse(const char *const fname, const vector<string> &lines) {
 		int curPage = 0;
@@ -46,23 +67,7 @@ namespace Parser {
 
 				program.labels.emplace(make_pair(labelName, position));
 			} else { // function call
-				Statement statement;
-				statement.instr = convertInstruction(words[0]);
-
-				vector<string> argsRaw = split(words[1], ',');
-				statement.args.resize(argsRaw.size());
-
-				for (int i = 0; i < (int)argsRaw.size(); i++) {
-					if (is_numberic(argsRaw[i])) {
-						statement.args[i].type = Argument::Type::ARGT_NUMBER;
-						statement.args[i].intVal = stoi(argsRaw[i]);
-					} else {
-						statement.args[i].type = Argument::Type::ARGT_VARIABLE;
-						statement.args[i].stringVal = argsRaw[i];
-					}
-				}
-
-				program.pages[curPage].push_back(statement);
+				program.pages[curPage].push_back(parseStatment(words[0], words[1]));
 			}
 		}
 
