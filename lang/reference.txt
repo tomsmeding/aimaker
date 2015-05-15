@@ -1,3 +1,7 @@
+Note: All function names are case insensitve.
+
+----
+
 Function: move
 Description: Moves the current bot forwards (1) or backwards (-1).
 
@@ -12,3 +16,9 @@ Arguments:
 	- Condition
 	- Label
 Description: Goes to the specified `label` if the `condition` is true.
+
+Function: store/sto
+Arguments:
+	- variableName
+	- Value
+Description: Stores the given `value` in `variableName`.

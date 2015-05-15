@@ -5,8 +5,13 @@
 
 namespace Parser {
 	Instruction convertInstruction(string word) {
-		     if (word == "move") return INSTR_MOVE;
-		else if (word == "sto")  return INSTR_STO;
+		to_lower(word); // Function calls are case insensitive.
+
+		     if (word == "move")                     return INSTR_MOVE;
+		else if (word == "sto")                      return INSTR_STO;
+		else if (word == "rotate" || word == "rot")  return INSTR_ROT;
+		else if (word == "nop")                      return INSTR_NOP;
+		else if (word == "ifgoto" || word == "if")   return INSTR_IFGOTO;
 	}
 
 	// Parses the given `functionName` and `arugments` to a Statement.

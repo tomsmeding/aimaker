@@ -11,6 +11,9 @@ namespace Parser {
 
 	enum Instruction {
 		INSTR_MOVE,
+		INSTR_ROT,
+		INSTR_NOP,
+		INSTR_IFGOTO,
 		INSTR_STO
 	};
 

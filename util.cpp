@@ -41,3 +41,7 @@ void throw_error(int lineNumber, char *message) {
 	asprintf(&error, "Error at line %d: %s", lineNumber, message);
 	throw error;
 }
+
+void to_lower(string &original) {
+	std::transform(original.begin(), original.end(), original.begin(), ::tolower);
+}
