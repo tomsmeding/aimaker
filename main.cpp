@@ -40,11 +40,16 @@ int main(int argc,char **argv){
 	}
 	int i;
 	Board board(20);
-	vector<Program> programs;
+	vector<Parser::Program> programs;
 	vector<Bot> bots;
 	for(i=1;i<argc;i++){
-		programs.push_back(Parser::parser(readFile(argv[i]));
-		bots.emplace_back(programs[programs.size()-1],&board);
+		try {
+			programs.push_back(Parser::parser(readFile(argv[i]));
+		} catch(const char *str){
+			cerr<<"ERROR: "<<str<<endl;
+			return 1;
+		}
+		bots.emplace_back(&programs[programs.size()-1],&board);
 	}
 	const int numprogs=programs.size();
 
@@ -55,7 +60,7 @@ int main(int argc,char **argv){
 	bool endgame=false;
 	while(true){
 		for(Bot &b : bots){
-			progid=b.progid;
+			progid=b.program->id;
 			for(i=0;i<numprogs;i++){
 				if(programs[i].id==progid){
 					stillthere[i]=true;

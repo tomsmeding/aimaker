@@ -4,6 +4,8 @@
 #include <vector>
 #include "bot.h"
 
+using namespace std;
+
 class Board {
 private:
 	int size;

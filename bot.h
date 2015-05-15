@@ -13,6 +13,7 @@ class Bot {
 private:
 	int curPage;
 	int curInstr;
+	int x, y, dir;
 	void jumpTo(int, int);
 	const Parser::Program *program;
 	Board *board;
@@ -22,4 +23,6 @@ public:
 	unordered_map<string, int> memoryMap;
 	vector<vector<Parser::Statement>> pages;
 	Bot(const Parser::Program*, Board*);
+	pair<int, int> getPos(void);
+	int getDir(void);
 };
