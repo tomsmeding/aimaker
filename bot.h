@@ -9,6 +9,7 @@
 
 using namespace std;
 
+class Board;
 class Bot {
 private:
 	int curPage;
