@@ -16,6 +16,7 @@ namespace Parser {
 
 		Program program;
 		program.id = genid();
+		program.name = fname;
 		program.pages.resize(16);
 
 		for (int lineIndex = 0; lineIndex < (int)lines.size(); lineIndex++) {
@@ -33,6 +34,8 @@ namespace Parser {
 					asprintf(&message, "Error at line %d: Page with ID '%d' already declared.", lineIndex, id);
 					throw message;
 				}
+			} else if (words[0] == "#name") { // name
+				program.name = words[1];
 			} else if (words[0][0] == '#') { // meta attribute
 				continue;
 			} else if (trimmed[trimmed.size() - 1] == ':') { // label
