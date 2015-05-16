@@ -13,6 +13,7 @@ namespace Parser {
 		else if (word == "nop")                          return INSTR_NOP;
 		else if (word == "ifgoto" || word == "if")       return INSTR_IFGOTO;
 		else if (word == "transfer" || word == "trans")  return INSTR_TRANS;
+		else if (word == "page")                         return INSTR_PAGE;
 		else return INSTR_INVALID;
 	}
 
@@ -45,7 +46,7 @@ namespace Parser {
 	// Parses the given `lines` with the given `fname`.
 	Program parse(const char *const fname, const vector<string> &lines) {
 		int curPage = 0;
-		bool seenPages[16];
+		bool seenPages[16]={false};
 
 		Program program;
 		program.id = genid();
