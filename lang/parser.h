@@ -15,6 +15,7 @@ namespace Parser {
 		INSTR_NOP,
 		INSTR_IFGOTO,
 		INSTR_STO,
+		INSTR_TRANS,
 
 		INSTR_INVALID=255
 	};

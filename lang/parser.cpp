@@ -7,11 +7,12 @@ namespace Parser {
 	Instruction convertInstruction(string word) {
 		to_lower(word); // Function calls are case insensitive.
 
-		     if (word == "move")                     return INSTR_MOVE;
-		else if (word == "store" || word=="sto")     return INSTR_STO;
-		else if (word == "rotate" || word == "rot")  return INSTR_ROT;
-		else if (word == "nop")                      return INSTR_NOP;
-		else if (word == "ifgoto" || word == "if")   return INSTR_IFGOTO;
+		     if (word == "move")                         return INSTR_MOVE;
+		else if (word == "store" || word=="sto")         return INSTR_STO;
+		else if (word == "rotate" || word == "rot")      return INSTR_ROT;
+		else if (word == "nop")                          return INSTR_NOP;
+		else if (word == "ifgoto" || word == "if")       return INSTR_IFGOTO;
+		else if (word == "transfer" || word == "trans")  return INSTR_TRANS;
 		else return INSTR_INVALID;
 	}
 

@@ -22,3 +22,9 @@ Arguments:
 	- variableName
 	- Value
 Description: Stores the given `value` in `variableName`.
+
+Function: transfer/trans
+Arguments:
+	- pageId
+	- targetId
+Description: Copies the page at the given `pageId` to the given `targetId` overwriting everything that was there originally.
