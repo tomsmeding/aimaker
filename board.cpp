@@ -3,12 +3,16 @@
 
 using namespace std;
 
-Board::Board(int size): size(size) {
-
+Board::Board(int size): size(size), tick(0) {
+	id = genid();
 }
 
 void Board::nextTick(void) {
+	for (Bot &bot : bots) {
+		bot.nextTick();
+	}
 
+	tick++;
 }
 
 string Board::render(void) {
@@ -46,4 +50,15 @@ string Board::render(void) {
 		s[idx+3*size+1+1]=dirchars[dir][3];
 	}
 	return s;
+}
+
+bool Board::canMoveTo(int x, int y) {
+	for (Bot &bot : bots) {
+		pair<int, int> location = bot.getPos();
+
+		if (location.first == x && location.second == y) {
+			return false;
+		}
+	}
+	return true;
 }

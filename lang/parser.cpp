@@ -59,6 +59,7 @@ namespace Parser {
 
 			if (words[0] == "#page") { // page
 				int id = stoi(words[1]);
+
 				if (!seenPages[id]) {
 					seenPages[id] = true;
 					curPage = id;
