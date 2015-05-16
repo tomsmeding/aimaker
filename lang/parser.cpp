@@ -55,6 +55,7 @@ namespace Parser {
 		for (int lineIndex = 0; lineIndex < (int)lines.size(); lineIndex++) {
 			string line = lines[lineIndex];
 			string trimmed = trim(line);
+			if(trimmed.size() == 0) continue;
 			vector<string> words = split(trimmed, ' ', 1);
 
 			if (words[0] == "#page") { // page
