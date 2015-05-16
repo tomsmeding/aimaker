@@ -7,10 +7,10 @@
 #page 1
 start:
 	sto a, 1
-	move
-	move
+	move 1
+	move 1
 	rotate a
-	ifgoto a==-1, @aIsMin1
+	ifgoto a == -1, @aIsMin1
 	sto a, -1
 	goto @start
 aIsMin1:

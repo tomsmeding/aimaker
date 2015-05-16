@@ -30,7 +30,7 @@ namespace Parser {
 		statement.args.resize(argsRaw.size());
 
 		for (int i = 0; i < (int)argsRaw.size(); i++) {
-			if (is_numberic(argsRaw[i])) {
+			if (is_numeric(argsRaw[i])) {
 				statement.args[i].type = Argument::Type::ARGT_NUMBER;
 				statement.args[i].intVal = stoi(argsRaw[i]);
 			} else {

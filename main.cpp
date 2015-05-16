@@ -23,7 +23,7 @@ vector<string> readFile(const char *const fname){
 	vector<string> lines;
 	string line;
 	while(f){
-		getline(cin,line);
+		getline(f,line);
 		lines.push_back(move(line));
 	}
 	return lines;
@@ -43,15 +43,23 @@ int main(int argc,char **argv){
 	vector<Parser::Program> programs;
 	vector<Bot> bots;
 	for(i=1;i<argc;i++){
+		cerr<<"Reading in program "<<i<<": '"<<argv[i]<<"'... ";
 		try {
-			programs.push_back(Parser::parse(argv[1],readFile(argv[i])));
+			vector<string> contents=readFile(argv[i]);
+			cerr<<"Read contents... ";
+			Parser::Program program=Parser::parse(argv[1],contents);
+			cerr<<"Parsed... ";
+			programs.push_back(program);
 		} catch(const char *str){
 			cerr<<"ERROR: "<<str<<endl;
 			return 1;
 		}
 		bots.emplace_back(&programs[programs.size()-1],&board);
+		cerr<<"Done."<<endl;
 	}
 	const int numprogs=programs.size();
+
+	cerr<<"Done reading in programs"<<endl;
 
 	int tick=0;
 	bool stillthere[numprogs];

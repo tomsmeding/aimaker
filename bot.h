@@ -4,7 +4,6 @@
 #include <vector>
 #include "lang/parser.h"
 #include "util.h"
-#include "board.h"
 #include "lang/parser.h"
 
 using namespace std;
@@ -22,13 +21,13 @@ private:
 	pair<int, int> executeCurrentLine(void);
 
 public:
-	int id;
+	const int id;
 	const Parser::Program *program;
 	unordered_map<string, int> memoryMap;
 	vector<vector<Parser::Statement>> pages;
 
 	Bot(const Parser::Program*, Board*);
-	pair<int, int> getPos(void);
-	int getDir(void);
+	pair<int, int> getPos(void) const;
+	int getDir(void) const;
 	void nextTick(void);
 };

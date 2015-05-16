@@ -32,7 +32,7 @@ bool char_is_digit(const char c){
 	return isdigit(c);
 }
 
-bool is_numberic(const string &s) {
+bool is_numeric(const string &s) {
 	return all_of(s.begin(), s.end(), char_is_digit);
 }
 

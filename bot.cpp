@@ -1,11 +1,10 @@
 #include <utility>
 #include "bot.h"
+#include "board.h"
 
 using namespace std;
 
-Bot::Bot(const Parser::Program *_program, Board *_board) : curInstr(0), curPage(0), tick(0), x(0), y(0), dir(0), board(_board), program(_program) {
-	id = genid();
-}
+Bot::Bot(const Parser::Program *_program, Board *_board) : curInstr(0), curPage(0), tick(0), x(0), y(0), dir(0), board(_board), id(genid()), program(_program) {}
 
 void Bot::jumpTo(int page, int instr) {
 	if(page < 0 || page >= (int)program->pages.size() ||
@@ -18,11 +17,11 @@ void Bot::jumpTo(int page, int instr) {
 	}
 }
 
-pair<int, int> Bot::getPos(void) {
+pair<int, int> Bot::getPos(void) const {
 	return make_pair(x, y);
 }
 
-int Bot::getDir(void) {
+int Bot::getDir(void) const {
 	return dir;
 }
 
@@ -33,22 +32,17 @@ pair<int, int> Bot::executeCurrentLine() {
 		case Parser::INSTR_MOVE: {
 			Parser::Argument argument = currentStatement.args[0];
 			if (argument.type == Parser::Argument::Type::ARGT_NUMBER) {
-				bool forwards = (bool) argument.intVal;
-				int deltaX = 0;
-				int deltaY = 0;
-
-				     if (dir == 0) deltaX =  1;
-				else if (dir == 2) deltaX = -1;
-				else if (dir == 1) deltaY =  1;
-				else if (dir == 3) deltaY = -1;
+				const bool forwards = (bool) argument.intVal;
+				int deltaX = dir % 2 == 1 ? 2 - dir : 0;
+				int deltaY = dir % 2 == 0 ? dir - 1 : 0;
 
 				if (!forwards) {
 					deltaX = deltaX * -1;
 					deltaX = deltaY * -1;
 				}
 
-				int x = this->x + deltaX;
-				int y = this->y + deltaY;
+				const int x = this->x + deltaX;
+				const int y = this->y + deltaY;
 
 				if (board->canMoveTo(deltaX, deltaY)) {
 					this->x = x;
