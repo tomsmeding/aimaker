@@ -7,8 +7,15 @@ Bot::Bot(const Parser::Program *_program, Board *_board) : curPage(0), curInstr(
 	id = genid();
 }
 
-void Bot::jumpTo(int page, int statement) {
-
+void Bot::jumpTo(int page, int instr) {
+	if(page < 0 || page >= (int)program->pages.size() ||
+			instr < 0 || instr >= (int)program->pages[page].size()) {
+		curPage = 0;
+		curInstr = 0;
+	} else {
+		curPage = page;
+		curInstr = instr;
+	}
 }
 
 pair<int, int> Bot::getPos(void){
