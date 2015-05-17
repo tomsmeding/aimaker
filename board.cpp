@@ -15,6 +15,17 @@ void Board::nextTick(void) {
 	tick++;
 }
 
+Bot* Board::at(int x, int y) {
+	for (Bot &bot : bots) {
+		pair<int, int> location = bot.getPos();
+
+		if (location.first == x && location.second == y)
+			return &bot;
+	}
+
+	return NULL;
+}
+
 string Board::render(void) {
 	stringstream ss;
 	int x,y;

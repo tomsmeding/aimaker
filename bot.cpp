@@ -4,17 +4,29 @@
 
 using namespace std;
 
-Bot::Bot(const Parser::Program *_program, Board *_board) : curInstr(0), curPage(0), tick(0), x(0), y(0), dir(0), board(_board), id(genid()), program(_program) {}
+Bot::Bot(const Parser::Program *_program, Board *_board) : curInstr(0), curPage(0), _workingFor(0), x(0), y(0), dir(0), board(_board), id(genid()), program(_program) {}
 
 void Bot::jumpTo(int page, int instr) {
-	if(page < 0 || page >= (int)program->pages.size() ||
-			instr < 0 || instr >= (int)program->pages[page].size()) {
+	if(page < 0 || page >= (int)pages.size() ||
+			instr < 0 || instr >= (int)pages[page].size()) {
 		curPage = 0;
 		curInstr = 0;
 	} else {
 		curPage = page;
 		curInstr = instr;
 	}
+}
+
+void Bot::workFor(int ticks) {
+	_workingFor = ticks;
+}
+
+bool Bot::isWorking(void) const {
+	return (bool) _workingFor;
+}
+
+int Bot::workingFor(void) const {
+	return _workingFor;
 }
 
 pair<int, int> Bot::getPos(void) const {
@@ -25,26 +37,40 @@ int Bot::getDir(void) const {
 	return dir;
 }
 
+pair<int, int> Bot::calculateNextLocataion(bool forwards) const {
+	int deltaX = dir % 2 == 1 ? 2 - dir : 0;
+	int deltaY = dir % 2 == 0 ? dir - 1 : 0;
+
+	if (!forwards) {
+		deltaX = deltaX * -1;
+		deltaX = deltaY * -1;
+	}
+
+	return make_pair(x + deltaX, y + deltaY);
+}
+
+void Bot::copyPage(int targetId, vector<Parser::Statement> page) {
+	pages[targetId] = page;
+
+	if (curInstr >= (int)pages[curPage].size()) {
+		curInstr = 0;
+	}
+}
+
 pair<int, int> Bot::executeCurrentLine() {
 	const Parser::Statement currentStatement = pages[curPage][curInstr];
 
 	switch (currentStatement.instr) {
 		case Parser::INSTR_MOVE: {
 			Parser::Argument argument = currentStatement.args[0];
-			if (argument.type == Parser::Argument::Type::ARGT_NUMBER) {
+			if (argument.type == Parser::Argument::ARGT_NUMBER) {
 				const bool forwards = (bool) argument.intVal;
-				int deltaX = dir % 2 == 1 ? 2 - dir : 0;
-				int deltaY = dir % 2 == 0 ? dir - 1 : 0;
 
-				if (!forwards) {
-					deltaX = deltaX * -1;
-					deltaX = deltaY * -1;
-				}
+				const pair<int, int> newLocation = calculateNextLocataion(forwards);
+				const int x = newLocation.first;
+				const int y = newLocation.second;
 
-				const int x = this->x + deltaX;
-				const int y = this->y + deltaY;
-
-				if (board->canMoveTo(deltaX, deltaY)) {
+				if (board->canMoveTo(x, y)) {
 					this->x = x;
 					this->y = y;
 				} else {
@@ -57,6 +83,50 @@ pair<int, int> Bot::executeCurrentLine() {
 			break;
 		}
 
+		case Parser::INSTR_ROT:
+		{
+			Parser::Argument argument = currentStatement.args[0];
+			if (argument.type == Parser::Argument::ARGT_NUMBER) {
+				dir += argument.intVal % 4;
+			} else {
+				// Wrong argument type.
+			}
+			break;
+		}
+
+		case Parser::INSTR_STO:
+		{
+			Parser::Argument varNameArgument = currentStatement.args[0];
+			Parser::Argument valueArgument = currentStatement.args[1];
+
+			if (varNameArgument.type == Parser::Argument::ARGT_VARIABLE && valueArgument.type == Parser::Argument::ARGT_NUMBER) {
+				memoryMap.emplace(make_pair(varNameArgument.stringVal, valueArgument.intVal));
+			} else {
+				// Wrong argument type.
+			}
+		}
+
+		case Parser::INSTR_TRANS:
+		{
+			Parser::Argument pageIdArgument = currentStatement.args[0];
+			Parser::Argument targetIdArgument = currentStatement.args[1];
+
+			if (pageIdArgument.type == Parser::Argument::ARGT_NUMBER && targetIdArgument.type == Parser::Argument::ARGT_NUMBER) {
+				vector<Parser::Statement> page = pages[pageIdArgument.ARGT_NUMBER];
+
+				const pair<int, int> targetLocation = calculateNextLocataion(true);
+				Bot *targetBot = board->at(targetLocation.first, targetLocation.second);
+
+				if (targetBot != NULL) {
+					targetBot->copyPage(targetIdArgument.intVal, page);
+				}
+
+				workFor(floor(5 + log(page.size())));
+			} else {
+				// Wrong argument type.
+			}
+		}
+
 		case Parser::INSTR_INVALID:
 		case Parser::INSTR_NOP:
 			break;
@@ -66,10 +136,13 @@ pair<int, int> Bot::executeCurrentLine() {
 }
 
 void Bot::nextTick(void) {
-	pair<int, int> pair = executeCurrentLine();
+	if (_workingFor) {
+		_workingFor--;
+		return;
+	} else {
+		pair<int, int> pair = executeCurrentLine();
 
-	curPage = pair.first;
-	curInstr = pair.second;
-
-	tick++;
+		curPage = pair.first;
+		curInstr = pair.second;
+	}
 }
