@@ -37,7 +37,7 @@ int Bot::getDir(void) const {
 	return dir;
 }
 
-pair<int, int> Bot::calculateNextLocataion(bool forwards) const {
+pair<int, int> Bot::calculateNextLocation(bool forwards) const {
 	int deltaX = dir % 2 == 1 ? 2 - dir : 0;
 	int deltaY = dir % 2 == 0 ? dir - 1 : 0;
 
@@ -66,7 +66,7 @@ pair<int, int> Bot::executeCurrentLine() {
 			if (argument.type == Parser::Argument::ARGT_NUMBER) {
 				const bool forwards = (bool) argument.intVal;
 
-				const pair<int, int> newLocation = calculateNextLocataion(forwards);
+				const pair<int, int> newLocation = calculateNextLocation(forwards);
 				const int x = newLocation.first;
 				const int y = newLocation.second;
 
@@ -114,7 +114,7 @@ pair<int, int> Bot::executeCurrentLine() {
 			if (pageIdArgument.type == Parser::Argument::ARGT_NUMBER && targetIdArgument.type == Parser::Argument::ARGT_NUMBER) {
 				vector<Parser::Statement> page = pages[pageIdArgument.ARGT_NUMBER];
 
-				const pair<int, int> targetLocation = calculateNextLocataion(true);
+				const pair<int, int> targetLocation = calculateNextLocation(true);
 				Bot *targetBot = board->at(targetLocation.first, targetLocation.second);
 
 				if (targetBot != NULL) {
