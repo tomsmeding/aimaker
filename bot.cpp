@@ -17,10 +17,6 @@ void Bot::jumpTo(int page, int instr) {
 	}
 }
 
-void Bot::workFor(int ticks) {
-	_workingFor = ticks;
-}
-
 bool Bot::isWorking(void) const {
 	return (bool) _workingFor;
 }
@@ -121,7 +117,7 @@ pair<int, int> Bot::executeCurrentLine() {
 					targetBot->copyPage(targetIdArgument.intVal, page);
 				}
 
-				workFor(floor(5 + log(page.size())));
+				_workingFor=floor(5 + log(page.size()));
 			} else {
 				// Wrong argument type.
 			}

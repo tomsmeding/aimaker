@@ -20,7 +20,6 @@ private:
 
 	pair<int, int> executeCurrentLine(void);
 	void jumpTo(int, int);
-	void workFor(int);
 	pair<int, int> calculateNextLocation(bool) const;
 
 public:
