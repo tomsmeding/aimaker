@@ -1,5 +1,6 @@
 #include <string>
 #include <vector>
+#include <unordered_map>
 
 using namespace std;
 
@@ -33,7 +34,6 @@ namespace Parser {
 
 		EN_AND, // &&
 		EN_OR, // ||
-		EN_XOR, // ^^
 		EN_SHIFTR, // >>
 		EN_SHIFTL, // <<
 
@@ -56,11 +56,13 @@ namespace Parser {
 		string strval;
 		int intval;
 		int hasval; //0=none, 1=string, 2=int
+		ExprNode(void);
 		ExprNode(ExprNodeType);
 		ExprNode(ExprNodeType,const string&);
 		ExprNode(ExprNodeType,const int);
 		ExprNode(ExprNodeType,ExprNode*,ExprNode*,const string&);
 		ExprNode(ExprNodeType,ExprNode*,ExprNode*,const int);
+		~ExprNode(void);
 	};
 
 	bool leftAssoc(ExprNodeType);
@@ -72,5 +74,8 @@ namespace Parser {
 	//these two throw char* for invalid operator
 	vector<ExprToken> tokeniseExpression(const string&);
 	ExprNode parseExpression(const vector<ExprToken>&);
+
+	//throws if a variable in the expression is not found in the map
+	int evaluateExpression(const ExprNode&,const unordered_map<string,int>&);
 
 };

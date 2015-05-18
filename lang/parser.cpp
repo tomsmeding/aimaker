@@ -4,7 +4,7 @@
 #include "../util.h"
 
 namespace Parser {
-	Instruction convertInstruction(string word) {
+	Instruction convertInstruction (string word) {
 		to_lower(word); // Function calls are case insensitive.
 
 		     if (word == "move")                         return INSTR_MOVE;
@@ -18,25 +18,42 @@ namespace Parser {
 	}
 
 	// Parses the given `functionName` and `arguments` to a Statement.
-	Statement parseStatement(string functionName, string arguments, int lineIndex) {
+	Statement parseStatement (string functionName, string arguments, int lineIndex) {
+		int i;
 		Statement statement;
 		statement.instr = convertInstruction(functionName);
-		if(statement.instr == INSTR_INVALID) {
+		if (statement.instr == INSTR_INVALID) {
 			char *message;
-			asprintf(&message,"Invalid instruction '%s'.", functionName.c_str());
+			asprintf(&message, "Invalid instruction '%s'.", functionName.c_str());
 			throw_error(lineIndex, message);
 		}
 
-		vector<string> argsRaw = split(arguments, ',');
+		vector<string> argsRaw;
+		int depth, cursor = 0;
+		while (true) {
+			depth = 0;
+			for (i = cursor; i < (int)arguments.size(); i++) {
+				if (depth == 0 && arguments[i] == ',') break;
+				else if (arguments[i] == '(') depth++;
+				else if (arguments[i] == ')') depth--;
+			}
+			if (i == (int)arguments.size()) {
+				argsRaw.push_back(trim(arguments.substr(cursor)));
+				break;
+			} else {
+				argsRaw.push_back(trim(arguments.substr(cursor,i)));
+				cursor = i + 1;
+			}
+		}
 		statement.args.resize(argsRaw.size());
 
-		for (int i = 0; i < (int)argsRaw.size(); i++) {
-			if (is_numeric(argsRaw[i])) {
-				statement.args[i].type = Argument::Type::ARGT_NUMBER;
-				statement.args[i].intVal = stoi(argsRaw[i]);
+		for (i = 0; i < (int)argsRaw.size(); i++) {
+			if(argsRaw[i][0]=='@'){
+				statement.args[i].type = ARGT_LABEL;
+				statement.args[i].label = argsRaw[i].substr(1);
 			} else {
-				statement.args[i].type = Argument::Type::ARGT_VARIABLE;
-				statement.args[i].stringVal = argsRaw[i];
+				statement.args[i].type = ARGT_EXPR;
+				statement.args[i].exprval = parseExpression(tokeniseExpression(argsRaw[i]));
 			}
 		}
 
@@ -44,7 +61,7 @@ namespace Parser {
 	}
 
 	// Parses the given `lines` with the given `fname`.
-	Program parse(const char *const fname, const vector<string> &lines) {
+	Program parse (const char *const fname, const vector<string> &lines) {
 		int curPage = 0;
 		bool seenPages[16]={false};
 

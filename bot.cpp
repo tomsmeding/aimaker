@@ -58,39 +58,37 @@ pair<int, int> Bot::executeCurrentLine() {
 
 	switch (currentStatement.instr) {
 		case Parser::INSTR_MOVE: {
-			Parser::Argument argument = currentStatement.args[0];
-			if (argument.type == Parser::Argument::ARGT_NUMBER) {
-				const bool forwards = (bool) argument.intVal;
-
-				const pair<int, int> newLocation = calculateNextLocation(forwards);
-				const int x = newLocation.first;
-				const int y = newLocation.second;
-
-				if (board->canMoveTo(x, y)) {
-					this->x = x;
-					this->y = y;
-				} else {
-					// We can't move there.
-				}
-
-			} else {
+			const Parser::Argument argument = currentStatement.args[0];
+			if (argument.type != Parser::ARGT_EXPR) {
 				// Wrong argument type.
+				break;
+			}
+			const bool forwards = (bool) Parser::evaluateExpression(argument.exprval);
+
+			const pair<int, int> newLocation = calculateNextLocation(forwards);
+			const int x = newLocation.first;
+			const int y = newLocation.second;
+
+			if (board->canMoveTo(x, y)) {
+				this->x = x;
+				this->y = y;
+			} else {
+				// We can't move there.
 			}
 			break;
 		}
 
-		case Parser::INSTR_ROT:
-		{
-			Parser::Argument argument = currentStatement.args[0];
-			if (argument.type == Parser::Argument::ARGT_NUMBER) {
-				dir += argument.intVal % 4;
-			} else {
+		case Parser::INSTR_ROT:{
+			const Parser::Argument argument = currentStatement.args[0];
+			if (argument.type != Parser::ARGT_EXPR) {
 				// Wrong argument type.
+				break;
 			}
+			dir += Parser::evaluateExpression(argument.exprval) % 4;
 			break;
 		}
 
-		case Parser::INSTR_STO:
+		/*case Parser::INSTR_STO:
 		{
 			Parser::Argument varNameArgument = currentStatement.args[0];
 			Parser::Argument valueArgument = currentStatement.args[1];
@@ -100,27 +98,27 @@ pair<int, int> Bot::executeCurrentLine() {
 			} else {
 				// Wrong argument type.
 			}
-		}
+		}*/
 
 		case Parser::INSTR_TRANS:
 		{
 			Parser::Argument pageIdArgument = currentStatement.args[0];
 			Parser::Argument targetIdArgument = currentStatement.args[1];
 
-			if (pageIdArgument.type == Parser::Argument::ARGT_NUMBER && targetIdArgument.type == Parser::Argument::ARGT_NUMBER) {
-				vector<Parser::Statement> page = pages[pageIdArgument.ARGT_NUMBER];
-
-				const pair<int, int> targetLocation = calculateNextLocation(true);
-				Bot *targetBot = board->at(targetLocation.first, targetLocation.second);
-
-				if (targetBot != NULL) {
-					targetBot->copyPage(targetIdArgument.intVal, page);
-				}
-
-				_workingFor=floor(5 + log(page.size()));
-			} else {
+			if (pageIdArgument.type != Parser::ARGT_EXPR || targetIdArgument.type != Parser::ARGT_EXPR) {
 				// Wrong argument type.
+				break;
 			}
+			vector<Parser::Statement> page = pages[Parser::evaluateExpression(pageIdArgument.exprval)];
+
+			const pair<int, int> targetLocation = calculateNextLocation(true);
+			Bot *targetBot = board->at(targetLocation.first, targetLocation.second);
+
+			if (targetBot != NULL) {
+				targetBot->copyPage(Parser::evaluateExpression(targetIdArgument.exprval), page);
+			}
+
+			_workingFor=floor(5 + log(page.size() + 1));
 		}
 
 		case Parser::INSTR_INVALID:

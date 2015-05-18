@@ -1,11 +1,13 @@
+#include <unordered_map>
 #include "expression.h"
-#include <vector>
 #include <iostream>
 
 using namespace std;
 
 namespace Parser {
 
+	ExprNode::ExprNode(void)
+		:type(EN_INVALID),left(NULL),right(NULL),strval(),intval(0),hasval(0){}
 	ExprNode::ExprNode(ExprNodeType _t)
 		:type(_t),left(NULL),right(NULL),strval(),intval(0),hasval(0){}
 	ExprNode::ExprNode(ExprNodeType _t,const string &_s)
@@ -16,6 +18,10 @@ namespace Parser {
 		:type(_t),left(_l),right(_r),strval(_s),intval(0),hasval(1){}
 	ExprNode::ExprNode(ExprNodeType _t,ExprNode *_l,ExprNode *_r,const int _i)
 		:type(_t),left(_l),right(_r),strval(),intval(_i),hasval(2){}
+	ExprNode::~ExprNode(void){
+		if(left)delete left;
+		if(right)delete right;
+	}
 
 
 	bool leftAssoc(ExprNodeType type){
@@ -27,40 +33,38 @@ namespace Parser {
 				return true;
 		}
 	}
-	int precedence(ExprNodeType type){ //the tens are c++ precedence
+	int precedence(ExprNodeType type){ //pretty much c++ precedence
 		switch(type){
 			case EN_NOT:
 			case EN_NEGATE:
-				return 30;
+				return 3;
 			case EN_MULTIPLY:
 			case EN_DIVIDE:
-				return 50;
+				return 5;
 			case EN_ADD:
 			case EN_SUBTRACT:
-				return 60;
+				return 6;
 			case EN_SHIFTR:
 			case EN_SHIFTL:
-				return 70;
+				return 7;
 			case EN_GREATER:
 			case EN_GREATEREQUAL:
 			case EN_LESS:
 			case EN_LESSEQUAL:
-				return 80;
+				return 8;
 			case EN_EQUALS:
 			case EN_NOTEQUAL:
-				return 90;
+				return 9;
 			case EN_BITAND:
-				return 100;
+				return 10;
 			case EN_BITXOR:
-				return 110;
+				return 11;
 			case EN_BITOR:
-				return 120;
+				return 12;
 			case EN_AND:
-				return 130;
-			case EN_XOR:
-				return 135;
+				return 13;
 			case EN_OR:
-				return 140;
+				return 14;
 
 			case EN_PAREN1:
 			case EN_PAREN2:
@@ -108,7 +112,6 @@ namespace Parser {
 		if(s=="<=")return EN_LESSEQUAL;
 		if(s=="&&")return EN_AND;
 		if(s=="||")return EN_OR;
-		if(s=="^^")return EN_XOR;
 		if(s==">>")return EN_SHIFTR;
 		if(s=="<<")return EN_SHIFTL;
 		if(s=="!")return EN_NOT;
@@ -135,7 +138,6 @@ namespace Parser {
 		case EN_LESSEQUAL: return "EN_LESSEQUAL";
 		case EN_AND: return "EN_AND";
 		case EN_OR: return "EN_OR";
-		case EN_XOR: return "EN_XOR";
 		case EN_SHIFTR: return "EN_SHIFTR";
 		case EN_SHIFTL: return "EN_SHIFTL";
 		case EN_NOT: return "EN_NOT";
@@ -328,6 +330,77 @@ namespace Parser {
 			throw buf;
 		}
 		return nodestack[0];
+	}
+
+	int evaluateExpression(const ExprNode &root,const unordered_map<string,int> &vars){
+		if(root.hasval==1){
+			unordered_map<string,int>::const_iterator varit=vars.find(root.strval);
+			if(varit==vars.end()){
+				char *buf;
+				asprintf(&buf,"Variable '%s' not found",root.strval.c_str());
+				throw buf;
+			}
+			return varit->second;
+		}
+		if(root.hasval==2)return root.intval;
+		switch(root.type){
+
+#define EVALUATEEXPRESSION_DYADIC_OPERATOR_CASE_REPETITION(en_,op) \
+	case en_: \
+		if(root.left==NULL||root.right==NULL){ \
+			char *buf; \
+			asprintf(&buf,"Dyadic operator " #op " doesn't have two arguments in tree (internal error)"); \
+			throw buf; \
+		} \
+		return evaluateExpression(*root.left,vars) op evaluateExpression(*root.right,vars);
+
+EVALUATEEXPRESSION_DYADIC_OPERATOR_CASE_REPETITION(EN_ADD,+)
+EVALUATEEXPRESSION_DYADIC_OPERATOR_CASE_REPETITION(EN_SUBTRACT,-)
+EVALUATEEXPRESSION_DYADIC_OPERATOR_CASE_REPETITION(EN_MULTIPLY,*)
+EVALUATEEXPRESSION_DYADIC_OPERATOR_CASE_REPETITION(EN_DIVIDE,/)
+EVALUATEEXPRESSION_DYADIC_OPERATOR_CASE_REPETITION(EN_BITAND,&)
+EVALUATEEXPRESSION_DYADIC_OPERATOR_CASE_REPETITION(EN_BITOR,|)
+EVALUATEEXPRESSION_DYADIC_OPERATOR_CASE_REPETITION(EN_BITXOR,^)
+EVALUATEEXPRESSION_DYADIC_OPERATOR_CASE_REPETITION(EN_EQUALS,==)
+EVALUATEEXPRESSION_DYADIC_OPERATOR_CASE_REPETITION(EN_NOTEQUAL,!=)
+EVALUATEEXPRESSION_DYADIC_OPERATOR_CASE_REPETITION(EN_GREATER,>)
+EVALUATEEXPRESSION_DYADIC_OPERATOR_CASE_REPETITION(EN_GREATEREQUAL,>=)
+EVALUATEEXPRESSION_DYADIC_OPERATOR_CASE_REPETITION(EN_LESS,<)
+EVALUATEEXPRESSION_DYADIC_OPERATOR_CASE_REPETITION(EN_LESSEQUAL,<=)
+EVALUATEEXPRESSION_DYADIC_OPERATOR_CASE_REPETITION(EN_AND,&&)
+EVALUATEEXPRESSION_DYADIC_OPERATOR_CASE_REPETITION(EN_OR,||)
+EVALUATEEXPRESSION_DYADIC_OPERATOR_CASE_REPETITION(EN_SHIFTR,>>)
+EVALUATEEXPRESSION_DYADIC_OPERATOR_CASE_REPETITION(EN_SHIFTL,<<)
+
+#undef EVALUATEEXPRESSION_DYADIC_OPERATOR_CASE_REPETITION
+
+#define EVALUATEEXPRESSION_UNARY_RIGHT_OPERATOR_CASE_REPETITION(en_,op) \
+	case en_: \
+		if(root.right==NULL){ \
+			char *buf; \
+			asprintf(&buf,"Unary-right operator " #op " doesn't have a right argument in tree (internal error)"); \
+			throw buf; \
+		} \
+		return op evaluateExpression(*root.right,vars);
+
+EVALUATEEXPRESSION_UNARY_RIGHT_OPERATOR_CASE_REPETITION(EN_NOT,!)
+EVALUATEEXPRESSION_UNARY_RIGHT_OPERATOR_CASE_REPETITION(EN_NEGATE,-)
+
+#undef EVALUATEEXPRESSION_UNARY_RIGHT_OPERATOR_CASE_REPETITION
+
+			case EN_PAREN1:
+			case EN_PAREN2:
+			case EN_NUMBER:
+			case EN_VARIABLE:
+			case EN_SUBTRACT_OR_NEGATE_CONFLICT:
+			case EN_INVALID:
+			{
+				char *buf;
+				asprintf(&buf,"Non-normal operator in expression tree (internal error)");
+				throw buf;
+			}
+
+		}
 	}
 
 };

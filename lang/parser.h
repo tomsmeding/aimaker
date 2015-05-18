@@ -4,6 +4,7 @@
 #include <utility>
 #include <unordered_map>
 #include <string>
+#include "expression.h"
 
 using namespace std;
 
@@ -21,14 +22,15 @@ namespace Parser {
 		INSTR_INVALID=255
 	};
 
+	enum ArgumentType {
+		ARGT_LABEL,
+		ARGT_EXPR
+	};
+
 	struct Argument {
-		enum Type {
-			ARGT_NUMBER,
-			ARGT_VARIABLE
-		};
-		Type type;
-		int intVal;
-		string stringVal;
+		ArgumentType type;
+		string labelval;
+		ExprNode exprval;
 	};
 
 	struct Statement {
