@@ -34,19 +34,44 @@ namespace Parser {
 		EN_AND, // &&
 		EN_OR, // ||
 		EN_XOR, // ^^
+		EN_SHIFTR, // >>
+		EN_SHIFTL, // <<
 
 		EN_NOT, // ! (right-unary)
+		EN_NEGATE, // - (right-unary)
 
-		EN_NUMBER,
-		EN_VARIABLE
+		EN_PAREN1, // (
+		EN_PAREN2, // )
+
+		EN_NUMBER, // [0-9]+
+		EN_VARIABLE, // [a-zA-Z_][a-zA-Z0-9_]*
+
+		EN_SUBTRACT_OR_NEGATE_CONFLICT,
+		EN_INVALID
 	};
 
 	struct ExprNode {
 		ExprNodeType type;
 		ExprNode *left,*right;
+		char *strval;
+		int intval;
+		bool hasval;
+		ExprNode(ExprNodeType);
+		ExprNode(ExprNodeType,const string&);
+		ExprNode(ExprNodeType,const int);
+		ExprNode(ExprNodeType,ExprNode*,ExprNode*,const string&);
+		ExprNode(ExprNodeType,ExprNode*,ExprNode*,const int);
+		~ExprNode(void);
 	};
 
-	vector<ExprToken> tokeniseExpression(const string &s);
-	ExprNode parseExpression(const string &s);
+	bool leftAssoc(ExprNodeType);
+	int precedence(ExprNodeType);
+	const char* operatorToString(ExprNodeType);
+
+	ExprNodeType interpretOperator(const string&);
+
+	//these two throw char* for invalid operator
+	vector<ExprToken> tokeniseExpression(const string&);
+	ExprNode parseExpression(const vector<ExprToken>&);
 
 };
