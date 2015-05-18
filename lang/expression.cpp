@@ -7,26 +7,15 @@ using namespace std;
 namespace Parser {
 
 	ExprNode::ExprNode(ExprNodeType _t)
-		:type(_t),left(NULL),right(NULL),strval(NULL),intval(0),hasval(false){}
+		:type(_t),left(NULL),right(NULL),strval(),intval(0),hasval(0){}
 	ExprNode::ExprNode(ExprNodeType _t,const string &_s)
-		:type(_t),left(NULL),right(NULL),intval(0),hasval(true){
-			const int len=_s.size();
-			strval=new char[len];
-			memcpy(strval,_s.data(),len);
-		}
+		:type(_t),left(NULL),right(NULL),strval(_s),intval(0),hasval(1){}
 	ExprNode::ExprNode(ExprNodeType _t,const int _i)
-		:type(_t),left(NULL),right(NULL),strval(NULL),intval(_i),hasval(true){}
+		:type(_t),left(NULL),right(NULL),strval(),intval(_i),hasval(2){}
 	ExprNode::ExprNode(ExprNodeType _t,ExprNode *_l,ExprNode *_r,const string &_s)
-		:type(_t),left(_l),right(_r),intval(0),hasval(true){
-			const int len=_s.size();
-			strval=new char[len];
-			memcpy(strval,_s.data(),len);
-		}
+		:type(_t),left(_l),right(_r),strval(_s),intval(0),hasval(1){}
 	ExprNode::ExprNode(ExprNodeType _t,ExprNode *_l,ExprNode *_r,const int _i)
-		:type(_t),left(_l),right(_r),strval(NULL),intval(_i),hasval(true){}
-	ExprNode::~ExprNode(void){
-		if(strval)delete[] strval;
-	}
+		:type(_t),left(_l),right(_r),strval(),intval(_i),hasval(2){}
 
 
 	bool leftAssoc(ExprNodeType type){
@@ -39,7 +28,6 @@ namespace Parser {
 		}
 	}
 	int precedence(ExprNodeType type){ //the tens are c++ precedence
-		cerr<<"precedence("<<operatorToString(type)<<')'<<endl;
 		switch(type){
 			case EN_NOT:
 			case EN_NEGATE:
@@ -194,10 +182,8 @@ namespace Parser {
 		for(int i=0;i<(int)stack.size();i++){
 			node=&stack[i];
 			cerr<<i<<": "<<operatorToString(node->type)<<' ';
-			if(node->hasval){
-				if(node->strval)cerr<<node->strval;
-				else cerr<<node->intval;
-			}
+			if(node->hasval==1)cerr<<node->strval;
+			else if(node->hasval==2)cerr<<node->intval;
 			cerr<<endl;
 		}
 	}
@@ -230,8 +216,10 @@ namespace Parser {
 					if(lastWasOperator)type=EN_NEGATE;
 					else type=EN_SUBTRACT;
 				}
+				//cerr<<"            type="<<operatorToString(type)<<endl;
 				if(type==EN_PAREN1){
 					opstack.emplace_back(type);
+					lastWasOperator=true;
 				} else if(type==EN_PAREN2){
 					foundLeftParen=false;
 					while(opstack.size()){
@@ -248,10 +236,11 @@ namespace Parser {
 						asprintf(&buf,"Closing parenthesis without matching open '('");
 						throw buf;
 					}
+					lastWasOperator=false;
 				} else {
 					isleftassoc=leftAssoc(type);
 					prec=precedence(type);
-					cerr<<"prec="<<prec<<" type="<<operatorToString(type)<<endl;
+					//cerr<<"prec="<<prec<<" type="<<operatorToString(type)<<endl;
 					while(opstack.size()){
 						const ExprNode opnode=opstack[opstack.size()-1];
 						//below condition inequality operators are reversed because it BREAKS if true, AND because precedence numbers are reversed from the source wikipedia article. Watch your steps.
@@ -262,9 +251,9 @@ namespace Parser {
 						nodestack.push_back(opnode);
 						opstack.pop_back();
 					}
-					opstack.emplace_back(interpretOperator(token.val));
+					opstack.emplace_back(type);
+					lastWasOperator=true;
 				}
-				lastWasOperator=true;
 				break;
 			}
 			/*cerr<<"Opstack:"<<endl;
@@ -283,6 +272,10 @@ namespace Parser {
 		cerr<<"Nodestack:"<<endl;
 		printstack(nodestack);
 		cerr<<"------------"<<endl;
+		ExprNode root(EN_INVALID);
+		for(i=0;i<(int)nodestack.size();i++){
+
+		}
 	}
 
 };
@@ -290,7 +283,7 @@ namespace Parser {
 #ifdef EXPRESSION_DEBUG_MAIN
 int main(void){
 	try {
-		Parser::parseExpression(Parser::tokeniseExpression("(1+2)*3&&1==2"));
+		Parser::parseExpression(Parser::tokeniseExpression("(1+2)-3==a&&b<=-c"));
 	} catch(char *exc){
 		cerr<<"EXCEPTION: "<<exc<<endl;
 	}
