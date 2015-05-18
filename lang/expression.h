@@ -52,15 +52,15 @@ namespace Parser {
 
 	struct ExprNode {
 		ExprNodeType type;
-		ExprNode *left, *right;
+		ExprNode *left,*right;
 		string strval;
 		int intval;
 		int hasval; //0=none, 1=string, 2=int
 		ExprNode(ExprNodeType);
-		ExprNode(ExprNodeType, const string&);
-		ExprNode(ExprNodeType, const int);
-		ExprNode(ExprNodeType, ExprNode*, ExprNode*, const string&);
-		ExprNode(ExprNodeType, ExprNode*, ExprNode*, const int);
+		ExprNode(ExprNodeType,const string&);
+		ExprNode(ExprNodeType,const int);
+		ExprNode(ExprNodeType,ExprNode*,ExprNode*,const string&);
+		ExprNode(ExprNodeType,ExprNode*,ExprNode*,const int);
 	};
 
 	bool leftAssoc(ExprNodeType);
