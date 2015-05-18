@@ -73,6 +73,24 @@ namespace Parser {
 				return -1; //eh?
 		}
 	}
+	int arity(ExprNodeType type){
+		switch(type){
+			case EN_NOT:
+			case EN_NEGATE:
+				return 1;
+
+			case EN_PAREN1:
+			case EN_PAREN2:
+			case EN_NUMBER:
+			case EN_VARIABLE:
+			case EN_SUBTRACT_OR_NEGATE_CONFLICT:
+			case EN_INVALID:
+				return 0; //eh?
+
+			default:
+				return 2;
+		}
+	}
 
 	ExprNodeType interpretOperator(const string &s){
 		if(s=="+")return EN_ADD;
@@ -272,18 +290,85 @@ namespace Parser {
 		cerr<<"Nodestack:"<<endl;
 		printstack(nodestack);
 		cerr<<"------------"<<endl;
-		ExprNode root(EN_INVALID);
+		if(nodestack.size()==0)return ExprNode(EN_INVALID);
 		for(i=0;i<(int)nodestack.size();i++){
-
+			ExprNode node=nodestack[i];
+			if(node.type==EN_NUMBER||node.type==EN_VARIABLE)continue;
+			const int ar=arity(node.type);
+			if(ar==0){
+				char *buf;
+				asprintf(&buf,"Invalid operator in stack: %s",operatorToString(node.type));
+				throw buf;
+			}
+			if(ar==1){
+				if(i<1){
+					char *buf;
+					asprintf(&buf,"Not enough arguments for unary %s on stack",operatorToString(node.type));
+					throw buf;
+				}
+				if(leftAssoc(node.type))node.left=new ExprNode(nodestack[i-1]);
+				else node.right=new ExprNode(nodestack[i-1]);
+				nodestack.erase(nodestack.begin()+(i-1));
+				i--;
+			} else if(ar==2){
+				if(i<2){
+					char *buf;
+					asprintf(&buf,"Not enough arguments for %s on stack",operatorToString(node.type));
+					throw buf;
+				}
+				nodestack[i].left=new ExprNode(nodestack[i-2]);
+				nodestack[i].right=new ExprNode(nodestack[i-1]);
+				nodestack.erase(nodestack.begin()+(i-2),nodestack.begin()+i);
+				i-=2;
+			}
 		}
+		if(nodestack.size()!=1){
+			char *buf;
+			asprintf(&buf,"Excess items on expression stack!");
+			throw buf;
+		}
+		return nodestack[0];
 	}
 
 };
 
 #ifdef EXPRESSION_DEBUG_MAIN
+#include <sstream>
+
+int uniqid(void){
+	static int $=0;
+	return $++;
+}
+
+string nodeToString(const Parser::ExprNode &node,const int thisid){
+	stringstream ss;
+	ss<<thisid<<"\\n"<<operatorToString(node.type);
+	if(node.hasval==1)ss<<"\\n("<<node.strval<<')';
+	else if(node.hasval==2)ss<<"\\n("<<node.intval<<')';
+	return ss.str();
+}
+
+void printtree__node(const Parser::ExprNode &node,const int thisid){
+	int leftid=uniqid(),rightid=uniqid();
+	if(node.left){
+		cout<<"\t\""<<nodeToString(node,thisid)<<"\"->\""<<nodeToString(*node.left,leftid)<<'"'<<endl;
+		printtree__node(*node.left,leftid);
+	}
+	if(node.right){
+		cout<<"\t\""<<nodeToString(node,thisid)<<"\"->\""<<nodeToString(*node.right,rightid)<<'"'<<endl;
+		printtree__node(*node.right,rightid);
+	}
+}
+void printtree(const Parser::ExprNode &root){
+	cout<<"digraph G{"<<endl;
+	printtree__node(root,uniqid());
+	cout<<"}"<<endl;
+}
+
 int main(void){
 	try {
-		Parser::parseExpression(Parser::tokeniseExpression("(1+2)-3==a&&b<=-c"));
+		Parser::ExprNode root=Parser::parseExpression(Parser::tokeniseExpression("(1+2)-3==a&&b<=-c"));
+		printtree(root);
 	} catch(char *exc){
 		cerr<<"EXCEPTION: "<<exc<<endl;
 	}
