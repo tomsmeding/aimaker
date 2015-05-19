@@ -1,7 +1,7 @@
 CXXFLAGS = -Wall -O2 -std=c++11
 CXX = g++
 
-CXX_FILES = $(shell echo *.cpp **/*.cpp | tr \  \\n | grep -v ^main.cpp\$)
+CXX_FILES = $(shell echo *.cpp **/*.cpp)
 H_FILES = *.h **/*.h
 OBJ_FILES = $(CXX_FILES:.cpp=.o)
 
@@ -14,8 +14,8 @@ clean:
 
 remake: clean all
 
-main: main.cpp $(OBJ_FILES)
-	$(CXX) $(CXXFLAGS) -o main main.cpp $(OBJ_FILES)
+main: $(OBJ_FILES)
+	$(CXX) $(CXXFLAGS) -o main $(OBJ_FILES)
 
 %.o: %.cpp %.h
 	$(CXX) $(CXXFLAGS) -c -o $*.o $*.cpp
