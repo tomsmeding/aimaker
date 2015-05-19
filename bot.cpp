@@ -7,7 +7,7 @@ using namespace std;
 
 Bot::Bot(const Parser::Program *_program, Board *_board, pair<int, int> startingPos) : curInstr(0), curPage(0), _workingFor(0), dir(0), board(_board), id(genid()), program(_program) {
 	x = startingPos.first;
-	xy = startingPos.second;
+	y = startingPos.second;
 }
 
 void Bot::jumpTo(int page, int instr) {
