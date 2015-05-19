@@ -15,7 +15,7 @@ void Board::nextTick(void) {
 	tick++;
 }
 
-Bot* Board::at(int x, int y) {
+Bot *Board::at(int x, int y) {
 	for (Bot &bot : bots) {
 		pair<int, int> location = bot.getPos();
 
@@ -28,37 +28,37 @@ Bot* Board::at(int x, int y) {
 
 string Board::render(void) {
 	stringstream ss;
-	int x,y;
-	ss<<'+';
-	for(x=0;x<size;x++)ss<<"--+";
-	ss<<endl;
-	for(y=0;y<size;y++){
-		ss<<'|';
-		for(x=0;x<size;x++)ss<<"  |";
-		ss<<endl<<'|';
-		for(x=0;x<size;x++)ss<<"  |";
-		ss<<endl;
-		ss<<'+';
-		for(x=0;x<size;x++)ss<<"--+";
-		ss<<endl;
+	int x, y;
+	ss << '+';
+	for (x = 0; x < size; x++)ss << "--+";
+	ss << endl;
+	for (y = 0; y < size; y++) {
+		ss << '|';
+		for (x = 0; x < size; x++)ss << "  |";
+		ss << endl << '|';
+		for (x = 0; x < size; x++)ss << "  |";
+		ss << endl;
+		ss << '+';
+		for (x = 0; x < size; x++)ss << "--+";
+		ss << endl;
 	}
 	string s(move(ss.str()));
-	int idx,dir;
-	pair<int,int> pos;
-	const char dirchars[4][4]={
-		{'/' ,' ' ,' ' ,'/' },
-		{'\\','\\',' ' ,' ' },
-		{' ' ,' ' ,'\\','\\'},
-		{' ' ,'/' ,'/' ,' ' }
+	int idx, dir;
+	pair<int, int> pos;
+	const char dirchars[4][4] = {
+		{'/' , ' ' , ' ' , '/' },
+		{'\\', '\\', ' ' , ' ' },
+		{' ' , ' ' , '\\', '\\'},
+		{' ' , '/' , '/' , ' ' }
 	};
-	for(Bot &b : bots){
-		pos=b.getPos();
-		dir=b.getDir();
-		idx=3*size+1+3*(3*size+1)*pos.second+3*pos.first+1;
-		s[idx]=dirchars[dir][0];
-		s[idx+1]=dirchars[dir][1];
-		s[idx+3*size+1]=dirchars[dir][2];
-		s[idx+3*size+1+1]=dirchars[dir][3];
+	for (Bot &b : bots) {
+		pos = b.getPos();
+		dir = b.getDir();
+		idx = 3 * size + 1 + 3 * (3 * size + 1) * pos.second + 3 * pos.first + 1;
+		s[idx] = dirchars[dir][0];
+		s[idx + 1] = dirchars[dir][1];
+		s[idx + 3 * size + 1] = dirchars[dir][2];
+		s[idx + 3 * size + 1 + 1] = dirchars[dir][3];
 	}
 	return s;
 }

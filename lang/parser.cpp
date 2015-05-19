@@ -7,12 +7,12 @@ namespace Parser {
 	Instruction convertInstruction (string word) {
 		to_lower(word); // Function calls are case insensitive.
 
-		     if (word == "move")                         return INSTR_MOVE;
+		if (word == "move")                              return INSTR_MOVE;
 		else if (word == "rotate" || word == "rot")      return INSTR_ROT;
 		else if (word == "nop")                          return INSTR_NOP;
 		else if (word == "goto")                         return INSTR_GOTO;
 		else if (word == "ifgoto" || word == "if")       return INSTR_IFGOTO;
-		else if (word == "store" || word=="sto")         return INSTR_STO;
+		else if (word == "store" || word == "sto")       return INSTR_STO;
 		else if (word == "transfer" || word == "trans")  return INSTR_TRANS;
 		else if (word == "page")                         return INSTR_PAGE;
 		else return INSTR_INVALID;
@@ -42,7 +42,7 @@ namespace Parser {
 				argsRaw.push_back(trim(arguments.substr(cursor)));
 				break;
 			} else {
-				argsRaw.push_back(trim(arguments.substr(cursor,i)));
+				argsRaw.push_back(trim(arguments.substr(cursor, i)));
 				cursor = i + 1;
 			}
 		}
@@ -58,7 +58,7 @@ namespace Parser {
 	// Parses the given `lines` with the given `fname`.
 	Program parse (const char *const fname, const vector<string> &lines) {
 		int curPage = 0;
-		bool seenPages[16]={false};
+		bool seenPages[16] = {false};
 
 		Program program;
 		program.id = genid();
@@ -68,7 +68,7 @@ namespace Parser {
 		for (int lineIndex = 0; lineIndex < (int)lines.size(); lineIndex++) {
 			string line = lines[lineIndex];
 			string trimmed = trim(line);
-			if(trimmed.size() == 0) continue;
+			if (trimmed.size() == 0) continue;
 			vector<string> words = split(trimmed, ' ', 1);
 
 			if (words[0] == "#page") { // page
