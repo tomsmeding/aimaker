@@ -14,6 +14,7 @@ namespace Parser {
 		INSTR_MOVE,
 		INSTR_ROT,
 		INSTR_NOP,
+		INSTR_GOTO,
 		INSTR_IFGOTO,
 		INSTR_STO,
 		INSTR_TRANS,
@@ -22,16 +23,7 @@ namespace Parser {
 		INSTR_INVALID=255
 	};
 
-	enum ArgumentType {
-		ARGT_LABEL,
-		ARGT_EXPR
-	};
-
-	struct Argument {
-		ArgumentType type;
-		string labelval;
-		ExprNode exprval;
-	};
+	typedef ExprNode Argument;
 
 	struct Statement {
 		Instruction instr;
@@ -39,7 +31,9 @@ namespace Parser {
 	};
 
 	typedef vector<Statement> Codepage;
-	typedef pair<int, int> Position;
+	struct Position {
+		int page, line;
+	};
 
 	struct Program {
 		int id;

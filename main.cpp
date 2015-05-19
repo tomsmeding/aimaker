@@ -2,6 +2,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <cstring>
 #include <cassert>
 #include "lang/parser.h"
 #include "board.h"
@@ -87,6 +88,7 @@ int main(int argc,char **argv){
 		}
 		clearScreen();
 		cout<<board.render()<<endl;
+		cout<<"tick "<<tick<<endl;
 	}
 	return 0;
 }

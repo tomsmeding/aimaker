@@ -1,4 +1,5 @@
 #include <unordered_map>
+#include <cstring>
 #include "expression.h"
 #include <iostream>
 
@@ -72,8 +73,10 @@ namespace Parser {
 
 			case EN_NUMBER:
 			case EN_VARIABLE:
+			case EN_LABEL:
 			case EN_SUBTRACT_OR_NEGATE_CONFLICT:
 			case EN_INVALID:
+			default:
 				return -1; //eh?
 		}
 	}
@@ -87,6 +90,7 @@ namespace Parser {
 			case EN_PAREN2:
 			case EN_NUMBER:
 			case EN_VARIABLE:
+			case EN_LABEL:
 			case EN_SUBTRACT_OR_NEGATE_CONFLICT:
 			case EN_INVALID:
 				return 0; //eh?
@@ -123,31 +127,32 @@ namespace Parser {
 	}
 	const char* operatorToString(ExprNodeType type){
 		switch(type){
-		case EN_ADD: return "EN_ADD";
-		case EN_SUBTRACT: return "EN_SUBTRACT";
-		case EN_MULTIPLY: return "EN_MULTIPLY";
-		case EN_DIVIDE: return "EN_DIVIDE";
-		case EN_BITAND: return "EN_BITAND";
-		case EN_BITOR: return "EN_BITOR";
-		case EN_BITXOR: return "EN_BITXOR";
-		case EN_EQUALS: return "EN_EQUALS";
-		case EN_NOTEQUAL: return "EN_NOTEQUAL";
-		case EN_GREATER: return "EN_GREATER";
-		case EN_GREATEREQUAL: return "EN_GREATEREQUAL";
-		case EN_LESS: return "EN_LESS";
-		case EN_LESSEQUAL: return "EN_LESSEQUAL";
-		case EN_AND: return "EN_AND";
-		case EN_OR: return "EN_OR";
-		case EN_SHIFTR: return "EN_SHIFTR";
-		case EN_SHIFTL: return "EN_SHIFTL";
-		case EN_NOT: return "EN_NOT";
-		case EN_NEGATE: return "EN_NEGATE";
-		case EN_PAREN1: return "EN_PAREN1";
-		case EN_PAREN2: return "EN_PAREN2";
-		case EN_NUMBER: return "EN_NUMBER";
-		case EN_VARIABLE: return "EN_VARIABLE";
-		case EN_SUBTRACT_OR_NEGATE_CONFLICT: return "EN_SUBTRACT_OR_NEGATE_CONFLICT";
-		case EN_INVALID: return "EN_INVALID";
+			case EN_ADD: return "EN_ADD";
+			case EN_SUBTRACT: return "EN_SUBTRACT";
+			case EN_MULTIPLY: return "EN_MULTIPLY";
+			case EN_DIVIDE: return "EN_DIVIDE";
+			case EN_BITAND: return "EN_BITAND";
+			case EN_BITOR: return "EN_BITOR";
+			case EN_BITXOR: return "EN_BITXOR";
+			case EN_EQUALS: return "EN_EQUALS";
+			case EN_NOTEQUAL: return "EN_NOTEQUAL";
+			case EN_GREATER: return "EN_GREATER";
+			case EN_GREATEREQUAL: return "EN_GREATEREQUAL";
+			case EN_LESS: return "EN_LESS";
+			case EN_LESSEQUAL: return "EN_LESSEQUAL";
+			case EN_AND: return "EN_AND";
+			case EN_OR: return "EN_OR";
+			case EN_SHIFTR: return "EN_SHIFTR";
+			case EN_SHIFTL: return "EN_SHIFTL";
+			case EN_NOT: return "EN_NOT";
+			case EN_NEGATE: return "EN_NEGATE";
+			case EN_PAREN1: return "EN_PAREN1";
+			case EN_PAREN2: return "EN_PAREN2";
+			case EN_NUMBER: return "EN_NUMBER";
+			case EN_VARIABLE: return "EN_VARIABLE";
+			case EN_LABEL: return "EN_LABEL";
+			case EN_SUBTRACT_OR_NEGATE_CONFLICT: return "EN_SUBTRACT_OR_NEGATE_CONFLICT";
+			case EN_INVALID: return "EN_INVALID";
 		}
 	}
 
@@ -162,11 +167,14 @@ namespace Parser {
 		vector<ExprToken> tkns;
 		while(true){
 			start=s.find_first_not_of(whitespace,cursor);
-			if(start==string::npos)return tkns;
+			if(start==(int)string::npos)return tkns;
 			ExprToken token;
 			if(strchr(whitespace,s[start])!=NULL){
 				cursor=s.find_first_not_of(whitespace,start+1);
 				continue;
+			} else if(s[start]=='@'){
+				token.type=ETT_LABEL;
+				end=s.find_first_not_of(wordchars,start+1);
 			} else if(strchr(wordchars,s[start])!=NULL){
 				token.type=ETT_WORD;
 				end=s.find_first_not_of(wordchars,start+1);
@@ -180,7 +188,7 @@ namespace Parser {
 					   strchr(numberchars,s[i])!=NULL||
 					   strchr(whitespace,s[i])!=NULL)break;
 				}
-				for(;i>start;i--)
+				for(;i>start+1;i--)
 					if(interpretOperator(s.substr(start,i-start))!=EN_INVALID)break;
 				end=i;
 			}
@@ -191,7 +199,7 @@ namespace Parser {
 				throw buf;
 			}
 			tkns.push_back(token);
-			if(end==s.size())break;
+			if(end==(int)s.size())break;
 			cursor=end;
 		}
 		return tkns;
@@ -214,6 +222,7 @@ namespace Parser {
 		int i;
 		bool lastWasOperator=true,foundLeftParen,isleftassoc;
 		int prec;
+		bool weGotALabel=false;
 		for(i=0;i<(int)tkns.size();i++){
 			const ExprToken token=tkns[i];
 			switch(token.type){
@@ -223,6 +232,16 @@ namespace Parser {
 				break;
 			case ETT_WORD:
 				nodestack.emplace_back(EN_VARIABLE,token.val);
+				lastWasOperator=false;
+				break;
+			case ETT_LABEL:
+				if(i>0||weGotALabel){
+					char *buf;
+					asprintf(&buf,"Invalid label '@%s' in expression",token.val.c_str());
+					throw buf;
+				}
+				weGotALabel=true;
+				nodestack.emplace_back(EN_LABEL,token.val);
 				lastWasOperator=false;
 				break;
 			case ETT_SYMBOL:
@@ -295,7 +314,7 @@ namespace Parser {
 		if(nodestack.size()==0)return ExprNode(EN_INVALID);
 		for(i=0;i<(int)nodestack.size();i++){
 			ExprNode node=nodestack[i];
-			if(node.type==EN_NUMBER||node.type==EN_VARIABLE)continue;
+			if(node.type==EN_NUMBER||node.type==EN_VARIABLE||node.type==EN_LABEL)continue;
 			const int ar=arity(node.type);
 			if(ar==0){
 				char *buf;
@@ -392,11 +411,12 @@ EVALUATEEXPRESSION_UNARY_RIGHT_OPERATOR_CASE_REPETITION(EN_NEGATE,-)
 			case EN_PAREN2:
 			case EN_NUMBER:
 			case EN_VARIABLE:
+			case EN_LABEL:
 			case EN_SUBTRACT_OR_NEGATE_CONFLICT:
 			case EN_INVALID:
-			{
+			default:{
 				char *buf;
-				asprintf(&buf,"Non-normal operator in expression tree (internal error)");
+				asprintf(&buf,"Non-normal operator %s in expression tree (internal error)",operatorToString(root.type));
 				throw buf;
 			}
 

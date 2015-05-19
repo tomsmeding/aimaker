@@ -7,7 +7,7 @@ using namespace std;
 namespace Parser {
 
 	enum ExprTokenType {
-		ETT_WORD, ETT_NUMBER, ETT_SYMBOL
+		ETT_WORD, ETT_NUMBER, ETT_LABEL, ETT_SYMBOL
 	};
 
 	struct ExprToken {
@@ -45,6 +45,7 @@ namespace Parser {
 
 		EN_NUMBER, // [0-9]+
 		EN_VARIABLE, // [a-zA-Z_][a-zA-Z0-9_]*
+		EN_LABEL, // @[a-zA-Z0-9_]+
 
 		EN_SUBTRACT_OR_NEGATE_CONFLICT,
 		EN_INVALID

@@ -8,10 +8,11 @@ namespace Parser {
 		to_lower(word); // Function calls are case insensitive.
 
 		     if (word == "move")                         return INSTR_MOVE;
-		else if (word == "store" || word=="sto")         return INSTR_STO;
 		else if (word == "rotate" || word == "rot")      return INSTR_ROT;
 		else if (word == "nop")                          return INSTR_NOP;
+		else if (word == "goto")                         return INSTR_GOTO;
 		else if (word == "ifgoto" || word == "if")       return INSTR_IFGOTO;
+		else if (word == "store" || word=="sto")         return INSTR_STO;
 		else if (word == "transfer" || word == "trans")  return INSTR_TRANS;
 		else if (word == "page")                         return INSTR_PAGE;
 		else return INSTR_INVALID;
@@ -48,13 +49,7 @@ namespace Parser {
 		statement.args.resize(argsRaw.size());
 
 		for (i = 0; i < (int)argsRaw.size(); i++) {
-			if(argsRaw[i][0]=='@'){
-				statement.args[i].type = ARGT_LABEL;
-				statement.args[i].label = argsRaw[i].substr(1);
-			} else {
-				statement.args[i].type = ARGT_EXPR;
-				statement.args[i].exprval = parseExpression(tokeniseExpression(argsRaw[i]));
-			}
+			statement.args[i] = parseExpression(tokeniseExpression(argsRaw[i]));
 		}
 
 		return statement;
@@ -95,7 +90,7 @@ namespace Parser {
 				continue;
 			} else if (trimmed[trimmed.size() - 1] == ':') { // label
 				string labelName = trimmed.substr(0, trimmed.size() - 1);
-				pair<int, int> position = make_pair(curPage, lineIndex);
+				Position position = {curPage, lineIndex};
 
 				program.labels.emplace(make_pair(labelName, position));
 			} else { // function call

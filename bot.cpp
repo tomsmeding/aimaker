@@ -1,6 +1,7 @@
 #include <utility>
 #include "bot.h"
 #include "board.h"
+#include "lang/parameters.h"
 
 using namespace std;
 
@@ -55,15 +56,18 @@ void Bot::copyPage(int targetId, vector<Parser::Statement> page) {
 
 pair<int, int> Bot::executeCurrentLine() {
 	const Parser::Statement currentStatement = pages[curPage][curInstr];
+	bool didJump = false;
+
+	_workingFor = instructionWorkTime(currentStatement.instr);
 
 	switch (currentStatement.instr) {
 		case Parser::INSTR_MOVE: {
 			const Parser::Argument argument = currentStatement.args[0];
-			if (argument.type != Parser::ARGT_EXPR) {
+			if (argument.type == Parser::EN_LABEL) {
 				// Wrong argument type.
 				break;
 			}
-			const bool forwards = (bool) Parser::evaluateExpression(argument.exprval);
+			const bool forwards = (bool) Parser::evaluateExpression(argument,memoryMap);
 
 			const pair<int, int> newLocation = calculateNextLocation(forwards);
 			const int x = newLocation.first;
@@ -78,59 +82,104 @@ pair<int, int> Bot::executeCurrentLine() {
 			break;
 		}
 
-		case Parser::INSTR_ROT:{
+		case Parser::INSTR_ROT: {
 			const Parser::Argument argument = currentStatement.args[0];
-			if (argument.type != Parser::ARGT_EXPR) {
+			if (argument.type == Parser::EN_LABEL) {
 				// Wrong argument type.
 				break;
 			}
-			dir += Parser::evaluateExpression(argument.exprval) % 4;
+			dir += Parser::evaluateExpression(argument, memoryMap) % 4;
 			break;
 		}
 
-		/*case Parser::INSTR_STO:
-		{
-			Parser::Argument varNameArgument = currentStatement.args[0];
-			Parser::Argument valueArgument = currentStatement.args[1];
-
-			if (varNameArgument.type == Parser::Argument::ARGT_VARIABLE && valueArgument.type == Parser::Argument::ARGT_NUMBER) {
-				memoryMap.emplace(make_pair(varNameArgument.stringVal, valueArgument.intVal));
-			} else {
-				// Wrong argument type.
-			}
-		}*/
-
-		case Parser::INSTR_TRANS:
-		{
-			Parser::Argument pageIdArgument = currentStatement.args[0];
-			Parser::Argument targetIdArgument = currentStatement.args[1];
-
-			if (pageIdArgument.type != Parser::ARGT_EXPR || targetIdArgument.type != Parser::ARGT_EXPR) {
+		case Parser::INSTR_GOTO: {
+			const Parser::Argument target = currentStatement.args[0];
+			if (target.type != Parser::EN_LABEL) {
 				// Wrong argument type.
 				break;
 			}
-			vector<Parser::Statement> page = pages[Parser::evaluateExpression(pageIdArgument.exprval)];
+			unordered_map<string, Parser::Position>::const_iterator labelit = program->labels.find(target.strval);
+			if (labelit == program->labels.end()) {
+				// Label not found.
+				break;
+			}
+			jumpTo(labelit->second.page, labelit->second.line);
+			didJump = true;
+			break;
+		}
+
+		case Parser::INSTR_IFGOTO: {
+			const Parser::Argument condition = currentStatement.args[0];
+			const Parser::Argument target = currentStatement.args[1];
+			if (condition.type == Parser::EN_LABEL || target.type != Parser::EN_LABEL) {
+				// Wrong argument type(s).
+				break;
+			}
+			if (!Parser::evaluateExpression(condition, memoryMap)) break; // that's the `if`
+			unordered_map<string, Parser::Position>::const_iterator labelit = program->labels.find(target.strval);
+			if (labelit == program->labels.end()) {
+				// Label not found.
+				break;
+			}
+			jumpTo(labelit->second.page, labelit->second.line); // that's the `goto`
+			didJump = true;
+			break;
+		}
+
+		case Parser::INSTR_STO: {
+			Parser::Argument varNameArgument = currentStatement.args[0];
+			Parser::Argument valueArgument = currentStatement.args[1];
+
+			if (varNameArgument.type != Parser::EN_VARIABLE || valueArgument.type == Parser::EN_LABEL) {
+				// Wrong argument type(s).
+				break;
+			}
+			const int value = Parser::evaluateExpression(valueArgument, memoryMap);
+			memoryMap[varNameArgument.strval] = value;
+			break;
+		}
+
+		case Parser::INSTR_TRANS: {
+			Parser::Argument pageIdArgument = currentStatement.args[0];
+			Parser::Argument targetIdArgument = currentStatement.args[1];
+
+			if (pageIdArgument.type == Parser::EN_LABEL || targetIdArgument.type == Parser::EN_LABEL) {
+				// Wrong argument type(s).
+				break;
+			}
+			vector<Parser::Statement> page = pages[Parser::evaluateExpression(pageIdArgument, memoryMap)];
 
 			const pair<int, int> targetLocation = calculateNextLocation(true);
 			Bot *targetBot = board->at(targetLocation.first, targetLocation.second);
 
 			if (targetBot != NULL) {
-				targetBot->copyPage(Parser::evaluateExpression(targetIdArgument.exprval), page);
+				targetBot->copyPage(Parser::evaluateExpression(targetIdArgument, memoryMap), page);
 			}
 
-			_workingFor=floor(5 + log(page.size() + 1));
+			_workingFor = instructionWorkTime(currentStatement.instr, page.size());
 		}
 
-		case Parser::INSTR_INVALID:
+		case Parser::INSTR_PAGE: {
+			Parser::Argument target = currentStatement.args[0];
+
+			if (target.type == Parser::EN_LABEL) {
+				// Wrong argument type.
+				break;
+			}
+			jumpTo(Parser::evaluateExpression(target, memoryMap), 0);
+			break;
+		}
+
 		case Parser::INSTR_NOP:
+		case Parser::INSTR_INVALID:
 			break;
 	}
 
-	return make_pair(curPage, curInstr + 1);
+	return make_pair(curPage, curInstr + !didJump);
 }
 
 void Bot::nextTick(void) {
-	if (_workingFor) {
+	if (_workingFor > 0) {
 		_workingFor--;
 		return;
 	} else {
