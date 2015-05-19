@@ -1,7 +1,9 @@
 #include <unordered_map>
 #include <cstring>
 #include "expression.h"
+#ifdef EXPRESSION_DEBUG_MAIN
 #include <iostream>
+#endif
 
 using namespace std;
 
@@ -153,6 +155,7 @@ namespace Parser {
 			case EN_LABEL: return "EN_LABEL";
 			case EN_SUBTRACT_OR_NEGATE_CONFLICT: return "EN_SUBTRACT_OR_NEGATE_CONFLICT";
 			case EN_INVALID: return "EN_INVALID";
+			default: return "?";
 		}
 	}
 
@@ -205,6 +208,7 @@ namespace Parser {
 		return tkns;
 	}
 
+#ifdef EXPRESSION_DEBUG_MAIN
 	void printstack(const vector<ExprNode> &stack){
 		const ExprNode *node;
 		for(int i=0;i<(int)stack.size();i++){
@@ -215,6 +219,7 @@ namespace Parser {
 			cerr<<endl;
 		}
 	}
+#endif
 	ExprNode parseExpression(const vector<ExprToken> &tkns){
 		//this implements Dijkstra's Shunting Yard algorithm, skipping functions.
 		vector<ExprNode> nodestack,opstack;
@@ -255,7 +260,6 @@ namespace Parser {
 					if(lastWasOperator)type=EN_NEGATE;
 					else type=EN_SUBTRACT;
 				}
-				//cerr<<"            type="<<operatorToString(type)<<endl;
 				if(type==EN_PAREN1){
 					opstack.emplace_back(type);
 					lastWasOperator=true;
@@ -295,22 +299,18 @@ namespace Parser {
 				}
 				break;
 			}
-			/*cerr<<"Opstack:"<<endl;
-			printstack(opstack);
-			cerr<<"Nodestack:"<<endl;
-			printstack(nodestack);
-			cerr<<"------------"<<endl;*/
 		}
 		while(opstack.size()){
 			nodestack.push_back(opstack[opstack.size()-1]);
 			opstack.pop_back();
 		}
-		//cerr<<"---\nFINAL:"<<endl;
+#ifdef EXPRESSION_DEBUG_MAIN
 		cerr<<"Opstack:"<<endl;
 		printstack(opstack);
 		cerr<<"Nodestack:"<<endl;
 		printstack(nodestack);
 		cerr<<"------------"<<endl;
+#endif
 		if(nodestack.size()==0)return ExprNode(EN_INVALID);
 		for(i=0;i<(int)nodestack.size();i++){
 			ExprNode node=nodestack[i];

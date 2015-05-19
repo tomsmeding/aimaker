@@ -7,9 +7,12 @@
 #include "lang/parser.h"
 #include "board.h"
 #include "bot.h"
-#include "io_util.h"
 
 using namespace std;
+
+void clearScreen(void){
+	cout<<"\x1B[2J"<<flush;
+}
 
 vector<string> readFile(const char *const fname){
 	ifstream f(fname);

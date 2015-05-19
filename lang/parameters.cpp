@@ -11,6 +11,7 @@ int instructionWorkTime (const Parser::Instruction instr, const int arg) {
 		case Parser::INSTR_STO:     return 1;
 		case Parser::INSTR_TRANS:   return floor(5 + log10(arg + 1)); // arg is page size
 		case Parser::INSTR_PAGE:    return 2;
-		case Parser::INSTR_INVALID: return 0; // eh?
+		case Parser::INSTR_INVALID:
+		default:                    return 0; // eh?
 	}
 };

@@ -1,12 +1,21 @@
-CXXFLAGS=-Wall -O2 -std=c++11
-CXX=g++
+CXXFLAGS = -Wall -O2 -std=c++11
+CXX = g++
 
-CXX_FILES=*.cpp **/*.cpp
-H_FILES=*.h **/*.h
+CXX_FILES = $(shell echo *.cpp **/*.cpp | tr \  \\n | grep -v ^main.cpp\$)
+H_FILES = *.h **/*.h
+OBJ_FILES = $(CXX_FILES:.cpp=.o)
 
-.PHONY: all
+.PHONY: all clean remake
 
 all: main
 
-main: $(CXX_FILES) $(H_FILES)
-	$(CXX) $(CXXFLAGS) -o main *.cpp **/*.cpp
+clean:
+	rm -f main $(OBJ_FILES)
+
+remake: clean all
+
+main: main.cpp $(OBJ_FILES)
+	$(CXX) $(CXXFLAGS) -o main main.cpp $(OBJ_FILES)
+
+%.o: %.cpp %.h
+	$(CXX) $(CXXFLAGS) -c -o $*.o $*.cpp
