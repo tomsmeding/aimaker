@@ -365,13 +365,13 @@ namespace Parser {
 		switch (root.type) {
 
 #define EVALUATEEXPRESSION_DYADIC_OPERATOR_CASE_REPETITION(en_,op) \
-	case en_: \
-		if(root.left==NULL||root.right==NULL){ \
-			char *buf; \
-			asprintf(&buf,"Dyadic operator " #op " doesn't have two arguments in tree (internal error)"); \
-			throw buf; \
-		} \
-		return evaluateExpression(*root.left,vars) op evaluateExpression(*root.right,vars);
+		case en_: \
+			if(root.left==NULL||root.right==NULL){ \
+				char *buf; \
+				asprintf(&buf,"Dyadic operator " #op " doesn't have two arguments in tree (internal error)"); \
+				throw buf; \
+			} \
+			return evaluateExpression(*root.left,vars) op evaluateExpression(*root.right,vars);
 
 			EVALUATEEXPRESSION_DYADIC_OPERATOR_CASE_REPETITION(EN_ADD, +)
 			EVALUATEEXPRESSION_DYADIC_OPERATOR_CASE_REPETITION(EN_SUBTRACT, -)
@@ -394,13 +394,13 @@ namespace Parser {
 #undef EVALUATEEXPRESSION_DYADIC_OPERATOR_CASE_REPETITION
 
 #define EVALUATEEXPRESSION_UNARY_RIGHT_OPERATOR_CASE_REPETITION(en_,op) \
-	case en_: \
-		if(root.right==NULL){ \
-			char *buf; \
-			asprintf(&buf,"Unary-right operator " #op " doesn't have a right argument in tree (internal error)"); \
-			throw buf; \
-		} \
-		return op evaluateExpression(*root.right,vars);
+		case en_: \
+			if(root.right==NULL){ \
+				char *buf; \
+				asprintf(&buf,"Unary-right operator " #op " doesn't have a right argument in tree (internal error)"); \
+				throw buf; \
+			} \
+			return op evaluateExpression(*root.right,vars);
 
 			EVALUATEEXPRESSION_UNARY_RIGHT_OPERATOR_CASE_REPETITION(EN_NOT, !)
 			EVALUATEEXPRESSION_UNARY_RIGHT_OPERATOR_CASE_REPETITION(EN_NEGATE, -)
