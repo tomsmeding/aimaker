@@ -58,7 +58,7 @@ int main(int argc,char **argv){
 			cerr<<"ERROR: "<<str<<endl;
 			return 1;
 		}
-		bots.emplace_back(&programs[programs.size()-1],&board);
+		bots.push_back(Bot(&programs[programs.size() - 1], &board, make_pair(0, 0)));
 		cerr<<"Done."<<endl;
 	}
 	const int numprogs=programs.size();

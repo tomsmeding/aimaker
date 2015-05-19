@@ -29,7 +29,7 @@ public:
 	unordered_map<string, int> memoryMap;
 	vector<vector<Parser::Statement>> pages;
 
-	Bot(const Parser::Program*, Board*);
+	Bot(const Parser::Program*, Board*, pair<int, int>);
 	bool isWorking(void) const;
 	int workingFor(void) const;
 	pair<int, int> getPos(void) const;

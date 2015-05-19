@@ -5,7 +5,10 @@
 
 using namespace std;
 
-Bot::Bot(const Parser::Program *_program, Board *_board) : curInstr(0), curPage(0), _workingFor(0), x(0), y(0), dir(0), board(_board), id(genid()), program(_program) {}
+Bot::Bot(const Parser::Program *_program, Board *_board, pair<int, int> startingPos) : curInstr(0), curPage(0), _workingFor(0), dir(0), board(_board), id(genid()), program(_program) {
+	x = startingPos.first;
+	xy = startingPos.second;
+}
 
 void Bot::jumpTo(int page, int instr) {
 	if(page < 0 || page >= (int)pages.size() ||
