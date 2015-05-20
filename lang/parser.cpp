@@ -49,7 +49,7 @@ namespace Parser {
 		statement.args.resize(argsRaw.size());
 
 		for (i = 0; i < (int)argsRaw.size(); i++) {
-			statement.args[i] = parseExpression(tokeniseExpression(argsRaw[i]));
+			parseExpression(&statement.args[i], tokeniseExpression(argsRaw[i]));
 		}
 
 		return statement;

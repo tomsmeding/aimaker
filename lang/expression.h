@@ -16,7 +16,7 @@ namespace Parser {
 	};
 
 	enum ExprNodeType {
-		EN_ADD, // +
+		EN_ADD=0, // +
 		EN_SUBTRACT, // -
 		EN_MULTIPLY, // *
 		EN_DIVIDE, // /
@@ -58,12 +58,17 @@ namespace Parser {
 		int intval;
 		int hasval; //0=none, 1=string, 2=int
 		ExprNode(void);
+		ExprNode(const ExprNode&);
+		ExprNode& operator=(const ExprNode&);
+		ExprNode(ExprNode&&);
+		ExprNode& operator=(ExprNode&&);
 		ExprNode(ExprNodeType);
 		ExprNode(ExprNodeType,const string&);
 		ExprNode(ExprNodeType,const int);
 		ExprNode(ExprNodeType,ExprNode*,ExprNode*,const string&);
 		ExprNode(ExprNodeType,ExprNode*,ExprNode*,const int);
 		~ExprNode(void);
+		void setNullChildren(void);
 	};
 
 	bool leftAssoc(ExprNodeType);
@@ -74,7 +79,7 @@ namespace Parser {
 
 	//these two throw char* for invalid operator
 	vector<ExprToken> tokeniseExpression(const string&);
-	ExprNode parseExpression(const vector<ExprToken>&);
+	void parseExpression(/*out*/ExprNode*,const vector<ExprToken>&);
 
 	//throws if a variable in the expression is not found in the map
 	int evaluateExpression(const ExprNode&,const unordered_map<string,int>&);

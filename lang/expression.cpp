@@ -1,4 +1,5 @@
-#include <unordered_map>
+#include <deque>
+#include <functional>
 #include <cstring>
 #include "expression.h"
 #ifdef EXPRESSION_DEBUG_MAIN
@@ -11,6 +12,28 @@ namespace Parser {
 
 	ExprNode::ExprNode(void)
 		: type(EN_INVALID), left(NULL), right(NULL), strval(), intval(0), hasval(0) {}
+	ExprNode::ExprNode(const ExprNode &n)
+		: type(n.type), left(n.left), right(n.right), strval(n.strval), intval(n.intval), hasval(n.hasval) {
+		//cerr<<"\x1B[33mCopied\x1B[0m ["<<n<<"] \x1B[33mto\x1B[0m ["<<*this<<']'<<endl;
+	}
+	ExprNode& ExprNode::operator=(const ExprNode &n){
+		type=n.type; left=n.left; right=n.right; strval=n.strval; intval=n.intval; hasval=n.hasval;
+		//cerr<<"\x1B[33mCopied\x1B[0m ["<<n<<"] \x1B[33mto\x1B[0m ["<<*this<<']'<<endl;
+		return *this;
+	}
+	ExprNode::ExprNode(ExprNode &&n)
+		: type(n.type), left(n.left), right(n.right), strval(move(n.strval)), intval(n.intval), hasval(n.hasval) {
+		//cerr<<"\x1B[33mMoved\x1B[0m ["<<n<<"] \x1B[33mto\x1B[0m ["<<*this<<']'<<endl;
+		n.type=EN_INVALID;
+		n.setNullChildren();
+	}
+	ExprNode& ExprNode::operator=(ExprNode &&n){
+		type=n.type; left=n.left; right=n.right; strval=move(n.strval); intval=n.intval; hasval=n.hasval;
+		//cerr<<"\x1B[33mMoved\x1B[0m ["<<n<<"] \x1B[33mto\x1B[0m ["<<*this<<']'<<endl;
+		n.type=EN_INVALID;
+		n.setNullChildren();
+		return *this;
+	}
 	ExprNode::ExprNode(ExprNodeType _t)
 		: type(_t), left(NULL), right(NULL), strval(), intval(0), hasval(0) {}
 	ExprNode::ExprNode(ExprNodeType _t, const string &_s)
@@ -22,9 +45,22 @@ namespace Parser {
 	ExprNode::ExprNode(ExprNodeType _t, ExprNode *_l, ExprNode *_r, const int _i)
 		: type(_t), left(_l), right(_r), strval(), intval(_i), hasval(2) {}
 	ExprNode::~ExprNode(void) {
-		if (left)delete left;
-		if (right)delete right;
+		//cerr<<"\x1B[33mDestructing\x1B[0m exprnode "<<*this<<endl;
+		if (left != NULL) delete left;
+		if (right != NULL) delete right;
 	}
+	void ExprNode::setNullChildren(void){
+		left = right = NULL;
+	}
+#ifdef EXPRESSION_DEBUG_MAIN
+	ostream& operator<<(ostream &os,const ExprNode &en){
+		os<<&en<<" ("<<operatorToString(en.type)<<',';
+		if(en.hasval==1)os<<en.strval;
+		else if(en.hasval==2)os<<en.intval;
+		os<<"), LR=("<<en.left<<','<<en.right<<')';
+		return os;
+	}
+#endif
 
 
 	bool leftAssoc(ExprNodeType type) {
@@ -209,10 +245,20 @@ namespace Parser {
 	}
 
 #ifdef EXPRESSION_DEBUG_MAIN
-	void printstack(const vector<ExprNode> &stack) {
+	void printstack(const vector<ExprNode> &st) {
 		const ExprNode *node;
-		for (int i = 0; i < (int)stack.size(); i++) {
-			node = &stack[i];
+		for (int i = 0; i < (int)st.size(); i++) {
+			node = &st[i];
+			cerr << i << ": " << operatorToString(node->type) << ' ';
+			if (node->hasval == 1)cerr << node->strval;
+			else if (node->hasval == 2)cerr << node->intval;
+			cerr << endl;
+		}
+	}
+	void printdeque(const deque<ExprNode> &deq) {
+		const ExprNode *node;
+		for (int i = 0; i < (int)deq.size(); i++) {
+			node = &deq[i];
 			cerr << i << ": " << operatorToString(node->type) << ' ';
 			if (node->hasval == 1)cerr << node->strval;
 			else if (node->hasval == 2)cerr << node->intval;
@@ -220,23 +266,24 @@ namespace Parser {
 		}
 	}
 #endif
-	ExprNode parseExpression(const vector<ExprToken> &tkns) {
+	void parseExpression(/*out*/ExprNode *root,const vector<ExprToken> &tkns) {
 		//this implements Dijkstra's Shunting Yard algorithm, skipping functions.
-		vector<ExprNode> nodestack, opstack;
+		deque<ExprNode> nodedeq;
+		vector<ExprNode> opstack;
 		ExprNodeType type;
 		int i;
 		bool lastWasOperator = true, foundLeftParen, isleftassoc;
 		int prec;
 		bool weGotALabel = false;
 		for (i = 0; i < (int)tkns.size(); i++) {
-			const ExprToken token = tkns[i];
+			const ExprToken &token = tkns[i];
 			switch (token.type) {
 			case ETT_NUMBER:
-				nodestack.emplace_back(EN_NUMBER, stoi(token.val));
+				nodedeq.emplace_back(EN_NUMBER, stoi(token.val));
 				lastWasOperator = false;
 				break;
 			case ETT_WORD:
-				nodestack.emplace_back(EN_VARIABLE, token.val);
+				nodedeq.emplace_back(EN_VARIABLE, token.val);
 				lastWasOperator = false;
 				break;
 			case ETT_LABEL:
@@ -246,7 +293,7 @@ namespace Parser {
 					throw buf;
 				}
 				weGotALabel = true;
-				nodestack.emplace_back(EN_LABEL, token.val);
+				nodedeq.emplace_back(EN_LABEL, token.val);
 				lastWasOperator = false;
 				break;
 			case ETT_SYMBOL:
@@ -272,7 +319,7 @@ namespace Parser {
 							foundLeftParen = true;
 							break;
 						}
-						nodestack.push_back(opnode);
+						nodedeq.push_back(opnode);
 					}
 					if (!foundLeftParen) {
 						char *buf;
@@ -291,7 +338,7 @@ namespace Parser {
 								prec < precedence(opnode.type) :
 								prec <= precedence(opnode.type))
 							break;
-						nodestack.push_back(opnode);
+						nodedeq.push_back(opnode);
 						opstack.pop_back();
 					}
 					opstack.emplace_back(type);
@@ -301,19 +348,23 @@ namespace Parser {
 			}
 		}
 		while (opstack.size()) {
-			nodestack.push_back(opstack[opstack.size() - 1]);
+			nodedeq.push_back(opstack[opstack.size() - 1]);
 			opstack.pop_back();
 		}
 #ifdef EXPRESSION_DEBUG_MAIN
 		cerr << "Opstack:" << endl;
 		printstack(opstack);
-		cerr << "Nodestack:" << endl;
-		printstack(nodestack);
+		cerr << "Nodedeq:" << endl;
+		printdeque(nodedeq);
 		cerr << "------------" << endl;
 #endif
-		if (nodestack.size() == 0)return ExprNode(EN_INVALID);
-		for (i = 0; i < (int)nodestack.size(); i++) {
-			ExprNode node = nodestack[i];
+		if (nodedeq.size() == 0){
+			root->type=EN_INVALID;
+			return;
+		}
+		for (i = 0; i < (int)nodedeq.size(); i++) {
+			//for(ExprNode &n : nodedeq)cerr<<operatorToString(n.type)<<' '; cerr<<endl;
+			const ExprNode &node = nodedeq[i];
 			if (node.type == EN_NUMBER || node.type == EN_VARIABLE || node.type == EN_LABEL)continue;
 			const int ar = arity(node.type);
 			if (ar == 0) {
@@ -327,9 +378,10 @@ namespace Parser {
 					asprintf(&buf, "Not enough arguments for unary %s on stack", operatorToString(node.type));
 					throw buf;
 				}
-				if (leftAssoc(node.type))node.left = new ExprNode(nodestack[i - 1]);
-				else node.right = new ExprNode(nodestack[i - 1]);
-				nodestack.erase(nodestack.begin() + (i - 1));
+				if (leftAssoc(node.type)) nodedeq[i].left = new ExprNode(move(nodedeq[i - 1]));
+				else nodedeq[i].right = new ExprNode(move(nodedeq[i - 1]));
+				//nodedeq[i - 1].setNullChildren();
+				nodedeq.erase(nodedeq.begin() + (i - 1));
 				i--;
 			} else if (ar == 2) {
 				if (i < 2) {
@@ -337,19 +389,50 @@ namespace Parser {
 					asprintf(&buf, "Not enough arguments for %s on stack", operatorToString(node.type));
 					throw buf;
 				}
-				nodestack[i].left = new ExprNode(nodestack[i - 2]);
-				nodestack[i].right = new ExprNode(nodestack[i - 1]);
-				nodestack.erase(nodestack.begin() + (i - 2), nodestack.begin() + i);
+				nodedeq[i].left = new ExprNode(move(nodedeq[i - 2]));
+				//nodedeq[i - 2].setNullChildren();
+				nodedeq[i].right = new ExprNode(move(nodedeq[i - 1]));
+				//nodedeq[i - 1].setNullChildren();
+				//cerr<<"\x1B[33mi="<<i<<"...\x1B[0m (="<<&nodedeq[i]<<';'<<nodedeq[i].left<<','<<nodedeq[i].right<<')'<<endl;
+				//cerr<<"\x1B[33mErasing\x1B[0m "<<nodedeq[i-2]<<" \x1B[33mand\x1B[0m "<<nodedeq[i-1]<<" \x1B[33mleaving\x1B[0m "<<nodedeq[i]<<"...";
+				//cerr<<" \x1B[33m(size="<<nodedeq.size()<<")\x1B[0m"<<endl;
+				nodedeq.erase(nodedeq.begin() + (i - 2), nodedeq.begin() + i);
+				//cerr<<"\x1B[33mdone.\x1B[0m"<<endl;
 				i -= 2;
 			}
 		}
-		if (nodestack.size() != 1) {
+		if (nodedeq.size() != 1) {
 			char *buf;
 			asprintf(&buf, "Excess items on expression stack!");
 			throw buf;
 		}
-		return nodestack[0];
+		//cerr<<"\x1B[33mReturning now...\x1B[0m"<<endl;
+		*root=nodedeq[0];
+		nodedeq[0].setNullChildren();
 	}
+
+
+	function<int(int, int)> exprnode_functions[] = {
+		[](int a, int b){return a +  b;}, //EN_ADD
+		[](int a, int b){return a -  b;}, //EN_SUBTRACT
+		[](int a, int b){return a *  b;}, //EN_MULTIPLY
+		[](int a, int b){return a /  b;}, //EN_DIVIDE
+		[](int a, int b){return a &  b;}, //EN_BITAND
+		[](int a, int b){return a |  b;}, //EN_BITOR
+		[](int a, int b){return a ^  b;}, //EN_BITXOR
+		[](int a, int b){return a == b;}, //EN_EQUALS
+		[](int a, int b){return a != b;}, //EN_NOTEQUAL
+		[](int a, int b){return a >  b;}, //EN_GREATER
+		[](int a, int b){return a >= b;}, //EN_GREATEREQUAL
+		[](int a, int b){return a <  b;}, //EN_LESS
+		[](int a, int b){return a <= b;}, //EN_LESSEQUAL
+		[](int a, int b){return a && b;}, //EN_AND
+		[](int a, int b){return a || b;}, //EN_OR
+		[](int a, int b){return a >> b;}, //EN_SHIFTR
+		[](int a, int b){return a << b;}, //EN_SHIFTL
+		[](int _, int b){return !b;    }, //EN_NOT
+		[](int _, int b){return -b;    }, //EN_NEGATE
+	};
 
 	int evaluateExpression(const ExprNode &root, const unordered_map<string, int> &vars) {
 		if (root.hasval == 1) {
@@ -362,65 +445,29 @@ namespace Parser {
 			return varit->second;
 		}
 		if (root.hasval == 2)return root.intval;
-		switch (root.type) {
-
-#define EVALUATEEXPRESSION_DYADIC_OPERATOR_CASE_REPETITION(en_,op) \
-		case en_: \
-			if(root.left==NULL||root.right==NULL){ \
-				char *buf; \
-				asprintf(&buf,"Dyadic operator " #op " doesn't have two arguments in tree (internal error)"); \
-				throw buf; \
-			} \
-			return evaluateExpression(*root.left,vars) op evaluateExpression(*root.right,vars);
-
-			EVALUATEEXPRESSION_DYADIC_OPERATOR_CASE_REPETITION(EN_ADD, +)
-			EVALUATEEXPRESSION_DYADIC_OPERATOR_CASE_REPETITION(EN_SUBTRACT, -)
-			EVALUATEEXPRESSION_DYADIC_OPERATOR_CASE_REPETITION(EN_MULTIPLY, *)
-			EVALUATEEXPRESSION_DYADIC_OPERATOR_CASE_REPETITION(EN_DIVIDE, / )
-			EVALUATEEXPRESSION_DYADIC_OPERATOR_CASE_REPETITION(EN_BITAND, &)
-			EVALUATEEXPRESSION_DYADIC_OPERATOR_CASE_REPETITION(EN_BITOR, | )
-			EVALUATEEXPRESSION_DYADIC_OPERATOR_CASE_REPETITION(EN_BITXOR, ^)
-			EVALUATEEXPRESSION_DYADIC_OPERATOR_CASE_REPETITION(EN_EQUALS, == )
-			EVALUATEEXPRESSION_DYADIC_OPERATOR_CASE_REPETITION(EN_NOTEQUAL, != )
-			EVALUATEEXPRESSION_DYADIC_OPERATOR_CASE_REPETITION(EN_GREATER, > )
-			EVALUATEEXPRESSION_DYADIC_OPERATOR_CASE_REPETITION(EN_GREATEREQUAL, >= )
-			EVALUATEEXPRESSION_DYADIC_OPERATOR_CASE_REPETITION(EN_LESS, < )
-			EVALUATEEXPRESSION_DYADIC_OPERATOR_CASE_REPETITION(EN_LESSEQUAL, <= )
-			EVALUATEEXPRESSION_DYADIC_OPERATOR_CASE_REPETITION(EN_AND, &&)
-			EVALUATEEXPRESSION_DYADIC_OPERATOR_CASE_REPETITION(EN_OR, || )
-			EVALUATEEXPRESSION_DYADIC_OPERATOR_CASE_REPETITION(EN_SHIFTR, >> )
-			EVALUATEEXPRESSION_DYADIC_OPERATOR_CASE_REPETITION(EN_SHIFTL, << )
-
-#undef EVALUATEEXPRESSION_DYADIC_OPERATOR_CASE_REPETITION
-
-#define EVALUATEEXPRESSION_UNARY_RIGHT_OPERATOR_CASE_REPETITION(en_,op) \
-		case en_: \
-			if(root.right==NULL){ \
-				char *buf; \
-				asprintf(&buf,"Unary-right operator " #op " doesn't have a right argument in tree (internal error)"); \
-				throw buf; \
-			} \
-			return op evaluateExpression(*root.right,vars);
-
-			EVALUATEEXPRESSION_UNARY_RIGHT_OPERATOR_CASE_REPETITION(EN_NOT, !)
-			EVALUATEEXPRESSION_UNARY_RIGHT_OPERATOR_CASE_REPETITION(EN_NEGATE, -)
-
-#undef EVALUATEEXPRESSION_UNARY_RIGHT_OPERATOR_CASE_REPETITION
-
-		case EN_PAREN1:
-		case EN_PAREN2:
-		case EN_NUMBER:
-		case EN_VARIABLE:
-		case EN_LABEL:
-		case EN_SUBTRACT_OR_NEGATE_CONFLICT:
-		case EN_INVALID:
-		default: {
+		if (root.type > sizeof(exprnode_functions) / sizeof(exprnode_functions[0])) {
 			char *buf;
 			asprintf(&buf, "Non-normal operator %s in expression tree (internal error)", operatorToString(root.type));
 			throw buf;
 		}
 
+		if (root.type > EN_SHIFTL) {
+			if (root.right == NULL) {
+				char *buf;
+				asprintf(&buf, "Unary-right operator %s doesn't have a right argument in tree (internal error)", operatorToString(root.type));
+				throw buf;
+			}
+		} else {
+			if (root.left == NULL || root.right == NULL) {
+				char *buf;
+				asprintf(&buf, "Dyadic operator %s doesn't have two arguments in tree (internal error)", operatorToString(root.type));
+				throw buf;
+			}
 		}
+		return exprnode_functions[root.type](
+			root.left != NULL ? evaluateExpression(*root.left, vars) : 0,
+			root.right != NULL ? evaluateExpression(*root.right, vars) : 0
+		);
 	}
 
 };
@@ -460,7 +507,9 @@ void printtree(const Parser::ExprNode &root) {
 
 int main(void) {
 	try {
-		Parser::ExprNode root = Parser::parseExpression(Parser::tokeniseExpression("(1+2)-3==a&&b<=-c"));
+		Parser::ExprNode root;
+		Parser::parseExpression(&root,Parser::tokeniseExpression("1+(2-3)==a&&b<=-c"));
+		cerr<<"Done parsing"<<endl;
 		printtree(root);
 	} catch (char *exc) {
 		cerr << "EXCEPTION: " << exc << endl;
