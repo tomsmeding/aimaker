@@ -44,11 +44,13 @@ namespace Parser {
 		: type(_t), left(_l), right(_r), strval(_s), intval(0), hasval(1) {}
 	ExprNode::ExprNode(ExprNodeType _t, ExprNode *_l, ExprNode *_r, const int _i)
 		: type(_t), left(_l), right(_r), strval(), intval(_i), hasval(2) {}
+
 	ExprNode::~ExprNode(void) {
 		//cerr<<"\x1B[33mDestructing\x1B[0m exprnode "<<*this<<endl;
 		if (left != NULL) delete left;
 		if (right != NULL) delete right;
 	}
+
 	void ExprNode::setNullChildren(void) {
 		left = right = NULL;
 	}
@@ -72,6 +74,7 @@ namespace Parser {
 			return true;
 		}
 	}
+
 	int precedence(ExprNodeType type) { //pretty much c++ precedence
 		switch (type) {
 		case EN_NOT:
@@ -118,6 +121,7 @@ namespace Parser {
 			return -1; //eh?
 		}
 	}
+
 	int arity(ExprNodeType type) {
 		switch (type) {
 		case EN_NOT:
@@ -139,30 +143,32 @@ namespace Parser {
 	}
 
 	ExprNodeType interpretOperator(const string &s) {
-		if (s == "+")return EN_ADD;
-		//if(s=="-")return EN_SUBTRACT;
-		if (s == "*")return EN_MULTIPLY;
-		if (s == "/")return EN_DIVIDE;
-		if (s == "&")return EN_BITAND;
-		if (s == "|")return EN_BITOR;
-		if (s == "^")return EN_BITXOR;
-		if (s == "==")return EN_EQUALS;
-		if (s == "!=")return EN_NOTEQUAL;
-		if (s == ">")return EN_GREATER;
-		if (s == ">=")return EN_GREATEREQUAL;
-		if (s == "<")return EN_LESS;
-		if (s == "<=")return EN_LESSEQUAL;
-		if (s == "&&")return EN_AND;
-		if (s == "||")return EN_OR;
-		if (s == ">>")return EN_SHIFTR;
-		if (s == "<<")return EN_SHIFTL;
-		if (s == "!")return EN_NOT;
-		//if(s=="-")return EN_NEGATE;
-		if (s == "(")return EN_PAREN1;
-		if (s == ")")return EN_PAREN2;
-		if (s == "-")return EN_SUBTRACT_OR_NEGATE_CONFLICT;
+		if (s == "+") return EN_ADD;
+		//else if(s=="-") return EN_SUBTRACT;
+		else if (s == "*") return EN_MULTIPLY;
+		else if (s == "/") return EN_DIVIDE;
+		else if (s == "&") return EN_BITAND;
+		else if (s == "|") return EN_BITOR;
+		else if (s == "^") return EN_BITXOR;
+		else if (s == "==") return EN_EQUALS;
+		else if (s == "!=") return EN_NOTEQUAL;
+		else if (s == ">") return EN_GREATER;
+		else if (s == ">=") return EN_GREATEREQUAL;
+		else if (s == "<") return EN_LESS;
+		else if (s == "<=") return EN_LESSEQUAL;
+		else if (s == "&&") return EN_AND;
+		else if (s == "||") return EN_OR;
+		else if (s == ">>") return EN_SHIFTR;
+		else if (s == "<<") return EN_SHIFTL;
+		else if (s == "!") return EN_NOT;
+		//else if(s=="-") return EN_NEGATE;
+		else if (s == "(") return EN_PAREN1;
+		else if (s == ") ") return EN_PAREN2;
+		else if (s == "-") return EN_SUBTRACT_OR_NEGATE_CONFLICT;
+
 		return EN_INVALID;
 	}
+
 	const char *operatorToString(ExprNodeType type) {
 		switch (type) {
 		case EN_ADD: return "EN_ADD";
@@ -195,7 +201,6 @@ namespace Parser {
 		}
 	}
 
-
 	vector<ExprToken> tokeniseExpression(const string &s) {
 		const char *const whitespace =
 			"\x01\x02\x03\x04\x05\x06\a\b\t\x0a\v\f\x0d\x0e\x0f\n\x11\x12\r\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f ";
@@ -204,9 +209,13 @@ namespace Parser {
 		const char *const numberchars = "0123456789";
 		int start, end, cursor = 0, i;
 		vector<ExprToken> tkns;
+
 		while (true) {
 			start = s.find_first_not_of(whitespace, cursor);
-			if (start == (int)string::npos)return tkns;
+			if (start == (int)string::npos) {
+				return tkns;
+			}
+
 			ExprToken token;
 			if (strchr(whitespace, s[start]) != NULL) {
 				cursor = s.find_first_not_of(whitespace, start + 1);
@@ -222,31 +231,39 @@ namespace Parser {
 				end = s.find_first_not_of(numberchars, start + 1);
 			} else {
 				token.type = ETT_SYMBOL;
+
 				for (i = start + 1; i < (int)s.size() && i - start <= 2; i++) {
 					if (strchr(wordchars, s[i]) != NULL ||
 							strchr(numberchars, s[i]) != NULL ||
 							strchr(whitespace, s[i]) != NULL)break;
 				}
+
 				for (; i > start + 1; i--)
-					if (interpretOperator(s.substr(start, i - start)) != EN_INVALID)break;
+					if (interpretOperator(s.substr(start, i - start)) != EN_INVALID) break;
+
 				end = i;
 			}
+
 			token.val = s.substr(start, end - start);
+
 			if (token.type == ETT_SYMBOL && interpretOperator(token.val) == EN_INVALID) {
 				char *buf;
 				asprintf(&buf, "Invalid operator '%s'", token.val.c_str());
 				throw buf;
 			}
+
 			tkns.push_back(token);
 			if (end == (int)s.size())break;
 			cursor = end;
 		}
+
 		return tkns;
 	}
 
 #ifdef EXPRESSION_DEBUG_MAIN
 	void printstack(const vector<ExprNode> &st) {
 		const ExprNode *node;
+
 		for (int i = 0; i < (int)st.size(); i++) {
 			node = &st[i];
 			cerr << i << ": " << operatorToString(node->type) << ' ';
@@ -257,6 +274,7 @@ namespace Parser {
 	}
 	void printdeque(const deque<ExprNode> &deq) {
 		const ExprNode *node;
+
 		for (int i = 0; i < (int)deq.size(); i++) {
 			node = &deq[i];
 			cerr << i << ": " << operatorToString(node->type) << ' ';
@@ -267,25 +285,27 @@ namespace Parser {
 	}
 #endif
 	void parseExpression(/*out*/ExprNode *root, const vector<ExprToken> &tkns) {
-		//this implements Dijkstra's Shunting Yard algorithm, skipping functions.
+		// This implements Dijkstra's Shunting Yard algorithm, skipping functions.
 		deque<ExprNode> nodedeq;
 		vector<ExprNode> opstack;
 		ExprNodeType type;
-		int i;
-		bool lastWasOperator = true, foundLeftParen, isleftassoc;
-		int prec;
-		bool weGotALabel = false;
+		int i, prec;
+		bool lastWasOperator = true, foundLeftParen, isleftassoc, weGotALabel = false;
+
 		for (i = 0; i < (int)tkns.size(); i++) {
 			const ExprToken &token = tkns[i];
+
 			switch (token.type) {
 			case ETT_NUMBER:
 				nodedeq.emplace_back(EN_NUMBER, stoi(token.val));
 				lastWasOperator = false;
 				break;
+
 			case ETT_WORD:
 				nodedeq.emplace_back(EN_VARIABLE, token.val);
 				lastWasOperator = false;
 				break;
+
 			case ETT_LABEL:
 				if (i > 0 || weGotALabel) {
 					char *buf;
@@ -296,6 +316,7 @@ namespace Parser {
 				nodedeq.emplace_back(EN_LABEL, token.val);
 				lastWasOperator = false;
 				break;
+
 			case ETT_SYMBOL:
 				type = interpretOperator(token.val);
 				if (type == EN_INVALID) {
@@ -303,10 +324,12 @@ namespace Parser {
 					asprintf(&buf, "Invalid operator '%s'", token.val.c_str());
 					throw buf;
 				}
+
 				if (type == EN_SUBTRACT_OR_NEGATE_CONFLICT) {
 					if (lastWasOperator)type = EN_NEGATE;
 					else type = EN_SUBTRACT;
 				}
+
 				if (type == EN_PAREN1) {
 					opstack.emplace_back(type);
 					lastWasOperator = true;
@@ -347,10 +370,12 @@ namespace Parser {
 				break;
 			}
 		}
+
 		while (opstack.size()) {
 			nodedeq.push_back(opstack[opstack.size() - 1]);
 			opstack.pop_back();
 		}
+
 #ifdef EXPRESSION_DEBUG_MAIN
 		cerr << "Opstack:" << endl;
 		printstack(opstack);
@@ -362,6 +387,7 @@ namespace Parser {
 			root->type = EN_INVALID;
 			return;
 		}
+
 		for (i = 0; i < (int)nodedeq.size(); i++) {
 			//for(ExprNode &n : nodedeq)cerr<<operatorToString(n.type)<<' '; cerr<<endl;
 			const ExprNode &node = nodedeq[i];
@@ -444,7 +470,7 @@ namespace Parser {
 			}
 			return varit->second;
 		}
-		if (root.hasval == 2)return root.intval;
+		if (root.hasval == 2) return root.intval;
 		if (root.type > sizeof(exprnode_functions) / sizeof(exprnode_functions[0])) {
 			char *buf;
 			asprintf(&buf, "Non-normal operator %s in expression tree (internal error)", operatorToString(root.type));
@@ -483,17 +509,21 @@ int uniqid(void) {
 string nodeToString(const Parser::ExprNode &node, const int thisid) {
 	stringstream ss;
 	ss << thisid << "\\n" << operatorToString(node.type);
+
 	if (node.hasval == 1)ss << "\\n(" << node.strval << ')';
 	else if (node.hasval == 2)ss << "\\n(" << node.intval << ')';
+
 	return ss.str();
 }
 
 void printtree__node(const Parser::ExprNode &node, const int thisid) {
 	int leftid = uniqid(), rightid = uniqid();
+
 	if (node.left) {
 		cout << "\t\"" << nodeToString(node, thisid) << "\"->\"" << nodeToString(*node.left, leftid) << '"' << endl;
 		printtree__node(*node.left, leftid);
 	}
+
 	if (node.right) {
 		cout << "\t\"" << nodeToString(node, thisid) << "\"->\"" << nodeToString(*node.right, rightid) << '"' << endl;
 		printtree__node(*node.right, rightid);

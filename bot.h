@@ -17,6 +17,8 @@ private:
 	int _workingFor;
 	int x, y, dir;
 	Board *board;
+	unordered_map<string, int> memoryMap;
+	vector<vector<Parser::Statement>> pages;
 
 	void storeVariable(const string&, const int&, const int& = -1);
 	bool reachedMemoryLimit(void) const;
@@ -28,8 +30,6 @@ public:
 	bool isAsleep;
 	const int id;
 	const Parser::Program *program;
-	unordered_map<string, int> memoryMap;
-	vector<vector<Parser::Statement>> pages;
 
 	Bot(const Parser::Program*, Board*, pair<int, int>);
 	bool isWorking(void) const;
