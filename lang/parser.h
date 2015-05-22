@@ -35,17 +35,21 @@ namespace Parser {
 	struct Position {
 		int page, line;
 	};
+	struct LabelInfo {
+		int id;
+		Position position;
+	};
 
 	struct Program {
 		int id;
 		string name;
 		string author;
 		vector<Codepage> pages;
-		unordered_map<string, Position> labels;
+		unordered_map<string, LabelInfo> labels;
 	};
 
 	Instruction convertInstruction(string word);
 
-	Program parse(const char *const,const vector<string>&);
+	Program parse(const char *const, const vector<string>&);
 
 }

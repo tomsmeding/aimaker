@@ -1,3 +1,12 @@
+Variables:
+
+Variable: _prevloc
+Value: string
+Description: The location of the previous goto.
+Example: `goto _prevloc`
+
+----
+
 Meta attributes:
 
 Attribute: name
@@ -23,6 +32,11 @@ Description: Rotates the current bot clockwise (1) or counter-clockwise (-1).
 Function: nop
 Description: Waits a tick.
 
+Function: goto
+Arguments:
+	- label
+Description: Goes to the specified `label`. `goto a` is the same as `if 1, a`.
+
 Function: ifgoto/if
 Arguments:
 	- Condition
@@ -41,6 +55,11 @@ Arguments:
 	- y variable name
 Description: Gets the current x and y location and puts the values
              respectively in the given variables.
+
+Function: page
+Arguments:
+	- page id
+Description: Jumps to the given page with the given id.
 
 Function: transfer/trans
 Arguments:

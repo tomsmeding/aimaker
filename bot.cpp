@@ -42,8 +42,8 @@ int Bot::getDir(void) const {
 
 void Bot::storeVariable(const string &varName, const int &value, const int &lineIndex) {
 	if (!reachedMemoryLimit()) {
-		if (varName == "_") {
-			// Disposal variable.
+		if (varName.find('_') == 0) {
+			// Unmutable or disposal variable.
 			return;
 		}
 
@@ -119,16 +119,15 @@ pair<int, int> Bot::executeCurrentLine() {
 
 	case Parser::INSTR_GOTO: {
 		const Parser::Argument target = currentStatement.args[0];
-		if (target.type != Parser::EN_LABEL) {
-			// Wrong argument type.
-			break;
-		}
-		unordered_map<string, Parser::Position>::const_iterator labelit = program->labels.find(target.strval);
+
+		unordered_map<string, Parser::LabelInfo>::const_iterator labelit = program->labels.find(target.strval);
 		if (labelit == program->labels.end()) {
 			// Label not found.
 			break;
 		}
-		jumpTo(labelit->second.page, labelit->second.line);
+
+		memoryMap["_prevloc"] = labelit->second.id;
+		jumpTo(labelit->second.position.page, labelit->second.position.line);
 		didJump = true;
 		break;
 	}
@@ -141,12 +140,12 @@ pair<int, int> Bot::executeCurrentLine() {
 			break;
 		}
 		if (!Parser::evaluateExpression(condition, memoryMap)) break; // that's the `if`
-		unordered_map<string, Parser::Position>::const_iterator labelit = program->labels.find(target.strval);
+		unordered_map<string, Parser::LabelInfo>::const_iterator labelit = program->labels.find(target.strval);
 		if (labelit == program->labels.end()) {
 			// Label not found.
 			break;
 		}
-		jumpTo(labelit->second.page, labelit->second.line); // that's the `goto`
+		jumpTo(labelit->second.position.page, labelit->second.position.line); // that's the `goto`
 		didJump = true;
 		break;
 	}

@@ -91,9 +91,12 @@ namespace Parser {
 				continue;
 			} else if (trimmed[trimmed.size() - 1] == ':') { // label
 				string labelName = trimmed.substr(0, trimmed.size() - 1);
-				Position position = {curPage, lineIndex};
 
-				program.labels.emplace(make_pair(labelName, position));
+				int id = genid();
+				Position position = {curPage, lineIndex};
+				LabelInfo labelInfo = {id, position};
+
+				program.labels.emplace(labelName, labelInfo);
 			} else { // function call
 				program.pages[curPage].push_back(parseStatement(words[0], words[1], lineIndex));
 			}
