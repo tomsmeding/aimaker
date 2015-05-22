@@ -15,6 +15,7 @@ namespace Parser {
 		else if (word == "store" || word == "sto")       return INSTR_STO;
 		else if (word == "transfer" || word == "trans")  return INSTR_TRANS;
 		else if (word == "page")                         return INSTR_PAGE;
+		else if (word == "getloc" || word == "loc")      return INSTR_LOC;
 		else return INSTR_INVALID;
 	}
 

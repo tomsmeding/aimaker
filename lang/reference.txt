@@ -35,6 +35,13 @@ Arguments:
 	- Value
 Description: Stores the given `value` in `variableName`.
 
+Function: getloc/loc
+Arguments:
+	- x variable name
+	- y variable name
+Description: Gets the current x and y location and puts the values
+             respectively in the given variables.
+
 Function: transfer/trans
 Arguments:
 	- pageId

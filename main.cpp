@@ -10,6 +10,8 @@
 
 using namespace std;
 
+int MaxBotMemory = 50;
+
 void clearScreen(void) {
 	cout << "\x1B[2J" << flush;
 }
@@ -34,7 +36,28 @@ vector<string> readFile(const char *const fname) {
 }
 
 void printusage(int argc, char **argv) {
-	cerr << "Usage: " << argv[0] << " <botprograms...>" << endl;
+	cerr << "Usage: " << argv[0] << " <options> <botprograms...>" << endl;
+	cerr << "Options:" << endl;
+	cerr << "\t--maxbotmemory=<int>" << endl;
+}
+
+bool parseFlagOption(const string &s) { // True if flag, otherwise false.
+	if (s.find("--") != string::npos) {
+		string trimmed = trim(s.substr(2, s.size() - 2));
+		vector<string> splitted = split(s, (char *)"= ", 0);
+
+		if (splitted[0] == "maxbotmemory") {
+			MaxBotMemory = stoi(splitted[1]);
+		} else {
+			char *message;
+			asprintf(&message, "Unknown flag '%s'.", splitted[0].c_str());
+			throw message;
+		}
+
+		return true;
+	} else {
+		return false;
+	}
 }
 
 int main(int argc, char **argv) {
@@ -42,12 +65,24 @@ int main(int argc, char **argv) {
 		printusage(argc, argv);
 		return 1;
 	}
+
 	int i;
 	Board board(20);
 	vector<Parser::Program> programs;
 	vector<Bot> bots;
 	for (i = 1; i < argc; i++) {
 		cerr << "Reading in program " << i << ": '" << argv[i] << "'... ";
+
+		try {
+			if (parseFlagOption(argv[i])) {
+				// Correct flag given. Continue since this isn't a bot.
+				continue;
+			}
+		} catch (const char *str) { // Unknown flag given.
+			printusage(argc, argv);
+			return 1;
+		}
+
 		try {
 			vector<string> contents = readFile(argv[i]);
 			cerr << "Read contents... ";

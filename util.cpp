@@ -22,6 +22,17 @@ vector<string> split(const string &s, const char delim, int numsplits) {
 	return vec;
 }
 
+vector<string> split(const string &s, char *delims, int numsplits) {
+	vector<string> res;
+
+	for (int i = 0; i < (int)sizeof(delims); i++) {
+		vector<string> result = split(s, delims[i], numsplits);
+		res.insert(res.end(), result.begin(), result.end());
+	}
+
+	return res;
+}
+
 string trim(const string &s) {
 	string::size_type begin = s.find_first_not_of(" \t"),
 					  end = s.find_last_not_of(" \t");

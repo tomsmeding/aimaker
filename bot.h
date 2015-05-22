@@ -18,6 +18,8 @@ private:
 	int x, y, dir;
 	Board *board;
 
+	void storeVariable(const string&, const int&, const int& = -1);
+	bool reachedMemoryLimit(void) const;
 	pair<int, int> executeCurrentLine(void);
 	void jumpTo(int, int);
 	pair<int, int> calculateNextLocation(bool) const;

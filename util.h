@@ -10,6 +10,7 @@ using namespace std;
 int genid(void);
 
 vector<string> split(const string&,const char,int numsplits=-1);
+vector<string> split(const string &s, char* delims, int numsplits);
 
 string trim(const string&);
 

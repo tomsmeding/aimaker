@@ -4,6 +4,7 @@
 #include "lang/parameters.h"
 
 using namespace std;
+extern int MaxBotMemory;
 
 Bot::Bot(const Parser::Program *_program, Board *_board, pair<int, int> startingPos) : curInstr(0), curPage(0), _workingFor(0), dir(0), board(_board), id(genid()), program(_program) {
 	x = startingPos.first;
@@ -35,6 +36,25 @@ pair<int, int> Bot::getPos(void) const {
 
 int Bot::getDir(void) const {
 	return dir;
+}
+
+void Bot::storeVariable(const string &varName, const int &value, const int &lineIndex) {
+	if (!reachedMemoryLimit()) {
+		if (varName == "_") {
+			// Disposal variable.
+			return;
+		}
+
+		memoryMap[varName] = value;
+	} else {
+		char *message;
+		asprintf(&message, "Bot memory reached ('%d')", MaxBotMemory);
+		throw_error(lineIndex, message);
+	}
+}
+
+bool Bot::reachedMemoryLimit(void) const {
+	return (int)memoryMap.size() >= MaxBotMemory;
 }
 
 pair<int, int> Bot::calculateNextLocation(bool forwards) const {
@@ -137,8 +157,10 @@ pair<int, int> Bot::executeCurrentLine() {
 			// Wrong argument type(s).
 			break;
 		}
+
 		const int value = Parser::evaluateExpression(valueArgument, memoryMap);
-		memoryMap[varNameArgument.strval] = value;
+		storeVariable(varNameArgument.strval, value, curInstr);
+		instructionWorkTime(Parser::INSTR_STO);
 		break;
 	}
 
@@ -170,6 +192,22 @@ pair<int, int> Bot::executeCurrentLine() {
 			break;
 		}
 		jumpTo(Parser::evaluateExpression(target, memoryMap), 0);
+		break;
+	}
+
+	case Parser::INSTR_LOC: {
+		Parser::Argument xTarget = currentStatement.args[0];
+		Parser::Argument yTarget = currentStatement.args[1];
+
+		if (xTarget.type == Parser::EN_VARIABLE &&
+				yTarget.type == Parser::EN_VARIABLE) {
+			storeVariable(xTarget.strval, this->x);
+			storeVariable(yTarget.strval, this->y);
+		} else {
+			// Wrong argument type.
+		}
+
+		instructionWorkTime(Parser::INSTR_LOC);
 		break;
 	}
 

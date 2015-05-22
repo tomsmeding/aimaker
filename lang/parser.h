@@ -11,14 +11,15 @@ using namespace std;
 namespace Parser {
 
 	enum Instruction {
-		INSTR_MOVE,
-		INSTR_ROT,
-		INSTR_NOP,
 		INSTR_GOTO,
 		INSTR_IFGOTO,
+		INSTR_LOC,
+		INSTR_MOVE,
+		INSTR_NOP,
+		INSTR_PAGE,
+		INSTR_ROT,
 		INSTR_STO,
 		INSTR_TRANS,
-		INSTR_PAGE,
 
 		INSTR_INVALID=255
 	};
