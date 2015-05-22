@@ -100,14 +100,14 @@ int main(int argc, char **argv) {
 
 	cerr << "Done reading in programs" << endl;
 
-	int tick = 0;
+	int tick = 0, progid;
 	bool stillthere[numprogs];
-	int progid;
 	memset(stillthere, 0, numprogs * sizeof(bool));
 	bool endgame = false;
 	while (true) {
 		for (Bot &b : bots) {
 			progid = b.program->id;
+
 			for (i = 0; i < numprogs; i++) {
 				if (programs[i].id == progid) {
 					stillthere[i] = true;
@@ -115,15 +115,21 @@ int main(int argc, char **argv) {
 				}
 			}
 		}
+
 		for (i = 0; i < numprogs; i++) {
 			if (stillthere[i])continue;
 			cout << "Program " << i << '(' << programs[i].name << ") has no bots left!" << endl;
 			endgame = true;
 		}
-		if (endgame)break;
+
+		if (endgame) {
+			break;
+		}
+
 		for (Bot &b : bots) {
 			b.nextTick();
 		}
+
 		clearScreen();
 		cout << board.render() << endl;
 		cout << "tick " << tick << endl;

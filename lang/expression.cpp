@@ -16,21 +16,21 @@ namespace Parser {
 		: type(n.type), left(n.left), right(n.right), strval(n.strval), intval(n.intval), hasval(n.hasval) {
 		//cerr<<"\x1B[33mCopied\x1B[0m ["<<n<<"] \x1B[33mto\x1B[0m ["<<*this<<']'<<endl;
 	}
-	ExprNode& ExprNode::operator=(const ExprNode &n){
-		type=n.type; left=n.left; right=n.right; strval=n.strval; intval=n.intval; hasval=n.hasval;
+	ExprNode &ExprNode::operator=(const ExprNode &n) {
+		type = n.type; left = n.left; right = n.right; strval = n.strval; intval = n.intval; hasval = n.hasval;
 		//cerr<<"\x1B[33mCopied\x1B[0m ["<<n<<"] \x1B[33mto\x1B[0m ["<<*this<<']'<<endl;
 		return *this;
 	}
 	ExprNode::ExprNode(ExprNode &&n)
 		: type(n.type), left(n.left), right(n.right), strval(move(n.strval)), intval(n.intval), hasval(n.hasval) {
 		//cerr<<"\x1B[33mMoved\x1B[0m ["<<n<<"] \x1B[33mto\x1B[0m ["<<*this<<']'<<endl;
-		n.type=EN_INVALID;
+		n.type = EN_INVALID;
 		n.setNullChildren();
 	}
-	ExprNode& ExprNode::operator=(ExprNode &&n){
-		type=n.type; left=n.left; right=n.right; strval=move(n.strval); intval=n.intval; hasval=n.hasval;
+	ExprNode &ExprNode::operator=(ExprNode &&n) {
+		type = n.type; left = n.left; right = n.right; strval = move(n.strval); intval = n.intval; hasval = n.hasval;
 		//cerr<<"\x1B[33mMoved\x1B[0m ["<<n<<"] \x1B[33mto\x1B[0m ["<<*this<<']'<<endl;
-		n.type=EN_INVALID;
+		n.type = EN_INVALID;
 		n.setNullChildren();
 		return *this;
 	}
@@ -49,15 +49,15 @@ namespace Parser {
 		if (left != NULL) delete left;
 		if (right != NULL) delete right;
 	}
-	void ExprNode::setNullChildren(void){
+	void ExprNode::setNullChildren(void) {
 		left = right = NULL;
 	}
 #ifdef EXPRESSION_DEBUG_MAIN
-	ostream& operator<<(ostream &os,const ExprNode &en){
-		os<<&en<<" ("<<operatorToString(en.type)<<',';
-		if(en.hasval==1)os<<en.strval;
-		else if(en.hasval==2)os<<en.intval;
-		os<<"), LR=("<<en.left<<','<<en.right<<')';
+	ostream &operator<<(ostream &os, const ExprNode &en) {
+		os << &en << " (" << operatorToString(en.type) << ',';
+		if (en.hasval == 1)os << en.strval;
+		else if (en.hasval == 2)os << en.intval;
+		os << "), LR=(" << en.left << ',' << en.right << ')';
 		return os;
 	}
 #endif
@@ -266,7 +266,7 @@ namespace Parser {
 		}
 	}
 #endif
-	void parseExpression(/*out*/ExprNode *root,const vector<ExprToken> &tkns) {
+	void parseExpression(/*out*/ExprNode *root, const vector<ExprToken> &tkns) {
 		//this implements Dijkstra's Shunting Yard algorithm, skipping functions.
 		deque<ExprNode> nodedeq;
 		vector<ExprNode> opstack;
@@ -358,8 +358,8 @@ namespace Parser {
 		printdeque(nodedeq);
 		cerr << "------------" << endl;
 #endif
-		if (nodedeq.size() == 0){
-			root->type=EN_INVALID;
+		if (nodedeq.size() == 0) {
+			root->type = EN_INVALID;
 			return;
 		}
 		for (i = 0; i < (int)nodedeq.size(); i++) {
@@ -407,31 +407,31 @@ namespace Parser {
 			throw buf;
 		}
 		//cerr<<"\x1B[33mReturning now...\x1B[0m"<<endl;
-		*root=nodedeq[0];
+		*root = nodedeq[0];
 		nodedeq[0].setNullChildren();
 	}
 
 
 	function<int(int, int)> exprnode_functions[] = {
-		[](int a, int b){return a +  b;}, //EN_ADD
-		[](int a, int b){return a -  b;}, //EN_SUBTRACT
-		[](int a, int b){return a *  b;}, //EN_MULTIPLY
-		[](int a, int b){return a /  b;}, //EN_DIVIDE
-		[](int a, int b){return a &  b;}, //EN_BITAND
-		[](int a, int b){return a |  b;}, //EN_BITOR
-		[](int a, int b){return a ^  b;}, //EN_BITXOR
-		[](int a, int b){return a == b;}, //EN_EQUALS
-		[](int a, int b){return a != b;}, //EN_NOTEQUAL
-		[](int a, int b){return a >  b;}, //EN_GREATER
-		[](int a, int b){return a >= b;}, //EN_GREATEREQUAL
-		[](int a, int b){return a <  b;}, //EN_LESS
-		[](int a, int b){return a <= b;}, //EN_LESSEQUAL
-		[](int a, int b){return a && b;}, //EN_AND
-		[](int a, int b){return a || b;}, //EN_OR
-		[](int a, int b){return a >> b;}, //EN_SHIFTR
-		[](int a, int b){return a << b;}, //EN_SHIFTL
-		[](int _, int b){return !b;    }, //EN_NOT
-		[](int _, int b){return -b;    }, //EN_NEGATE
+		[](int a, int b) { return a +  b; }, //EN_ADD
+		[](int a, int b) { return a -  b; }, //EN_SUBTRACT
+		[](int a, int b) { return a *  b; }, //EN_MULTIPLY
+		[](int a, int b) { return a /  b; }, //EN_DIVIDE
+		[](int a, int b) { return a &  b; }, //EN_BITAND
+		[](int a, int b) { return a |  b; }, //EN_BITOR
+		[](int a, int b) { return a ^  b; }, //EN_BITXOR
+		[](int a, int b) { return a == b; }, //EN_EQUALS
+		[](int a, int b) { return a != b; }, //EN_NOTEQUAL
+		[](int a, int b) { return a >  b; }, //EN_GREATER
+		[](int a, int b) { return a >= b; }, //EN_GREATEREQUAL
+		[](int a, int b) { return a <  b; }, //EN_LESS
+		[](int a, int b) { return a <= b; }, //EN_LESSEQUAL
+		[](int a, int b) { return a && b; }, //EN_AND
+		[](int a, int b) { return a || b; }, //EN_OR
+		[](int a, int b) { return a >> b; }, //EN_SHIFTR
+		[](int a, int b) { return a << b; }, //EN_SHIFTL
+		[](int _, int b) { return !b;     }, //EN_NOT
+		[](int _, int b) { return -b;     }, //EN_NEGATE
 	};
 
 	int evaluateExpression(const ExprNode &root, const unordered_map<string, int> &vars) {
@@ -465,9 +465,9 @@ namespace Parser {
 			}
 		}
 		return exprnode_functions[root.type](
-			root.left != NULL ? evaluateExpression(*root.left, vars) : 0,
-			root.right != NULL ? evaluateExpression(*root.right, vars) : 0
-		);
+				   root.left != NULL ? evaluateExpression(*root.left, vars) : 0,
+				   root.right != NULL ? evaluateExpression(*root.right, vars) : 0
+			   );
 	}
 
 };
@@ -508,8 +508,8 @@ void printtree(const Parser::ExprNode &root) {
 int main(void) {
 	try {
 		Parser::ExprNode root;
-		Parser::parseExpression(&root,Parser::tokeniseExpression("1+(2-3)==a&&b<=-c"));
-		cerr<<"Done parsing"<<endl;
+		Parser::parseExpression(&root, Parser::tokeniseExpression("1+(2-3)==a&&b<=-c"));
+		cerr << "Done parsing" << endl;
 		printtree(root);
 	} catch (char *exc) {
 		cerr << "EXCEPTION: " << exc << endl;
