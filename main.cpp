@@ -4,13 +4,14 @@
 #include <vector>
 #include <cstring>
 #include <cassert>
+#include "lang/parameters.h"
 #include "lang/parser.h"
 #include "board.h"
 #include "bot.h"
 
 using namespace std;
 
-int MaxBotMemory = 50;
+extern Params params;
 
 void clearScreen(void) {
 	cout << "\x1B[2J" << flush;
@@ -42,12 +43,12 @@ void printusage(int argc, char **argv) {
 }
 
 bool parseFlagOption(const string &s) { // True if flag, otherwise false.
-	if (s.find("--") != string::npos) {
+	if (s.find("--") == 0) {
 		string trimmed = trim(s.substr(2, s.size() - 2));
 		vector<string> splitted = split(s, (char *)"= ", 0);
 
 		if (splitted[0] == "maxbotmemory") {
-			MaxBotMemory = stoi(splitted[1]);
+			params.maxBotMemory = stoi(splitted[1]);
 		} else {
 			char *message;
 			asprintf(&message, "Unknown flag '%s'.", splitted[0].c_str());
@@ -65,6 +66,12 @@ int main(int argc, char **argv) {
 		printusage(argc, argv);
 		return 1;
 	}
+
+
+
+	try {
+
+
 
 	int i;
 	Board board(20);
@@ -134,5 +141,14 @@ int main(int argc, char **argv) {
 		cout << board.render() << endl;
 		cout << "tick " << tick << endl;
 	}
+
+
+
+	} catch(char *msg) {
+		cerr << "ERROR CAUGHT: " << msg << endl;
+	}
+
+
+
 	return 0;
 }

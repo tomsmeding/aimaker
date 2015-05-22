@@ -1,12 +1,14 @@
 #include <utility>
+#include <iostream>
 #include "bot.h"
 #include "board.h"
 #include "lang/parameters.h"
 
 using namespace std;
-extern int MaxBotMemory;
 
-Bot::Bot(const Parser::Program *_program, Board *_board, pair<int, int> startingPos) : curInstr(0), curPage(0), _workingFor(0), dir(0), board(_board), id(genid()), program(_program) {
+extern Params params;
+
+Bot::Bot(const Parser::Program *_program, Board *_board, pair<int, int> startingPos) : curInstr(0), curPage(0), _workingFor(0), x(0), y(0), dir(0), board(_board), isAsleep(false), id(genid()), program(_program), pages(program->pages) {
 	x = startingPos.first;
 	y = startingPos.second;
 }
@@ -48,13 +50,13 @@ void Bot::storeVariable(const string &varName, const int &value, const int &line
 		memoryMap[varName] = value;
 	} else {
 		char *message;
-		asprintf(&message, "Bot memory reached ('%d')", MaxBotMemory);
+		asprintf(&message, "Bot memory reached ('%d')", params.maxBotMemory);
 		throw_error(lineIndex, message);
 	}
 }
 
 bool Bot::reachedMemoryLimit(void) const {
-	return (int)memoryMap.size() >= MaxBotMemory;
+	return (int)memoryMap.size() >= params.maxBotMemory;
 }
 
 pair<int, int> Bot::calculateNextLocation(bool forwards) const {

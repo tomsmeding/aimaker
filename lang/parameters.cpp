@@ -1,5 +1,6 @@
 #include <cmath>
 #include "parser.h"
+#include "parameters.h"
 
 int instructionWorkTime (const Parser::Instruction instr, const int arg) {
 	switch (instr) {
@@ -15,3 +16,5 @@ int instructionWorkTime (const Parser::Instruction instr, const int arg) {
 	default:                    return 0; // eh?
 	}
 };
+
+Params params;
