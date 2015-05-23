@@ -11,6 +11,9 @@ using namespace std;
 
 class Board;
 class Bot {
+public:
+	const Parser::Program *program;
+
 private:
 	int curInstr;
 	int curPage;
@@ -29,7 +32,6 @@ private:
 public:
 	bool isAsleep;
 	const int id;
-	const Parser::Program *program;
 
 	Bot(const Parser::Program*, Board*, pair<int, int>);
 	bool isWorking(void) const;

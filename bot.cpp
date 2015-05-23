@@ -8,7 +8,19 @@ using namespace std;
 
 extern Params params;
 
-Bot::Bot(const Parser::Program *_program, Board *_board, pair<int, int> startingPos) : curInstr(0), curPage(0), _workingFor(0), x(0), y(0), dir(0), board(_board), isAsleep(false), id(genid()), program(_program), pages(program->pages) {
+Bot::Bot(const Parser::Program *_program, Board *_board, pair<int, int> startingPos) :
+		program(_program),
+		curInstr(0),
+		curPage(0),
+		_workingFor(0),
+		x(0), y(0), dir(0),
+		board(_board),
+
+		pages(program->pages),
+
+		isAsleep(false),
+		id(genid()) {
+
 	x = startingPos.first;
 	y = startingPos.second;
 }
