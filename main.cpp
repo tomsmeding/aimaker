@@ -73,79 +73,79 @@ int main(int argc, char **argv) {
 
 
 
-	int i;
-	Board board(20);
-	vector<Parser::Program> programs;
-	vector<Bot> bots;
-	for (i = 1; i < argc; i++) {
-		cerr << "Reading in program " << i << ": '" << argv[i] << "'... ";
+		int i;
+		Board board(20);
+		vector<Parser::Program> programs;
+		vector<Bot> bots;
+		for (i = 1; i < argc; i++) {
+			cerr << "Reading in program " << i << ": '" << argv[i] << "'... ";
 
-		try {
-			if (parseFlagOption(argv[i])) {
-				// Correct flag given. Continue since this isn't a bot.
-				continue;
+			try {
+				if (parseFlagOption(argv[i])) {
+					// Correct flag given. Continue since this isn't a bot.
+					continue;
+				}
+			} catch (const char *str) { // Unknown flag given.
+				printusage(argc, argv);
+				return 1;
 			}
-		} catch (const char *str) { // Unknown flag given.
-			printusage(argc, argv);
-			return 1;
+
+			try {
+				vector<string> contents = readFile(argv[i]);
+				cerr << "Read contents... ";
+				Parser::Program program = Parser::parse(argv[1], contents);
+				cerr << "Parsed... ";
+				programs.push_back(program);
+			} catch (const char *str) {
+				cerr << "ERROR: " << str << endl;
+				return 1;
+			}
+			bots.emplace_back(&programs[programs.size() - 1], &board, make_pair(0, 0));
+			cerr << "Done." << endl;
 		}
+		const int numprogs = programs.size();
 
-		try {
-			vector<string> contents = readFile(argv[i]);
-			cerr << "Read contents... ";
-			Parser::Program program = Parser::parse(argv[1], contents);
-			cerr << "Parsed... ";
-			programs.push_back(program);
-		} catch (const char *str) {
-			cerr << "ERROR: " << str << endl;
-			return 1;
-		}
-		bots.emplace_back(&programs[programs.size() - 1], &board, make_pair(0, 0));
-		cerr << "Done." << endl;
-	}
-	const int numprogs = programs.size();
+		cerr << "Done reading in programs" << endl;
 
-	cerr << "Done reading in programs" << endl;
+		int tick = 0, progid;
+		bool stillthere[numprogs];
+		memset(stillthere, 0, numprogs * sizeof(bool));
+		bool endgame = false;
+		while (true) {
+			for (Bot &b : bots) {
+				progid = b.program->id;
 
-	int tick = 0, progid;
-	bool stillthere[numprogs];
-	memset(stillthere, 0, numprogs * sizeof(bool));
-	bool endgame = false;
-	while (true) {
-		for (Bot &b : bots) {
-			progid = b.program->id;
-
-			for (i = 0; i < numprogs; i++) {
-				if (programs[i].id == progid) {
-					stillthere[i] = true;
-					break;
+				for (i = 0; i < numprogs; i++) {
+					if (programs[i].id == progid) {
+						stillthere[i] = true;
+						break;
+					}
 				}
 			}
+
+			for (i = 0; i < numprogs; i++) {
+				if (stillthere[i])continue;
+				cout << "Program " << i << '(' << programs[i].name << ") has no bots left!" << endl;
+				endgame = true;
+			}
+
+			if (endgame) {
+				break;
+			}
+
+			for (Bot &b : bots) {
+				b.nextTick();
+			}
+
+			clearScreen();
+			cout << board.render() << endl;
+			cout << "tick " << tick << endl;
+			tick ++;
 		}
 
-		for (i = 0; i < numprogs; i++) {
-			if (stillthere[i])continue;
-			cout << "Program " << i << '(' << programs[i].name << ") has no bots left!" << endl;
-			endgame = true;
-		}
-
-		if (endgame) {
-			break;
-		}
-
-		for (Bot &b : bots) {
-			b.nextTick();
-		}
-
-		clearScreen();
-		cout << board.render() << endl;
-		cout << "tick " << tick << endl;
-		tick ++;
-	}
 
 
-
-	} catch(char *msg) {
+	} catch (char *msg) {
 		cerr << "ERROR CAUGHT: " << msg << endl;
 	}
 
