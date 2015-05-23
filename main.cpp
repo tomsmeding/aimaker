@@ -140,6 +140,7 @@ int main(int argc, char **argv) {
 		clearScreen();
 		cout << board.render() << endl;
 		cout << "tick " << tick << endl;
+		tick ++;
 	}
 
 
