@@ -16,6 +16,7 @@ remake: clean all
 
 main: $(OBJ_FILES)
 	$(CXX) $(CXXFLAGS) -o main $(OBJ_FILES)
+	strip main
 
 %.o: %.cpp %.h
 	$(CXX) $(CXXFLAGS) -c -o $*.o $*.cpp
