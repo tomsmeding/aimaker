@@ -12,6 +12,40 @@ using namespace std;
 
 namespace Parser {
 
+	Variable::Variable(void) {}
+	Variable::Variable(int i) {
+		type = VAR_INT;
+		intVal = i;
+	}
+
+	int Variable::getSize(void) const {
+		switch (type) {
+		case VAR_ARR: {
+			int sum = 0;
+			for (const Variable &var : arrVal) {
+				sum += var.getSize();
+			}
+			return sum;
+		}
+
+		case VAR_INT: return 8;
+		}
+	}
+
+	string Variable::toString(void) const {
+		switch (type) {
+		case VAR_ARR: {
+			string s = "";
+			for (const Variable &v : arrVal) {
+				s += v.toString();
+			}
+			return s;
+		}
+
+		case VAR_INT: return to_string(intVal);
+		}
+	}
+
 	ExprNode::ExprNode(void)
 		: type(EN_INVALID), left(NULL), right(NULL), strval(), intval(0), hasval(0) {}
 	ExprNode::ExprNode(const ExprNode &n)
@@ -466,19 +500,28 @@ namespace Parser {
 	};
 
 	int evaluateExpression(
-			const ExprNode &root,
-			const int lineNumber,
-			const unordered_map<string, int> &vars,
-			const LabelMap &labels) {
+		const ExprNode &root,
+		const int lineNumber,
+		const unordered_map<string, Variable> &vars,
+		const LabelMap &labels
+	) {
 		if (root.hasval == 1 && root.type == EN_VARIABLE) {
-			unordered_map<string, int>::const_iterator varit = vars.find(root.strval);
+			unordered_map<string, Variable>::const_iterator varit = vars.find(root.strval);
 			if (varit == vars.end()) {
 				char *buf;
 
+				cerr << "vars size: " << vars.size() << endl;
+				for (const auto &x : vars) {
+					cerr << x.first << ", " << x.second.toString() << endl;
+				}
+
 				asprintf(&buf, "Variable '%s' not found", root.strval.c_str());
 				throw_error(lineNumber, buf);
+			} else if (varit->second.type != Variable::VAR_INT) {
+				throw_error(lineNumber, "Exprected an int variable.");
+			} else {
+				return varit->second.intVal;
 			}
-			return varit->second;
 		} else if (root.hasval == 1 && root.type == EN_LABEL) {
 			unordered_map<string, LabelInfo>::const_iterator labit = labels.find(root.strval);
 			if (labit == labels.end()) {

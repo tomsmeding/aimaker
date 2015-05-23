@@ -3,8 +3,7 @@
 #include <cmath>
 #include <unordered_map>
 #include <vector>
-#include "lang/parser.h"
-#include "lang/parser.h"
+#include "lang/expression.h"
 #include "util.h"
 
 using namespace std;
@@ -20,10 +19,11 @@ private:
 	int _workingFor;
 	int x, y, dir;
 	Board *board;
-	unordered_map<string, int> memoryMap;
+	unordered_map<string, Parser::Variable> memoryMap;
 	vector<vector<Parser::Statement>> pages;
 
 	void storeVariable(const string&, const int, const int = -1);
+	int calculateMemorySize(void) const;
 	bool reachedMemoryLimit(void) const;
 	pair<int, int> executeCurrentLine(void);
 	void jumpTo(int, int);

@@ -67,8 +67,18 @@ void Bot::storeVariable(const string &varName, const int value, const int lineIn
 	}
 }
 
+int Bot::calculateMemorySize(void) const {
+	int sum = 0;
+
+	for (const auto &var : memoryMap) {
+		sum += var.second.getSize();
+	}
+
+	return sum;
+}
+
 bool Bot::reachedMemoryLimit(void) const {
-	return (int)memoryMap.size() >= params.maxBotMemory;
+	return calculateMemorySize() >= params.maxBotMemory;
 }
 
 pair<int, int> Bot::calculateNextLocation(bool forwards) const {

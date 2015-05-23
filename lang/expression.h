@@ -13,6 +13,22 @@ namespace Parser {
 	struct LabelInfo;
 	typedef unordered_map<string, LabelInfo> LabelMap;
 
+	struct Variable {
+		enum VariableType {
+			VAR_ARR, VAR_INT
+		};
+
+		VariableType type;
+		vector<Variable> arrVal;
+		int intVal;
+
+		Variable(void);
+		Variable(int);
+
+		int getSize(void) const;
+		string toString(void) const;
+	};
+
 	enum ExprTokenType {
 		ETT_WORD, ETT_NUMBER, ETT_LABEL, ETT_SYMBOL
 	};
@@ -89,5 +105,5 @@ namespace Parser {
 	void parseExpression(/*out*/ExprNode*, const vector<ExprToken>&);
 
 	// Throws if a variable in the expression is not found in the map.
-	int evaluateExpression(const ExprNode&, const int lineNumber, const unordered_map<string, int>&, const LabelMap&);
+	int evaluateExpression(const ExprNode&, const int lineNumber, const unordered_map<string, Variable>&, const LabelMap&);
 };
