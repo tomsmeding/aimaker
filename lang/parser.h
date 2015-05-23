@@ -10,6 +10,8 @@ using namespace std;
 
 namespace Parser {
 
+	struct ExprNode;
+
 	enum Instruction {
 		INSTR_GOTO,
 		INSTR_IFGOTO,
@@ -38,16 +40,17 @@ namespace Parser {
 	struct LabelInfo {
 		int id;
 		int intval;
-		Position getPosition(void);
-		void LabelInfo::setFromPosition(const Position&);
+		Position getPosition(void) const;
+		void setFromPosition(const Position&);
 	};
 
+	typedef unordered_map<string, LabelInfo> LabelMap;
 	struct Program {
 		int id;
 		string name;
 		string author;
 		vector<Codepage> pages;
-		unordered_map<string, LabelInfo> labels;
+		LabelMap labels;
 	};
 
 	Instruction convertInstruction(string word);

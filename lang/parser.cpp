@@ -4,12 +4,12 @@
 #include "../util.h"
 
 namespace Parser {
-	Position LabelInfo::getPosition(void){
-		return {intval>>24,intval&0xffffff};
+	Position LabelInfo::getPosition(void) const {
+		return { intval >> 24, intval & 0xffffff };
 	}
 
-	void LabelInfo::setFromPosition(const Position &p){
-		intval=(p.page<<24)+p.line;
+	void LabelInfo::setFromPosition(const Position &p) {
+		intval = (p.page<<24) + p.line;
 	}
 
 	Instruction convertInstruction (string word) {
@@ -102,7 +102,8 @@ namespace Parser {
 
 				int id = genid();
 				Position position = {curPage, lineIndex};
-				LabelInfo labelInfo = {id, position};
+				LabelInfo labelInfo = {id, 0};
+				labelInfo.setFromPosition(position);
 
 				program.labels.emplace(labelName, labelInfo);
 			} else { // function call

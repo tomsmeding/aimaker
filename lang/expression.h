@@ -1,10 +1,17 @@
+#pragma once
+
+#include <map>
 #include <string>
-#include <vector>
 #include <unordered_map>
+#include <vector>
+#include "parser.h"
 
 using namespace std;
 
 namespace Parser {
+
+	struct LabelInfo;
+	typedef unordered_map<string, LabelInfo> LabelMap;
 
 	enum ExprTokenType {
 		ETT_WORD, ETT_NUMBER, ETT_LABEL, ETT_SYMBOL
@@ -79,9 +86,8 @@ namespace Parser {
 
 	//these two throw char* for invalid operator
 	vector<ExprToken> tokeniseExpression(const string&);
-	void parseExpression(/*out*/ExprNode*,const vector<ExprToken>&);
+	void parseExpression(/*out*/ExprNode*, const vector<ExprToken>&);
 
 	//throws if a variable in the expression is not found in the map
-	int evaluateExpression(const ExprNode&,const unordered_map<string,int>&,const map<string,LabelInfo>&);
-
+	int evaluateExpression(const ExprNode&, const unordered_map<string, int>&, const LabelMap&);
 };

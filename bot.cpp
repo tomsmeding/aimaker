@@ -104,7 +104,7 @@ pair<int, int> Bot::executeCurrentLine() {
 			// Wrong argument type.
 			break;
 		}
-		const bool forwards = (bool) Parser::evaluateExpression(argument, memoryMap);
+		const bool forwards = (bool) Parser::evaluateExpression(argument, memoryMap, program->labels);
 
 		const pair<int, int> newLocation = calculateNextLocation(forwards);
 		const int x = newLocation.first;
@@ -125,7 +125,7 @@ pair<int, int> Bot::executeCurrentLine() {
 			// Wrong argument type.
 			break;
 		}
-		dir += Parser::evaluateExpression(argument, memoryMap) % 4;
+		dir += Parser::evaluateExpression(argument, memoryMap, program->labels) % 4;
 		break;
 	}
 
@@ -139,7 +139,7 @@ pair<int, int> Bot::executeCurrentLine() {
 		}
 
 		memoryMap["_prevloc"] = labelit->second.id;
-		jumpTo(labelit->second.position.page, labelit->second.position.line);
+		jumpTo(labelit->second.getPosition().page, labelit->second.getPosition().line);
 		didJump = true;
 		break;
 	}
@@ -151,13 +151,13 @@ pair<int, int> Bot::executeCurrentLine() {
 			// Wrong argument type(s).
 			break;
 		}
-		if (!Parser::evaluateExpression(condition, memoryMap)) break; // that's the `if`
+		if (!Parser::evaluateExpression(condition, memoryMap, program->labels)) break; // that's the `if`
 		unordered_map<string, Parser::LabelInfo>::const_iterator labelit = program->labels.find(target.strval);
 		if (labelit == program->labels.end()) {
 			// Label not found.
 			break;
 		}
-		jumpTo(labelit->second.position.page, labelit->second.position.line); // that's the `goto`
+		jumpTo(labelit->second.getPosition().page, labelit->second.getPosition().line); // that's the `goto`
 		didJump = true;
 		break;
 	}
@@ -171,7 +171,7 @@ pair<int, int> Bot::executeCurrentLine() {
 			break;
 		}
 
-		const int value = Parser::evaluateExpression(valueArgument, memoryMap);
+		const int value = Parser::evaluateExpression(valueArgument, memoryMap, program->labels);
 		storeVariable(varNameArgument.strval, value, curInstr);
 		instructionWorkTime(Parser::INSTR_STO);
 		break;
@@ -185,13 +185,13 @@ pair<int, int> Bot::executeCurrentLine() {
 			// Wrong argument type(s).
 			break;
 		}
-		vector<Parser::Statement> page = pages[Parser::evaluateExpression(pageIdArgument, memoryMap)];
+		vector<Parser::Statement> page = pages[Parser::evaluateExpression(pageIdArgument, memoryMap, program->labels)];
 
 		const pair<int, int> targetLocation = calculateNextLocation(true);
 		Bot *targetBot = board->at(targetLocation.first, targetLocation.second);
 
 		if (targetBot != NULL) {
-			targetBot->copyPage(Parser::evaluateExpression(targetIdArgument, memoryMap), page);
+			targetBot->copyPage(Parser::evaluateExpression(targetIdArgument, memoryMap, program->labels), page);
 		}
 
 		_workingFor = instructionWorkTime(currentStatement.instr, page.size());
@@ -204,7 +204,7 @@ pair<int, int> Bot::executeCurrentLine() {
 			// Wrong argument type.
 			break;
 		}
-		jumpTo(Parser::evaluateExpression(target, memoryMap), 0);
+		jumpTo(Parser::evaluateExpression(target, memoryMap, program->labels), 0);
 		break;
 	}
 
