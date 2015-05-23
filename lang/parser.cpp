@@ -111,7 +111,7 @@ namespace Parser {
 
 				program.labels.emplace(labelName, labelInfo);
 			} else { // function call
-				program.pages[curPage].push_back(parseStatement(words[0], words[1], lineIndex));
+				program.pages[curPage].push_back(parseStatement(words[0], words[1], lineIndex + 1));
 			}
 		}
 
