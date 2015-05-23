@@ -37,7 +37,9 @@ namespace Parser {
 	};
 	struct LabelInfo {
 		int id;
-		Position position;
+		int intval;
+		Position getPosition(void);
+		void LabelInfo::setFromPosition(const Position&);
 	};
 
 	struct Program {

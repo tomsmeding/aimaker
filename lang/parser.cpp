@@ -4,6 +4,14 @@
 #include "../util.h"
 
 namespace Parser {
+	Position LabelInfo::getPosition(void){
+		return {intval>>24,intval&0xffffff};
+	}
+
+	void LabelInfo::setFromPosition(const Position &p){
+		intval=(p.page<<24)+p.line;
+	}
+
 	Instruction convertInstruction (string word) {
 		to_lower(word); // Function calls are case insensitive.
 

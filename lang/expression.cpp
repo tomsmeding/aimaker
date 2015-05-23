@@ -460,8 +460,8 @@ namespace Parser {
 		[](int _, int b) { return -b;     }, //EN_NEGATE
 	};
 
-	int evaluateExpression(const ExprNode &root, const unordered_map<string, int> &vars) {
-		if (root.hasval == 1) {
+	int evaluateExpression(const ExprNode &root, const unordered_map<string, int> &vars, const map<string,LabelInfo> &labels) {
+		if (root.hasval == 1 && root.type == EN_VAIRABLE) {
 			unordered_map<string, int>::const_iterator varit = vars.find(root.strval);
 			if (varit == vars.end()) {
 				char *buf;
@@ -469,6 +469,14 @@ namespace Parser {
 				throw buf;
 			}
 			return varit->second;
+		} else if (root.hasval == 1 && root.type == EN_LABEL) {
+			unordered_map<string, int>::const_iterator labit = labels.find(root.strval);
+			if (labit == labels.end()) {
+				char *buf;
+				asprintf(&buf, "Label '@%s' not found", root.strval.c_str());
+				throw buf;
+			}
+			return labit->second;
 		}
 		if (root.hasval == 2) return root.intval;
 		if (root.type > sizeof(exprnode_functions) / sizeof(exprnode_functions[0])) {

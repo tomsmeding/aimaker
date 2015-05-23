@@ -82,6 +82,6 @@ namespace Parser {
 	void parseExpression(/*out*/ExprNode*,const vector<ExprToken>&);
 
 	//throws if a variable in the expression is not found in the map
-	int evaluateExpression(const ExprNode&,const unordered_map<string,int>&);
+	int evaluateExpression(const ExprNode&,const unordered_map<string,int>&,const map<string,LabelInfo>&);
 
 };
