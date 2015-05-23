@@ -24,7 +24,7 @@ Note: All function names are case insensitve.
 ----
 
 Function: move
-Description: Moves the current bot forwards (1) or backwards (-1).
+Description: Moves the current bot forwards (1) or backwards (0).
 
 Function: rotate/rot
 Description: Rotates the current bot clockwise (1) or counter-clockwise (-1).

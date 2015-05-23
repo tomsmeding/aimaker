@@ -9,7 +9,9 @@ start:
 	sto a, 1
 	move 1
 	move 1
+	move 0
 	rotate a
+	rotate -1 * (.5 * 2)
 	ifgoto a == -1, @aIsMin1
 	sto a, -1
 	goto @start
