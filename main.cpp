@@ -67,12 +67,7 @@ int main(int argc, char **argv) {
 		return 1;
 	}
 
-
-
 	try {
-
-
-
 		int i;
 		Board board(20);
 		vector<Parser::Program> programs;
@@ -142,14 +137,9 @@ int main(int argc, char **argv) {
 			cout << "tick " << tick << endl;
 			tick ++;
 		}
-
-
-
 	} catch (char *msg) {
 		cerr << "ERROR CAUGHT: " << msg << endl;
 	}
-
-
 
 	return 0;
 }
