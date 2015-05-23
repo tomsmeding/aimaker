@@ -209,6 +209,7 @@ pair<int, int> Bot::executeCurrentLine() {
 			break;
 		}
 		jumpTo(Parser::evaluateExpression(target, lineNumber, memoryMap, program->labels), 0);
+		didJump = true;
 		break;
 	}
 
