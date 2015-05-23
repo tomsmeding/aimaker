@@ -40,7 +40,7 @@ int Bot::getDir(void) const {
 	return dir;
 }
 
-void Bot::storeVariable(const string &varName, const int &value, const int &lineIndex) {
+void Bot::storeVariable(const string &varName, const int value, const int lineIndex) {
 	if (!reachedMemoryLimit()) {
 		if (varName.find('_') == 0) {
 			// Unmutable or disposal variable.

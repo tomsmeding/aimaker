@@ -20,7 +20,7 @@ private:
 	unordered_map<string, int> memoryMap;
 	vector<vector<Parser::Statement>> pages;
 
-	void storeVariable(const string&, const int&, const int& = -1);
+	void storeVariable(const string&, const int, const int = -1);
 	bool reachedMemoryLimit(void) const;
 	pair<int, int> executeCurrentLine(void);
 	void jumpTo(int, int);
