@@ -28,9 +28,10 @@ namespace Parser {
 	}
 
 	// Parses the given `functionName` and `arguments` to a Statement.
-	Statement parseStatement (string functionName, string arguments, int lineIndex) {
+	Statement parseStatement (string functionName, string arguments, const int lineIndex) {
 		int i;
 		Statement statement;
+		statement.lineNumber = lineIndex;
 		statement.instr = convertInstruction(functionName);
 		if (statement.instr == INSTR_INVALID) {
 			char *message;
@@ -74,7 +75,10 @@ namespace Parser {
 		program.name = fname;
 		program.pages.resize(16);
 
+		// printf("\n");
 		for (int lineIndex = 0; lineIndex < (int)lines.size(); lineIndex++) {
+			// printf("%d: %s\n", lineIndex, lines[lineIndex].c_str());
+
 			string line = lines[lineIndex];
 			string trimmed = trim(line);
 			if (trimmed.size() == 0) continue;

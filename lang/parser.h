@@ -31,6 +31,7 @@ namespace Parser {
 	struct Statement {
 		Instruction instr;
 		vector<Argument> args;
+		int lineNumber;
 	};
 
 	typedef vector<Statement> Codepage;

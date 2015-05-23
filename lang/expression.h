@@ -84,10 +84,10 @@ namespace Parser {
 
 	ExprNodeType interpretOperator(const string&);
 
-	//these two throw char* for invalid operator
+	// These two throw char* for invalid operator.
 	vector<ExprToken> tokeniseExpression(const string&);
 	void parseExpression(/*out*/ExprNode*, const vector<ExprToken>&);
 
-	//throws if a variable in the expression is not found in the map
-	int evaluateExpression(const ExprNode&, const unordered_map<string, int>&, const LabelMap&);
+	// Throws if a variable in the expression is not found in the map.
+	int evaluateExpression(const ExprNode&, const int lineNumber, const unordered_map<string, int>&, const LabelMap&);
 };

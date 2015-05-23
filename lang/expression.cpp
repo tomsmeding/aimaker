@@ -1,8 +1,10 @@
+#define EXPRESSION_DEBUG 1 // 0: off, 1: errors, 2: verbose
 #include <deque>
 #include <functional>
 #include <cstring>
 #include "expression.h"
-#ifdef EXPRESSION_DEBUG_MAIN
+#include "../util.h"
+#if defined(EXPRESSION_DEBUG) || defined(EXPRESSION_DEBUG_MAIN)
 #include <iostream>
 #endif
 
@@ -54,7 +56,7 @@ namespace Parser {
 	void ExprNode::setNullChildren(void) {
 		left = right = NULL;
 	}
-#ifdef EXPRESSION_DEBUG_MAIN
+#if EXPRESSION_DEBUG==2
 	ostream &operator<<(ostream &os, const ExprNode &en) {
 		os << &en << " (" << operatorToString(en.type) << ',';
 		if (en.hasval == 1)os << en.strval;
@@ -260,7 +262,7 @@ namespace Parser {
 		return tkns;
 	}
 
-#ifdef EXPRESSION_DEBUG_MAIN
+#if EXPRESSION_DEBUG==2
 	void printstack(const vector<ExprNode> &st) {
 		const ExprNode *node;
 
@@ -376,7 +378,7 @@ namespace Parser {
 			opstack.pop_back();
 		}
 
-#ifdef EXPRESSION_DEBUG_MAIN
+#if EXPRESSION_DEBUG==2
 		cerr << "Opstack:" << endl;
 		printstack(opstack);
 		cerr << "Nodedeq:" << endl;
@@ -384,6 +386,9 @@ namespace Parser {
 		cerr << "------------" << endl;
 #endif
 		if (nodedeq.size() == 0) {
+#if EXPRESSION_DEBUG>0
+			cerr << "\t\t--- nodedeq.size() == 0" << endl;
+#endif
 			root->type = EN_INVALID;
 			return;
 		}
@@ -462,14 +467,16 @@ namespace Parser {
 
 	int evaluateExpression(
 			const ExprNode &root,
+			const int lineNumber,
 			const unordered_map<string, int> &vars,
 			const LabelMap &labels) {
 		if (root.hasval == 1 && root.type == EN_VARIABLE) {
 			unordered_map<string, int>::const_iterator varit = vars.find(root.strval);
 			if (varit == vars.end()) {
 				char *buf;
+
 				asprintf(&buf, "Variable '%s' not found", root.strval.c_str());
-				throw buf;
+				throw_error(lineNumber, buf);
 			}
 			return varit->second;
 		} else if (root.hasval == 1 && root.type == EN_LABEL) {
@@ -477,7 +484,7 @@ namespace Parser {
 			if (labit == labels.end()) {
 				char *buf;
 				asprintf(&buf, "Label '@%s' not found", root.strval.c_str());
-				throw buf;
+				throw_error(lineNumber, buf);
 			}
 			return labit->second.intval;
 		}
@@ -486,27 +493,27 @@ namespace Parser {
 		if (root.type > sizeof(exprnode_functions) / sizeof(exprnode_functions[0])) {
 			char *buf;
 			asprintf(&buf, "Non-normal operator %s in expression tree (internal error)", operatorToString(root.type));
-			throw buf;
+			throw_error(lineNumber, buf);
 		}
 
 		if (root.type > EN_SHIFTL) {
 			if (root.right == NULL) {
 				char *buf;
 				asprintf(&buf, "Unary-right operator %s doesn't have a right argument in tree (internal error)", operatorToString(root.type));
-				throw buf;
+				throw_error(lineNumber, buf);
 			}
 		} else {
 			if (root.left == NULL || root.right == NULL) {
 				char *buf;
 				asprintf(&buf, "Dyadic operator %s doesn't have two arguments in tree (internal error)", operatorToString(root.type));
-				throw buf;
+				throw_error(lineNumber, buf);
 			}
 		}
 
 		return exprnode_functions[root.type](
-				   root.left != NULL ? evaluateExpression(*root.left, vars, labels) : 0,
-				   root.right != NULL ? evaluateExpression(*root.right, vars, labels) : 0
-			   );
+			root.left != NULL ? evaluateExpression(*root.left, lineNumber, vars, labels) : 0,
+			root.right != NULL ? evaluateExpression(*root.right, lineNumber, vars, labels) : 0
+		);
 	}
 
 };
