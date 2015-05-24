@@ -11,7 +11,7 @@ start:
 	move 1
 	move 0
 	rotate a
-	rotate -1 * (.5 * 2)
+	rotate -1 * ((2 + 1) / 3)
 	ifgoto a == -1, @aIsMin1
 	sto a, -1
 	goto @start

@@ -1,4 +1,4 @@
-#define EXPRESSION_DEBUG 1 // 0: off, 1: errors, 2: verbose
+#define EXPRESSION_DEBUG 2 // 0: off, 1: errors, 2: verbose
 #include "expression.h"
 #include "../util.h"
 #include <deque>
@@ -47,14 +47,29 @@ namespace Parser {
 		}
 	}
 
+#if EXPRESSION_DEBUG==2
+	ostream &operator<<(ostream &os, const ExprNode &en) {
+		os << &en << " (" << operatorToString(en.type) << ',';
+		if (en.hasval == 1)os << en.strval;
+		else if (en.hasval == 2)os << en.intval;
+		os << "), LR=(" << en.left << ',' << en.right << ')';
+		return os;
+	}
+#endif
+
 	ExprNode::ExprNode(void)
 		: type(EN_INVALID), left(NULL), right(NULL), strval(), intval(0), hasval(0) {}
 	ExprNode::ExprNode(const ExprNode &n)
-		: type(n.type), left(n.left), right(n.right), strval(n.strval), intval(n.intval), hasval(n.hasval) {
+		: type(n.type), strval(n.strval), intval(n.intval), hasval(n.hasval) {
+		if (left) left = new ExprNode(*n.left); else left = NULL;
+		if (right) right = new ExprNode(*n.right); else right = NULL;
 		//cerr<<"\x1B[33mCopied\x1B[0m ["<<n<<"] \x1B[33mto\x1B[0m ["<<*this<<']'<<endl;
 	}
 	ExprNode &ExprNode::operator=(const ExprNode &n) {
-		type = n.type; left = n.left; right = n.right; strval = n.strval; intval = n.intval; hasval = n.hasval;
+		type = n.type;
+		if (left) left = new ExprNode(*n.left); else left = NULL;
+		if (right) right = new ExprNode(*n.right); else right = NULL;
+		strval = n.strval; intval = n.intval; hasval = n.hasval;
 		//cerr<<"\x1B[33mCopied\x1B[0m ["<<n<<"] \x1B[33mto\x1B[0m ["<<*this<<']'<<endl;
 		return *this;
 	}
@@ -83,7 +98,9 @@ namespace Parser {
 		: type(_t), left(_l), right(_r), strval(), intval(_i), hasval(2) {}
 
 	ExprNode::~ExprNode(void) {
-		//cerr<<"\x1B[33mDestructing\x1B[0m exprnode "<<*this<<endl;
+#if EXPRESSION_DEBUG==2
+		cerr<<"\x1B[33mDestructing\x1B[0m exprnode "<<*this<<endl;
+#endif
 		if (left != NULL) delete left;
 		if (right != NULL) delete right;
 	}
@@ -91,15 +108,6 @@ namespace Parser {
 	void ExprNode::setNullChildren(void) {
 		left = right = NULL;
 	}
-#if EXPRESSION_DEBUG==2
-	ostream &operator<<(ostream &os, const ExprNode &en) {
-		os << &en << " (" << operatorToString(en.type) << ',';
-		if (en.hasval == 1)os << en.strval;
-		else if (en.hasval == 2)os << en.intval;
-		os << "), LR=(" << en.left << ',' << en.right << ')';
-		return os;
-	}
-#endif
 
 
 	bool leftAssoc(ExprNodeType type) {
@@ -200,7 +208,7 @@ namespace Parser {
 		else if (s == "!") return EN_NOT;
 		//else if(s=="-") return EN_NEGATE;
 		else if (s == "(") return EN_PAREN1;
-		else if (s == ") ") return EN_PAREN2;
+		else if (s == ")") return EN_PAREN2;
 		else if (s == "-") return EN_SUBTRACT_OR_NEGATE_CONFLICT;
 
 		return EN_INVALID;
@@ -242,7 +250,7 @@ namespace Parser {
 		const char *const whitespace =
 			"\x01\x02\x03\x04\x05\x06\a\b\t\x0a\v\f\x0d\x0e\x0f\n\x11\x12\r\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f ";
 		const char *const wordchars =
-			"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_";
+			"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_";
 		const char *const numberchars = "0123456789";
 		int start, end, cursor = 0, i;
 		vector<ExprToken> tkns;

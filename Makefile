@@ -1,4 +1,9 @@
-CXXFLAGS = -Wall -O2 -std=c++11
+CXXFLAGS_BASE = -Wall -std=c++11
+ifdef DEBUG
+	CXXFLAGS = $(CXXFLAGS_BASE) -g
+else
+	CXXFLAGS = $(CXXFLAGS_BASE) -O2
+endif
 CXX = g++
 
 CXX_FILES = $(shell echo *.cpp **/*.cpp)

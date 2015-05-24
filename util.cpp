@@ -11,9 +11,8 @@ vector<string> split(const string &s, const char delim, int numsplits) {
 	string::size_type cursor = 0;
 	string::size_type idx = s.find(delim);
 	vector<string> vec;
-	while (true) {
+	while (idx != string::npos && numsplits > 0) {
 		vec.push_back(s.substr(cursor, idx - cursor));
-		if (idx == string::npos || numsplits == 0)break;
 		numsplits--;
 		cursor = idx + 1;
 		idx = s.find(delim, cursor);

@@ -52,7 +52,7 @@ namespace Parser {
 				argsRaw.push_back(trim(arguments.substr(cursor)));
 				break;
 			} else {
-				argsRaw.push_back(trim(arguments.substr(cursor, i)));
+				argsRaw.push_back(trim(arguments.substr(cursor, i - cursor)));
 				cursor = i + 1;
 			}
 		}
