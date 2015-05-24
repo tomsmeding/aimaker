@@ -1,9 +1,10 @@
 #define EXPRESSION_DEBUG 1 // 0: off, 1: errors, 2: verbose
-#include <deque>
-#include <functional>
-#include <cstring>
 #include "expression.h"
 #include "../util.h"
+#include <deque>
+#include <functional>
+#include <cstdint>
+#include <cstring>
 #if defined(EXPRESSION_DEBUG) || defined(EXPRESSION_DEBUG_MAIN)
 #include <iostream>
 #endif
@@ -13,7 +14,7 @@ using namespace std;
 namespace Parser {
 
 	Variable::Variable(void) {}
-	Variable::Variable(int i) {
+	Variable::Variable(int32_t i) {
 		type = VAR_INT;
 		intVal = i;
 	}
@@ -28,7 +29,7 @@ namespace Parser {
 			return sum;
 		}
 
-		case VAR_INT: return 8;
+		case VAR_INT: return 4;
 		}
 	}
 

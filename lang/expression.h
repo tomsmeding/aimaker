@@ -20,10 +20,10 @@ namespace Parser {
 
 		VariableType type;
 		vector<Variable> arrVal;
-		int intVal;
+		int32_t intVal;
 
 		Variable(void);
-		Variable(int);
+		Variable(int32_t);
 
 		int getSize(void) const;
 		string toString(void) const;
