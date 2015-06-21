@@ -5,6 +5,11 @@ Value: string
 Description: The location of the previous goto.
 Example: `goto _prevloc`
 
+Variable: rip
+Value: string
+Description: The current location in the page
+Example: `goto rip`
+
 ----
 
 Meta attributes:

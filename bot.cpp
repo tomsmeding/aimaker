@@ -107,6 +107,7 @@ pair<int, int> Bot::executeCurrentLine() {
 	const Parser::Statement currentStatement = pages[curPage][curInstr];
 	bool didJump = false;
 	const int lineNumber = currentStatement.lineNumber;
+	memoryMap["rip"] = curInstr;
 
 	_workingFor = instructionWorkTime(currentStatement.instr);
 	// cerr << "Working for: " << _workingFor << endl;
