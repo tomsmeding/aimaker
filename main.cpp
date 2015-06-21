@@ -3,7 +3,6 @@
 #include <string>
 #include <vector>
 #include <cstring>
-#include <cassert>
 #include "lang/parameters.h"
 #include "lang/parser.h"
 #include "board.h"
@@ -35,14 +34,16 @@ vector<string> readFile(const char *const fname) {
 		}
 		return lines;
 	} else {
-		throw "File not readable.";
+		char *message;
+		asprintf(&message, "Can't read program '%s', are you sure it exists?", fname);
+		throw message;
 	}
 }
 
 void printusage(int argc, char **argv) {
 	cerr << "Usage: " << argv[0] << " <options> <botprograms...>" << endl;
 	cerr << "Options:" << endl;
-	cerr << "\t--maxbotmemory=<int>" << endl;
+	cerr << "\t--maxbotmemory=<int> | Sets the max memory a bot can store." << endl;
 }
 
 bool parseFlagOption(const string &s) { // True if flag, otherwise false.
@@ -93,8 +94,7 @@ int main(int argc, char **argv) {
 				try {
 					contents = readFile(argv[i]);
 				} catch (const char *str) {
-					cerr << "Can't read program '" << argv[i] << "', are you sure it exists?" << endl;
-					cerr << endl;
+					cerr << str << endl << endl;
 
 					printusage(argc, argv);
 					return 1;
