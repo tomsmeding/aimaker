@@ -61,8 +61,8 @@ namespace Parser {
 		: type(EN_INVALID), left(NULL), right(NULL), strval(), intval(0), hasval(0) {}
 	ExprNode::ExprNode(const ExprNode &n)
 		: type(n.type), strval(n.strval), intval(n.intval), hasval(n.hasval) {
-		if (left) left = new ExprNode(*n.left); else left = NULL;
-		if (right) right = new ExprNode(*n.right); else right = NULL;
+		if (n.left) left = new ExprNode(*n.left); else left = NULL;
+		if (n.right) right = new ExprNode(*n.right); else right = NULL;
 		//cerr<<"\x1B[33mCopied\x1B[0m ["<<n<<"] \x1B[33mto\x1B[0m ["<<*this<<']'<<endl;
 	}
 	ExprNode &ExprNode::operator=(const ExprNode &n) {
