@@ -44,6 +44,7 @@ vector<string> readFile(const char *const fname) {
 void printusage(int argc, char **argv) {
 	cerr << "Usage: " << argv[0] << " <options> <botprograms...>" << endl;
 	cerr << "Options:" << endl;
+	cerr << "\t--boardsize=<int> | Sets the size of the game board." << endl;
 	cerr << "\t--maxbotmemory=<int> | Sets the max memory a bot can store." << endl;
 	cerr << "\t--parseonly | Quits after parsing the program(s)." << endl;
 }
@@ -51,12 +52,15 @@ void printusage(int argc, char **argv) {
 bool parseFlagOption(const string &s) { // True if flag, otherwise false.
 	if (s.find("--") == 0) {
 		string trimmed = trim(s.substr(2, s.size() - 2));
-		vector<string> splitted = split(trimmed, "= ", 0);
+		vector<string> splitted = split(trimmed, '=', 1);
 
 		if (splitted[0] == "maxbotmemory") {
 			params.maxBotMemory = stoi(splitted[1]);
 		} else if (splitted[0] == "parseonly") {
-			params.parseonly = true;
+			params.parseOnly = true;
+		} else if (splitted[0] == "boardsize") {
+			params.boardSize = stoi(splitted[1]);
+			cerr << "boardSize = " << params.boardSize << endl;
 		} else {
 			char *message;
 			asprintf(&message, "Unknown flag '%s'.", splitted[0].c_str());
@@ -76,10 +80,8 @@ int main(int argc, char **argv) {
 	}
 
 	try {
-		int i;
-		Board board(5);
-		vector<Parser::Program> programs;
-		for (i = 1; i < argc; i++) {
+		vector<string> programNames;
+		for (int i = 1; i < argc; i++) {
 			try {
 				if (parseFlagOption(argv[i])) {
 					// Correct flag given. Continue since this isn't a bot.
@@ -90,12 +92,22 @@ int main(int argc, char **argv) {
 				return 1;
 			}
 
-			cerr << "Reading in program " << i - 1 << ": '" << argv[i] << "'... ";
+			programNames.push_back(argv[i]);
+		}
+
+		int i;
+		Board board(params.boardSize);
+		vector<Parser::Program> programs;
+
+		for (int i = 0; i < (int)programNames.size(); i++) {
+			const string &programName = programNames[i];
+
+			cerr << "Reading in program " << i << ": '" << programName << "'... ";
 
 			try {
 				vector<string> contents;
 				try {
-					contents = readFile(argv[i]);
+					contents = readFile(programName.c_str());
 				} catch (const char *str) {
 					cerr << str << endl << endl;
 
@@ -118,7 +130,7 @@ int main(int argc, char **argv) {
 
 		cerr << "Done reading in programs" << endl;
 
-		if (params.parseonly) {
+		if (params.parseOnly) {
 			return 0;
 		}
 
