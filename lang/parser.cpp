@@ -1,12 +1,13 @@
 #include <string>
 #include <cstdio>
+#include <cstring>
 #include "parser.h"
 #include "parameters.h"
 #include "../util.h"
 
-namespace Parser {
+extern Params params;
 
-	extern Params params;
+namespace Parser {
 
 	Position LabelInfo::getPosition(void) const {
 		return { intval >> 24, intval & 0xffffff };
