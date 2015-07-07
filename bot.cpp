@@ -291,8 +291,8 @@ pair<int, int> Bot::executeCurrentLine() {
 		} else {
 			if(targetBot){
 				response |= 2;
-				if(targetbot->program->id == this->program->id) response |= 4;
-				if(targetbot->isAsleep) response |= 8;
+				if(targetBot->program->id == this->program->id) response |= 4;
+				if(targetBot->isAsleep) response |= 8;
 			}
 		}
 		storeVariable(varNameArgument.strval, response);
