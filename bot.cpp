@@ -269,6 +269,37 @@ pair<int, int> Bot::executeCurrentLine() {
 		break;
 	}
 
+	case Parser::INSTR_LOOK: {
+		//bit 1: is_wall
+		//bit 2: is_bot
+		//bit 4: is_my_bot
+		//bit 8: is_bot_sleeping
+
+		Parser::Argument varNameArgument = currentStatement.args[0];
+
+		if (varNameArgument.type != Parser::EN_VARIABLE) {
+			// Wrong argument type(s).
+			break;
+		}
+
+		const pair<int, int> targetLocation = calculateNextLocation(true);
+		Bot *targetBot = board->at(targetLocation.first, targetLocation.second);
+
+		int response = 0;
+		if(targetLocation.first == this->x && targetLocation.second == this->y){
+			response |= 1;
+		} else {
+			if(targetBot){
+				response |= 2;
+				if(targetbot->program->id == this->program->id) response |= 4;
+				if(targetbot->isAsleep) response |= 8;
+			}
+		}
+		storeVariable(varNameArgument.strval, response);
+
+		break;
+	}
+
 	case Parser::INSTR_NOP:
 	case Parser::INSTR_INVALID:
 		break;

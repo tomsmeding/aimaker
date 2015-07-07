@@ -7,6 +7,7 @@ int instructionWorkTime (const Parser::Instruction instr, const int arg) {
 	case Parser::INSTR_GOTO:    return 1;
 	case Parser::INSTR_IFGOTO:  return 2;
 	case Parser::INSTR_LOC:     return 2;
+	case Parser::INSTR_LOOK:    return 3;
 	case Parser::INSTR_MOVE:    return 5;
 	case Parser::INSTR_NOP:     return 1;
 	case Parser::INSTR_PAGE:    return 2;
