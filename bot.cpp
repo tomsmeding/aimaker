@@ -83,8 +83,8 @@ bool Bot::reachedMemoryLimit(void) const {
 }
 
 pair<int, int> Bot::calculateNextLocation(bool forwards) const {
-	int deltaX = dir % 2 == 1 ? 2 - dir : 0;
-	int deltaY = dir % 2 == 0 ? dir - 1 : 0;
+	int deltaX = dir % 2 == 1 ? 2 - dir%4 : 0;
+	int deltaY = dir % 2 == 0 ? dir%4 - 1 : 0;
 
 	if (!forwards) {
 		deltaX = deltaX * -1;
