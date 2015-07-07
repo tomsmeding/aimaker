@@ -197,7 +197,6 @@ pair<int, int> Bot::executeCurrentLine() {
 
 		const int value = Parser::evaluateExpression(valueArgument, lineNumber, memoryMap, program->labels);
 		storeVariable(varNameArgument.strval, value, curInstr);
-		instructionWorkTime(Parser::INSTR_STO);
 		break;
 	}
 
@@ -217,8 +216,6 @@ pair<int, int> Bot::executeCurrentLine() {
 		if (targetBot != NULL) {
 			targetBot->copyPage(Parser::evaluateExpression(targetIdArgument, lineNumber, memoryMap, program->labels), page);
 		}
-
-		_workingFor = instructionWorkTime(currentStatement.instr, page.size());
 	}
 
 	case Parser::INSTR_PAGE: {
@@ -245,7 +242,6 @@ pair<int, int> Bot::executeCurrentLine() {
 			// Wrong argument type.
 		}
 
-		instructionWorkTime(Parser::INSTR_LOC);
 		break;
 	}
 
