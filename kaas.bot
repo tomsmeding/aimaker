@@ -1,0 +1,30 @@
+#name kaas
+#author Lieuwe Rooijakkers
+
+#page 0
+	page 15
+
+#page 15
+main:
+	look res
+	if res == 1 || res == 4 || res == 12, @turn
+	if res == 0, @walk
+	if res == 2 || res == 8, @inject
+	goto @main
+turn:
+	rot 1
+	goto @main
+walk:
+	move 1
+	goto @main
+inject:
+	sto i, 0
+injectloop:
+	trans 15, i
+	sto i, i+1
+	if i<16, @injectloop
+
+	goto @main
+
+#page 14
+	suicide
