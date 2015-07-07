@@ -1,0 +1,17 @@
+#name killer
+#author Lieuwe Rooijakkers
+
+#page 0
+	rotate -1
+	trans 1, 0
+	page 2
+#page 1
+loop:
+	suicide
+	goto @loop
+#page 2
+dance:
+	rotate 1
+	rotate 1
+	rotate -1
+	goto @dance
