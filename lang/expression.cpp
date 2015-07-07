@@ -67,8 +67,8 @@ namespace Parser {
 	}
 	ExprNode &ExprNode::operator=(const ExprNode &n) {
 		type = n.type;
-		if (left) left = new ExprNode(*n.left); else left = NULL;
-		if (right) right = new ExprNode(*n.right); else right = NULL;
+		if (n.left) left = new ExprNode(*n.left); else left = NULL;
+		if (n.right) right = new ExprNode(*n.right); else right = NULL;
 		strval = n.strval; intval = n.intval; hasval = n.hasval;
 		//cerr<<"\x1B[33mCopied\x1B[0m ["<<n<<"] \x1B[33mto\x1B[0m ["<<*this<<']'<<endl;
 		return *this;
@@ -482,9 +482,11 @@ namespace Parser {
 			asprintf(&buf, "Excess items on expression stack!");
 			throw buf;
 		}
-		//cerr<<"\x1B[33mReturning now...\x1B[0m"<<endl;
+		cerr<<"\x1B[33mReturning now...\x1B[0m"<<endl;
 		*root = nodedeq[0];
 		nodedeq[0].setNullChildren();
+		nodedeq.clear();
+		cerr<<"Really returning..."<<endl;
 	}
 
 
@@ -529,7 +531,7 @@ namespace Parser {
 				asprintf(&buf, "Variable '%s' not found", root.strval.c_str());
 				throw_error(lineNumber, buf);
 			} else if (varit->second.type != Variable::VAR_INT) {
-				throw_error(lineNumber, "Exprected an int variable.");
+				throw_error(lineNumber, "Expected an int variable.");
 			} else {
 				return varit->second.intVal;
 			}

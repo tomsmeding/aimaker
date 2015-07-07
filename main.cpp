@@ -77,7 +77,7 @@ int main(int argc, char **argv) {
 
 	try {
 		int i;
-		Board board(20);
+		Board board(5);
 		vector<Parser::Program> programs;
 		vector<Bot> bots;
 		for (i = 1; i < argc; i++) {

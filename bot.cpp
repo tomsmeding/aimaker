@@ -104,7 +104,7 @@ void Bot::copyPage(int targetId, vector<Parser::Statement> page) {
 pair<int, int> Bot::executeCurrentLine() {
 	// cerr << "------------------------" << endl;
 	// cerr << curPage << "." << curInstr << endl;
-	const Parser::Statement currentStatement = pages[curPage][curInstr];
+	const Parser::Statement currentStatement = pages.at(curPage).at(curInstr);
 	bool didJump = false;
 	const int lineNumber = currentStatement.lineNumber;
 	memoryMap["rip"] = curInstr;
