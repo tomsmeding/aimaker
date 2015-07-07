@@ -216,8 +216,6 @@ pair<int, int> Bot::executeCurrentLine() {
 		Parser::Argument pageIdArgument = currentStatement.args[0];
 		Parser::Argument targetIdArgument = currentStatement.args[1];
 
-		cout << "INSTR_TRANS " << pageIdArgument.intval << ", " << targetIdArgument.intval << endl;
-
 		if (pageIdArgument.type == Parser::EN_LABEL || targetIdArgument.type == Parser::EN_LABEL) {
 			// Wrong argument type(s).
 			break;
