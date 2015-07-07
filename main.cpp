@@ -137,7 +137,6 @@ int main(int argc, char **argv) {
 		for (int i = 0; i < (int)botDist.size(); i++) {
 			int loc = botDist[i];
 			Bot &bot = board.bots[i];
-			cerr << "index: " << i << " | loc: " << loc << endl;
 
 			bot.x = loc % params.boardSize;
 			bot.y = loc / params.boardSize;
@@ -158,7 +157,6 @@ int main(int argc, char **argv) {
 
 
 		while (true) {
-			cerr << "programs.size(): " << programs.size() << " | numprogs: " << numprogs << endl;
 			for (Bot &b : board.bots) {
 				progid = b.program->id;
 

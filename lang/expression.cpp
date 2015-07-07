@@ -483,11 +483,15 @@ namespace Parser {
 			asprintf(&buf, "Excess items on expression stack!");
 			throw buf;
 		}
+#if EXPRESSION_DEBUG==2
 		cerr<<"\x1B[33mReturning now...\x1B[0m"<<endl;
+#endif
 		*root = nodedeq[0];
 		nodedeq[0].setNullChildren();
 		nodedeq.clear();
+#if EXPRESSION_DEBUG==2
 		cerr<<"Really returning..."<<endl;
+#endif
 	}
 
 
