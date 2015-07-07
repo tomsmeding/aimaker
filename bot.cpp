@@ -157,7 +157,9 @@ pair<int, int> Bot::executeCurrentLine() {
 		unordered_map<string, Parser::LabelInfo>::const_iterator labelit = program->labels.find(target.strval);
 		if (labelit == program->labels.end()) {
 			// Label not found.
-			break;
+			char *message;
+			asprintf(&message, "Label not found: '%s'", target.strval.c_str());
+			throw_error(lineNumber, message);
 		}
 
 		memoryMap["_prevloc"] = labelit->second.id;
