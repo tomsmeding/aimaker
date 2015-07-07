@@ -53,7 +53,7 @@ string Board::render(void) {
 	};
 	for (Bot b : bots) {
 		pos = b.getPos();
-		dir = b.getDir();
+		dir = b.getDir() % 4;
 		idx = 3 * size + 2 + 3 * (3 * size + 2) * pos.second + 3 * pos.first + 1;
 		s[idx] = dirchars[dir][0];
 		s[idx + 1] = dirchars[dir][1];
