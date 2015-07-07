@@ -45,6 +45,7 @@ void printusage(int argc, char **argv) {
 	cerr << "Usage: " << argv[0] << " <options> <botprograms...>" << endl;
 	cerr << "Options:" << endl;
 	cerr << "\t--maxbotmemory=<int> | Sets the max memory a bot can store." << endl;
+	cerr << "\t--parseonly | Quits after parsing the program(s)." << endl;
 }
 
 bool parseFlagOption(const string &s) { // True if flag, otherwise false.
@@ -54,6 +55,8 @@ bool parseFlagOption(const string &s) { // True if flag, otherwise false.
 
 		if (splitted[0] == "maxbotmemory") {
 			params.maxBotMemory = stoi(splitted[1]);
+		} else if (splitted[0] == "parseonly") {
+			params.parseonly = true;
 		} else {
 			char *message;
 			asprintf(&message, "Unknown flag '%s'.", splitted[0].c_str());
@@ -115,6 +118,10 @@ int main(int argc, char **argv) {
 		const int numprogs = programs.size();
 
 		cerr << "Done reading in programs" << endl;
+
+		if (params.parseonly) {
+			return 0;
+		}
 
 		int tick = 0, progid;
 		bool stillthere[numprogs];
