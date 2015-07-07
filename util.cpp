@@ -24,15 +24,15 @@ vector<string> split(const string &s, const char delim, int numsplits) {
 
 vector<string> split(const string &s, const char *delims, int numsplits) {
 	string::size_type cursor = 0;
-	unsigned int idx = UINT_MAX;
-	for(const char *p = delims; *p; p++) idx = min(idx, (unsigned int)s.find(*p));
+	unsigned long long idx = UINT_MAX;
+	for(const char *p = delims; *p; p++) idx = min(idx, (unsigned long long)s.find(*p));
 	vector<string> vec;
 	while (idx != string::npos && numsplits != 0) {
 		vec.push_back(s.substr(cursor, idx - cursor));
 		numsplits--;
 		cursor = idx + 1;
 		idx = UINT_MAX;
-		for(const char *p = delims; *p; p++) idx = min(idx, (unsigned int)s.find(*p));
+		for(const char *p = delims; *p; p++) idx = min(idx, (unsigned long long)s.find(*p));
 	}
 	vec.push_back(s.substr(cursor, string::npos));
 	return vec;
@@ -64,6 +64,6 @@ void to_lower(string &original) {
 }
 
 template <typename T>
-void print_vector(const vector<T> &vec,ostream &os=cout){
+void print_vector(const vector<T> &vec,ostream &os){
 	for(const T &i:vec)os<<i<<endl;
 }

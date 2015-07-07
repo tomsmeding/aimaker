@@ -129,7 +129,7 @@ int main(int argc, char **argv) {
 
 		cout << board.render() << endl;
 		tick++;
-		usleep(300000);
+		usleep(1000 * 1000);
 
 		while (true) {
 			for (Bot &b : board.bots) {

@@ -270,10 +270,10 @@ void Bot::nextTick(void) {
 
 		curPage = pair.first;
 		curInstr = pair.second;
-		if(curPage >= pages.size()){
+		if(curPage >= (int)pages.size()){
 			assert(false);
 		}
-		if(curInstr >= pages[curPage].size()){
+		if(curInstr >= (int)pages[curPage].size()){
 			isAsleep = true;
 			curInstr = 0;
 		}
