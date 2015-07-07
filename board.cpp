@@ -67,9 +67,10 @@ bool Board::canMoveTo(int x, int y) {
 	for (Bot &bot : bots) {
 		pair<int, int> location = bot.getPos();
 
-		if (location.first == x && location.second == y) {
-			return false;
-		}
+		if (
+			(location.first == x && location.second == y) ||
+			((x < 0 || x >= size) || (y < 0 || y >= size))
+		) return false;
 	}
 	return true;
 }
