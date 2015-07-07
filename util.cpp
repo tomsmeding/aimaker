@@ -62,8 +62,3 @@ void throw_error(int lineNumber, const char *message) {
 void to_lower(string &original) {
 	std::transform(original.begin(), original.end(), original.begin(), ::tolower);
 }
-
-template <typename T>
-void print_vector(const vector<T> &vec,ostream &os){
-	for(const T &i:vec)os<<i<<endl;
-}

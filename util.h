@@ -20,6 +20,3 @@ bool is_numeric(const string&);
 void throw_error(int, const char*);
 
 void to_lower(string&);
-
-template <typename T>
-void print_vector(const vector<T>&, ostream &os=cout);
