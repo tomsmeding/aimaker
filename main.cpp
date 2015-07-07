@@ -79,7 +79,6 @@ int main(int argc, char **argv) {
 		int i;
 		Board board(5);
 		vector<Parser::Program> programs;
-		vector<Bot> bots;
 		for (i = 1; i < argc; i++) {
 			try {
 				if (parseFlagOption(argv[i])) {
@@ -91,7 +90,7 @@ int main(int argc, char **argv) {
 				return 1;
 			}
 
-			cerr << "Reading in program " << i << ": '" << argv[i] << "'... ";
+			cerr << "Reading in program " << i - 1 << ": '" << argv[i] << "'... ";
 
 			try {
 				vector<string> contents;
@@ -112,8 +111,7 @@ int main(int argc, char **argv) {
 				cerr << "ERROR: " << str << endl;
 				return 1;
 			}
-			bots.emplace_back(&programs[programs.size() - 1], &board, make_pair(0, 0));
-			board.bots.push_back(&bots.back());
+			board.bots.emplace_back(&programs[programs.size() - 1], &board, make_pair(0, 0));
 			cerr << "Done." << endl;
 		}
 		const int numprogs = programs.size();
@@ -134,7 +132,7 @@ int main(int argc, char **argv) {
 		usleep(300000);
 
 		while (true) {
-			for (Bot &b : bots) {
+			for (Bot &b : board.bots) {
 				progid = b.program->id;
 
 				for (i = 0; i < numprogs; i++) {
@@ -156,7 +154,7 @@ int main(int argc, char **argv) {
 			}
 
 			int botindex=0;
-			for (Bot &b : bots) {
+			for (Bot &b : board.bots) {
 				b.nextTick();
 				cerr<<"nextticking bot "<<botindex<<" to ("<<b.getPos().first<<','<<b.getPos().second<<") direction "<<b.getDir()<<endl;
 				botindex++;

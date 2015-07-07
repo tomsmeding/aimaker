@@ -12,7 +12,7 @@ private:
 	int tick;
 	vector<int> board;
 public:
-	vector<Bot*> bots;
+	vector<Bot> bots;
 	int id;
 
 	Board(int);
