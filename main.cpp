@@ -45,9 +45,10 @@ vector<string> readFile(const char *const fname) {
 void printusage(int argc, char **argv) {
 	cerr << "Usage: " << argv[0] << " <options> <botprograms...>" << endl;
 	cerr << "Options:" << endl;
-	cerr << "\t--boardsize=<int> | Sets the size of the game board." << endl;
-	cerr << "\t--maxbotmemory=<int> | Sets the max memory a bot can store." << endl;
-	cerr << "\t--parseonly | Quits after parsing the program(s)." << endl;
+	cerr << "\t--boardsize=<int> (50) | Sets the size of the game board." << endl;
+	cerr << "\t--maxbotmemory=<int> (5) | Sets the max memory a bot can store." << endl;
+	cerr << "\t--maxpages=<int> | Sets the max pages a program can have." << endl;
+	cerr << "\t--parseonly (16) | Quits after parsing the program(s)." << endl;
 }
 
 bool parseFlagOption(const string &s) { // True if flag, otherwise false.
@@ -61,7 +62,8 @@ bool parseFlagOption(const string &s) { // True if flag, otherwise false.
 			params.parseOnly = true;
 		} else if (splitted[0] == "boardsize") {
 			params.boardSize = stoi(splitted[1]);
-			cerr << "boardSize = " << params.boardSize << endl;
+		} else if (splitted[0] == "maxpages") {
+			params.maxPages = stoi(splitted[1]);
 		} else {
 			char *message;
 			asprintf(&message, "Unknown flag '%s'.", splitted[0].c_str());

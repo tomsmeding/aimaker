@@ -1,9 +1,12 @@
 #include <string>
 #include <cstdio>
 #include "parser.h"
+#include "parameters.h"
 #include "../util.h"
 
 namespace Parser {
+
+	extern Params params;
 
 	Position LabelInfo::getPosition(void) const {
 		return { intval >> 24, intval & 0xffffff };
@@ -71,12 +74,13 @@ namespace Parser {
 	// Parses the given `lines` with the given `fname`.
 	Program parse (const char *const fname, const vector<string> &lines) {
 		int curPage = 0, curInstr = 0;
-		bool seenPages[16] = {false};
+		bool seenPages[params.maxPages];
+		memset(seenPages, 0, params.maxPages * sizeof(bool));
 
 		Program program;
 		program.id = genid();
 		program.name = fname;
-		program.pages.resize(16);
+		program.pages.resize(params.maxPages);
 
 		// printf("\n");
 		for (int lineIndex = 0; lineIndex < (int)lines.size(); lineIndex++) {
