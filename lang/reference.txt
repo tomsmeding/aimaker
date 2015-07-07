@@ -30,29 +30,35 @@ Note: All function names are case insensitve.
 
 Function: move
 Description: Moves the current bot forwards (1) or backwards (0).
+Ticks: 5
 
 Function: rotate/rot
 Description: Rotates the current bot clockwise (1) or counter-clockwise (-1).
+Ticks: 5
 
 Function: nop
 Description: Waits a tick.
+Ticks: 1
 
 Function: goto
 Arguments:
 	- label
 Description: Goes to the specified `label`. `goto a` is the same as `if 1, a`.
+Ticks: 1
 
 Function: ifgoto/if
 Arguments:
 	- Condition
 	- Label
 Description: Goes to the specified `label` if the `condition` is true.
+Ticks: 2
 
 Function: store/sto
 Arguments:
 	- variableName
 	- Value
 Description: Stores the given `value` in `variableName`.
+Ticks: 1
 
 Function: getloc/loc
 Arguments:
@@ -60,11 +66,13 @@ Arguments:
 	- y variable name
 Description: Gets the current x and y location and puts the values
              respectively in the given variables.
+Ticks: 2
 
 Function: page
 Arguments:
 	- page id
 Description: Jumps to the given page with the given id.
+Ticks: 2
 
 Function: transfer/trans
 Arguments:
@@ -75,3 +83,4 @@ Description: Copies the page at the given `pageId` on the current bot to the
              overwriting everything that was there originally. If there isn't
              any other bot there, this function does nothing, but doesn't take
              any shorter.
+Ticks: floor(5 + log10(pagesize + 1))
