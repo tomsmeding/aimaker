@@ -148,7 +148,6 @@ int main(int argc, char **argv) {
 
 		int progid;
 		bool stillthere[numprogs];
-		memset(stillthere, 0, numprogs * sizeof(bool));
 		bool endgame = false;
 
 		clearScreen();
@@ -157,6 +156,7 @@ int main(int argc, char **argv) {
 
 
 		while (true) {
+			memset(stillthere, 0, numprogs * sizeof(bool));
 			for (Bot &b : board.bots) {
 				progid = b.program->id;
 
