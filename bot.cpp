@@ -1,5 +1,6 @@
 #include <utility>
 #include <iostream>
+#include <cassert>
 #include "bot.h"
 #include "board.h"
 #include "lang/parameters.h"
