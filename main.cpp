@@ -127,6 +127,7 @@ int main(int argc, char **argv) {
 		memset(stillthere, 0, numprogs * sizeof(bool));
 		bool endgame = false;
 
+		clearScreen();
 		cout << board.render() << endl;
 		tick++;
 		usleep(1000 * 1000);
@@ -160,7 +161,7 @@ int main(int argc, char **argv) {
 				botindex++;
 			}
 
-			//clearScreen();
+			clearScreen();
 			cout << board.render() << endl;
 			cout << "tick " << tick << endl;
 			tick++;
