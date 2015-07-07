@@ -20,3 +20,6 @@ bool is_numeric(const string&);
 void throw_error(int, const char*);
 
 void to_lower(string&);
+
+template <typename T>
+ostream& operator<<(ostream &os,const vector<T> &vec){for(const T &i:vec)os<<i<<endl;return os;}
