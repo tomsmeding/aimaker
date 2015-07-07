@@ -69,7 +69,7 @@ namespace Parser {
 
 	// Parses the given `lines` with the given `fname`.
 	Program parse (const char *const fname, const vector<string> &lines) {
-		int curPage = 0;
+		int curPage = 0, curInstr = 0;
 		bool seenPages[16] = {false};
 
 		Program program;
@@ -97,6 +97,8 @@ namespace Parser {
 					asprintf(&message, "Page with ID '%d' already declared.", id);
 					throw_error(lineIndex, message);
 				}
+
+				curInstr = 0;
 			} else if (words[0] == "#name") { // name
 				program.name = words[1];
 			} else if (words[0] == "#author") { // author
@@ -107,14 +109,17 @@ namespace Parser {
 				string labelName = trimmed.substr(0, trimmed.size() - 1);
 
 				int id = genid();
-				Position position = {curPage, lineIndex};
-				LabelInfo labelInfo = {id, 0};
+				Position position = {curPage, curInstr};
+				LabelInfo labelInfo;
+				labelInfo.id = id;
 				labelInfo.setFromPosition(position);
 
 				program.labels.emplace(labelName, labelInfo);
 			} else { // function call
 				const string args = words.size() == 1 ? "" : words[1];
 				program.pages[curPage].push_back(parseStatement(words[0], args, lineIndex + 1));
+
+				curInstr++;
 			}
 		}
 
