@@ -111,7 +111,8 @@ namespace Parser {
 
 				program.labels.emplace(labelName, labelInfo);
 			} else { // function call
-				program.pages[curPage].push_back(parseStatement(words[0], words[1], lineIndex + 1));
+				const string args = words.size() == 1 ? "" : words[1];
+				program.pages[curPage].push_back(parseStatement(words[0], args, lineIndex + 1));
 			}
 		}
 
