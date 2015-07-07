@@ -51,7 +51,7 @@ void printusage(int argc, char **argv) {
 bool parseFlagOption(const string &s) { // True if flag, otherwise false.
 	if (s.find("--") == 0) {
 		string trimmed = trim(s.substr(2, s.size() - 2));
-		vector<string> splitted = split(s, (char *)"= ", 0);
+		vector<string> splitted = split(trimmed, (char *)"= ", 0);
 
 		if (splitted[0] == "maxbotmemory") {
 			params.maxBotMemory = stoi(splitted[1]);
