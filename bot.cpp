@@ -104,6 +104,13 @@ void Bot::copyPage(int targetId, vector<Parser::Statement> page) {
 pair<int, int> Bot::executeCurrentLine() {
 	// cerr << "------------------------" << endl;
 	// cerr << curPage << "." << curInstr << endl;
+	// auto statements = pages.at(curPage);
+	// for (auto statement : statements) {
+	// 	cout << "found statement in pages[" << curPage << "] with type: " << statement.instr << endl;
+	// }
+	// cout << "page: " << curPage << " | instruction: " << curInstr << endl;
+	// cout << "pages size: " << pages.size() << endl;
+	// cout << "pages[" << curPage << "] size: " << pages.at(curPage).size() << endl;
 	const Parser::Statement currentStatement = pages.at(curPage).at(curInstr);
 	bool didJump = false;
 	const int lineNumber = currentStatement.lineNumber;
