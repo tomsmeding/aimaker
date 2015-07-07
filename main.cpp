@@ -8,6 +8,7 @@
 #include "lang/parser.h"
 #include "board.h"
 #include "bot.h"
+#include "botdist.h"
 
 using namespace std;
 
@@ -98,6 +99,7 @@ int main(int argc, char **argv) {
 		int i;
 		Board board(params.boardSize);
 		vector<Parser::Program> programs;
+		programs.reserve(programNames.size());
 
 		for (int i = 0; i < (int)programNames.size(); i++) {
 			const string &programName = programNames[i];
@@ -116,7 +118,7 @@ int main(int argc, char **argv) {
 				}
 
 				cerr << "Read contents... ";
-				Parser::Program program = Parser::parse(argv[1], contents);
+				Parser::Program program = Parser::parse(programName.c_str(), contents);
 				cerr << "Parsed... ";
 				programs.push_back(program);
 			} catch (const char *str) {
@@ -129,6 +131,17 @@ int main(int argc, char **argv) {
 		const int numprogs = programs.size();
 
 		cerr << "Done reading in programs" << endl;
+
+
+		vector<int> botDist = makeBotDistribution(params.boardSize, params.boardSize, board.bots.size());
+		for (int i = 0; i < (int)botDist.size(); i++) {
+			int loc = botDist[i];
+			Bot &bot = board.bots[i];
+			cerr << "index: " << i << " | loc: " << loc << endl;
+
+			bot.x = loc % params.boardSize;
+			bot.y = loc / params.boardSize;
+		}
 
 		if (params.parseOnly) {
 			return 0;
@@ -143,7 +156,9 @@ int main(int argc, char **argv) {
 		cout << board.render() << endl;
 		usleep(1000 * 1000);
 
+
 		while (true) {
+			cerr << "programs.size(): " << programs.size() << " | numprogs: " << numprogs << endl;
 			for (Bot &b : board.bots) {
 				progid = b.program->id;
 

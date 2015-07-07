@@ -1,0 +1,7 @@
+#name blablabot
+#author Lieuwe Rooijakkers
+
+#page 0
+loop:
+	rot 1
+	goto @loop

@@ -21,8 +21,8 @@ vector<int> makeBotDistribution(const int W,const int H,const int B){
 		bd[i]=true;
 		bots[i]=i;
 	}
-	if(B==W*H)return vector<int>(bd,bd+B);
-	return vector<int>(bd,bd+B);
+	if(B==W*H)return vector<int>(bots,bots+B);
+	return vector<int>(bots,bots+B);
 	for(int iter=0;iter<100;iter++){
 		memset(force,0,B*sizeof(double));
 		for(i=0;i<B;i++){

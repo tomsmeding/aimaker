@@ -14,11 +14,11 @@ Bot::Bot(const Parser::Program *_program, Board *_board, pair<int, int> starting
 	curInstr(0),
 	curPage(0),
 	_workingFor(0),
-	x(0), y(0), dir(0),
 	board(_board),
 
 	pages(program->pages),
 
+	x(0), y(0), dir(0),
 	isAsleep(false),
 	id(genid()) {
 
@@ -105,15 +105,15 @@ void Bot::copyPage(int targetId, vector<Parser::Statement> page) {
 }
 
 pair<int, int> Bot::executeCurrentLine() {
-	// cerr << "------------------------" << endl;
-	// cerr << curPage << "." << curInstr << endl;
-	// auto statements = pages.at(curPage);
-	// for (auto statement : statements) {
-	// 	cout << "found statement in pages[" << curPage << "] with type: " << statement.instr << endl;
-	// }
-	// cout << "page: " << curPage << " | instruction: " << curInstr << endl;
-	// cout << "pages size: " << pages.size() << endl;
-	// cout << "pages[" << curPage << "] size: " << pages.at(curPage).size() << endl;
+	cerr << "------------------------" << endl;
+	cerr << curPage << "." << curInstr << endl;
+	auto statements = pages.at(curPage);
+	for (auto statement : statements) {
+		cout << "found statement in pages[" << curPage << "] with type: " << statement.instr << endl;
+	}
+	cout << "page: " << curPage << " | instruction: " << curInstr << endl;
+	cout << "pages size: " << pages.size() << endl;
+	cout << "pages[" << curPage << "] size: " << pages.at(curPage).size() << endl;
 	const Parser::Statement currentStatement = pages.at(curPage).at(curInstr);
 	bool didJump = false;
 	const int lineNumber = currentStatement.lineNumber;

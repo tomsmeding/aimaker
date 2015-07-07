@@ -30,7 +30,7 @@ Bot *Board::at(int x, int y) {
 	return NULL;
 }
 
-string Board::render(void) {
+string Board::render(void) const {
 	const int linelen = 4*size+2;
 	stringstream ss;
 	int x, y;
@@ -73,8 +73,8 @@ string Board::render(void) {
 	return s;
 }
 
-bool Board::canMoveTo(int x, int y) {
-	for (Bot &bot : bots) {
+bool Board::canMoveTo(int x, int y) const {
+	for (const Bot &bot : bots) {
 		pair<int, int> location = bot.getPos();
 
 		if (

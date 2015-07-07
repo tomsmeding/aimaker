@@ -1,9 +1,13 @@
 #include <string>
+#include <iostream>
 #include <cstdio>
 #include "parser.h"
 #include "../util.h"
 
 namespace Parser {
+
+	int kaas = 0;
+
 	Position LabelInfo::getPosition(void) const {
 		return { intval >> 24, intval & 0xffffff };
 	}
@@ -75,6 +79,8 @@ namespace Parser {
 		program.name = fname;
 		program.pages.resize(16);
 
+		cerr << program.name << " has id " << program.id << endl;
+
 		// printf("\n");
 		for (int lineIndex = 0; lineIndex < (int)lines.size(); lineIndex++) {
 			// printf("%d: %s\n", lineIndex, lines[lineIndex].c_str());
@@ -83,6 +89,11 @@ namespace Parser {
 			string trimmed = trim(line);
 			if (trimmed.size() == 0) continue;
 			vector<string> words = split(trimmed, ' ', 1);
+			cerr << kaas++ << endl;
+			for (auto x : words) {
+				cerr << x << endl;
+			}
+			cerr << "---" << endl;
 
 			if (words[0] == "#page") { // page
 				int id = stoi(words[1]);

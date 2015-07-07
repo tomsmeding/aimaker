@@ -17,7 +17,6 @@ private:
 	int curInstr;
 	int curPage;
 	int _workingFor;
-	int x, y, dir;
 	Board *board;
 	unordered_map<string, Parser::Variable> memoryMap;
 	vector<vector<Parser::Statement>> pages;
@@ -30,6 +29,7 @@ private:
 	pair<int, int> calculateNextLocation(bool) const;
 
 public:
+	int x, y, dir;
 	bool isAsleep;
 	const int id;
 
