@@ -14,7 +14,7 @@ using namespace std;
 extern Params params;
 
 void clearScreen(void) {
-	cout << "\x1B[2J" << flush;
+	cout << "\x1B[2J\x1B[H" << flush;
 }
 
 vector<string> readFile(const char *const fname) {
