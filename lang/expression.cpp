@@ -1,4 +1,4 @@
-#define EXPRESSION_DEBUG 2 // 0: off, 1: errors, 2: verbose
+#define EXPRESSION_DEBUG 1 // 0: off, 1: errors, 2: verbose
 #include "expression.h"
 #include "../util.h"
 #include <deque>
