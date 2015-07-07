@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <cstring>
+#include "unistd.h"
 #include "lang/parameters.h"
 #include "lang/parser.h"
 #include "board.h"
@@ -149,6 +150,7 @@ int main(int argc, char **argv) {
 			cout << board.render() << endl;
 			cout << "tick " << tick << endl;
 			tick ++;
+			usleep(100000);
 		}
 	} catch (char *msg) {
 		cerr << "ERROR CAUGHT: " << msg << endl;

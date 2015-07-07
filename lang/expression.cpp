@@ -250,8 +250,10 @@ namespace Parser {
 		const char *const whitespace =
 			"\x01\x02\x03\x04\x05\x06\a\b\t\x0a\v\f\x0d\x0e\x0f\n\x11\x12\r\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f ";
 		const char *const wordchars =
-			"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_";
+			"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_";
 		const char *const numberchars = "0123456789";
+		const char *const wordnumberchars =
+			"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_0123456789";
 		int start, end, cursor = 0, i;
 		vector<ExprToken> tkns;
 
@@ -267,10 +269,10 @@ namespace Parser {
 				continue;
 			} else if (s[start] == '@') {
 				token.type = ETT_LABEL;
-				end = s.find_first_not_of(wordchars, start + 1);
+				end = s.find_first_not_of(wordnumberchars, start + 1);
 			} else if (strchr(wordchars, s[start]) != NULL) {
 				token.type = ETT_WORD;
-				end = s.find_first_not_of(wordchars, start + 1);
+				end = s.find_first_not_of(wordnumberchars, start + 1);
 			} else if (strchr(numberchars, s[start]) != NULL) {
 				token.type = ETT_NUMBER;
 				end = s.find_first_not_of(numberchars, start + 1);
