@@ -87,8 +87,10 @@ pair<int, int> Bot::calculateNextLocation(bool forwards) const {
 
 	if (!forwards) {
 		deltaX = deltaX * -1;
-		deltaX = deltaY * -1;
+		deltaY = deltaY * -1;
 	}
+
+	cerr<<"calculateNextLocation: dx="<<deltaX<<" dy="<<deltaY<<endl;
 
 	return make_pair(x + deltaX, y + deltaY);
 }
@@ -254,6 +256,9 @@ pair<int, int> Bot::executeCurrentLine() {
 }
 
 void Bot::nextTick(void) {
+	if (isAsleep) {
+		return;
+	}
 	if (_workingFor > 0) {
 		_workingFor--;
 		return;
@@ -262,5 +267,12 @@ void Bot::nextTick(void) {
 
 		curPage = pair.first;
 		curInstr = pair.second;
+		if(curPage >= pages.size()){
+			assert(false);
+		}
+		if(curInstr >= pages[curPage].size()){
+			isAsleep = true;
+			curInstr = 0;
+		}
 	}
 }

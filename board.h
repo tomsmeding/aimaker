@@ -11,8 +11,8 @@ private:
 	int size;
 	int tick;
 	vector<int> board;
-	vector<Bot> bots;
 public:
+	vector<Bot*> bots;
 	int id;
 
 	Board(int);

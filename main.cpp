@@ -51,7 +51,7 @@ void printusage(int argc, char **argv) {
 bool parseFlagOption(const string &s) { // True if flag, otherwise false.
 	if (s.find("--") == 0) {
 		string trimmed = trim(s.substr(2, s.size() - 2));
-		vector<string> splitted = split(trimmed, (char *)"= ", 0);
+		vector<string> splitted = split(trimmed, "= ", 0);
 
 		if (splitted[0] == "maxbotmemory") {
 			params.maxBotMemory = stoi(splitted[1]);
@@ -113,6 +113,7 @@ int main(int argc, char **argv) {
 				return 1;
 			}
 			bots.emplace_back(&programs[programs.size() - 1], &board, make_pair(0, 0));
+			board.bots.push_back(&bots.back());
 			cerr << "Done." << endl;
 		}
 		const int numprogs = programs.size();
@@ -127,6 +128,11 @@ int main(int argc, char **argv) {
 		bool stillthere[numprogs];
 		memset(stillthere, 0, numprogs * sizeof(bool));
 		bool endgame = false;
+
+		cout << board.render() << endl;
+		tick++;
+		usleep(300000);
+
 		while (true) {
 			for (Bot &b : bots) {
 				progid = b.program->id;
@@ -149,15 +155,18 @@ int main(int argc, char **argv) {
 				break;
 			}
 
+			int botindex=0;
 			for (Bot &b : bots) {
 				b.nextTick();
+				cerr<<"nextticking bot "<<botindex<<" to ("<<b.getPos().first<<','<<b.getPos().second<<") direction "<<b.getDir()<<endl;
+				botindex++;
 			}
 
-			clearScreen();
+			//clearScreen();
 			cout << board.render() << endl;
 			cout << "tick " << tick << endl;
-			tick ++;
-			usleep(100000);
+			tick++;
+			usleep(300000);
 		}
 	} catch (char *msg) {
 		cerr << "ERROR CAUGHT: " << msg << endl;
