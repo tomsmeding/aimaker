@@ -1,3 +1,4 @@
+#include <climits>
 #include "util.h"
 
 using namespace std;
@@ -21,15 +22,20 @@ vector<string> split(const string &s, const char delim, int numsplits) {
 	return vec;
 }
 
-vector<string> split(const string &s, char *delims, int numsplits) {
-	vector<string> res;
-
-	for (int i = 0; i < (int)sizeof(delims); i++) {
-		vector<string> result = split(s, delims[i], numsplits);
-		res.insert(res.end(), result.begin(), result.end());
+vector<string> split(const string &s, const char *delims, int numsplits) {
+	string::size_type cursor = 0;
+	unsigned int idx = UINT_MAX;
+	for(const char *p = delims; *p; p++) idx = min(idx, (unsigned int)s.find(*p));
+	vector<string> vec;
+	while (idx != string::npos && numsplits != 0) {
+		vec.push_back(s.substr(cursor, idx - cursor));
+		numsplits--;
+		cursor = idx + 1;
+		idx = UINT_MAX;
+		for(const char *p = delims; *p; p++) idx = min(idx, (unsigned int)s.find(*p));
 	}
-
-	return res;
+	vec.push_back(s.substr(cursor, string::npos));
+	return vec;
 }
 
 string trim(const string &s) {
@@ -55,4 +61,9 @@ void throw_error(int lineNumber, const char *message) {
 
 void to_lower(string &original) {
 	std::transform(original.begin(), original.end(), original.begin(), ::tolower);
+}
+
+template <typename T>
+void print_vector(const vector<T> &vec,ostream &os=cout){
+	for(const T &i:vec)os<<i<<endl;
 }
