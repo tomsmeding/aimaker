@@ -266,6 +266,8 @@ void Bot::nextTick(void) {
 	} else {
 		pair<int, int> pair = executeCurrentLine();
 
+		_workingFor--;
+
 		curPage = pair.first;
 		curInstr = pair.second;
 		if(curPage >= pages.size()){

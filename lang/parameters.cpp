@@ -14,7 +14,7 @@ int instructionWorkTime (const Parser::Instruction instr, const int arg) {
 	case Parser::INSTR_PAGE:    return 2;
 	case Parser::INSTR_LOC:     return 2;
 	case Parser::INSTR_INVALID:
-	default:                    return 0; // eh?
+	default:                    return 1; // eh?
 	}
 };
 
