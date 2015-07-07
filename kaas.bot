@@ -8,14 +8,11 @@
 main:
 	look res
 	if res == 1 || res == 4 || res == 12, @turn
-	if res == 0, @walk
 	if res == 2 || res == 8, @inject
+	move 1
 	goto @main
 turn:
 	rot 1
-	goto @main
-walk:
-	move 1
 	goto @main
 inject:
 	sto i, 0
