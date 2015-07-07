@@ -16,6 +16,7 @@ public:
 private:
 	int curInstr;
 	int curPage;
+	bool isDead;
 	int _workingFor;
 	Board *board;
 	unordered_map<string, Parser::Variable> memoryMap;
@@ -31,13 +32,14 @@ private:
 public:
 	int x, y, dir;
 	bool isAsleep;
-	const int id;
+	int id;
+	int index;
 
-	Bot(const Parser::Program*, Board*, pair<int, int>);
+	Bot(const Parser::Program*, Board*, pair<int, int>, int);
 	bool isWorking(void) const;
 	int workingFor(void) const;
 	pair<int, int> getPos(void) const;
 	int getDir(void) const;
-	void nextTick(void);
-	void copyPage(int, vector<Parser::Statement>);
+	bool nextTick(void);
+	void copyPage(int, const vector<Parser::Statement>&);
 };

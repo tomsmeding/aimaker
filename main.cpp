@@ -82,7 +82,8 @@ int main(int argc, char **argv) {
 
 	try {
 		vector<string> programNames;
-		for (int i = 1; i < argc; i++) {
+		int i;
+		for (i = 1; i < argc; i++) {
 			try {
 				if (parseFlagOption(argv[i])) {
 					// Correct flag given. Continue since this isn't a bot.
@@ -96,12 +97,11 @@ int main(int argc, char **argv) {
 			programNames.push_back(argv[i]);
 		}
 
-		int i;
 		Board board(params.boardSize);
 		vector<Parser::Program> programs;
 		programs.reserve(programNames.size());
 
-		for (int i = 0; i < (int)programNames.size(); i++) {
+		for (i = 0; i < (int)programNames.size(); i++) {
 			const string &programName = programNames[i];
 
 			cerr << "Reading in program " << i << ": '" << programName << "'... ";
@@ -125,7 +125,7 @@ int main(int argc, char **argv) {
 				cerr << "ERROR: " << str << endl;
 				return 1;
 			}
-			board.bots.emplace_back(&programs[programs.size() - 1], &board, make_pair(0, 0));
+			board.bots.emplace_back(&programs[programs.size() - 1], &board, make_pair(0, 0), board.bots.size());
 			cerr << "Done." << endl;
 		}
 		const int numprogs = programs.size();
@@ -134,7 +134,7 @@ int main(int argc, char **argv) {
 
 
 		vector<int> botDist = makeBotDistribution(params.boardSize, params.boardSize, board.bots.size());
-		for (int i = 0; i < (int)botDist.size(); i++) {
+		for (i = 0; i < (int)botDist.size(); i++) {
 			int loc = botDist[i];
 			Bot &bot = board.bots[i];
 

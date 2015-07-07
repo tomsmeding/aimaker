@@ -84,3 +84,7 @@ Description: Copies the page at the given `pageId` on the current bot to the
              any other bot there, this function does nothing, but doesn't take
              any shorter.
 Ticks: floor(5 + log10(pagesize + 1))
+
+Function: suicide
+Description: Kill yourself.
+Ticks: ∞

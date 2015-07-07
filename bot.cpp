@@ -8,21 +8,21 @@ using namespace std;
 
 extern Params params;
 
-Bot::Bot(const Parser::Program *_program, Board *_board, pair<int, int> startingPos) :
+Bot::Bot(const Parser::Program *_program, Board *_board, pair<int, int> startingPos, int _index) :
 	program(_program),
 	curInstr(0),
 	curPage(0),
+	isDead(false),
 	_workingFor(0),
 	board(_board),
 
 	pages(program->pages),
 
-	x(0), y(0), dir(0),
+	x(startingPos.first), y(startingPos.second),
+	dir(0),
 	isAsleep(false),
-	id(genid()) {
-
-	x = startingPos.first;
-	y = startingPos.second;
+	id(genid()),
+	index(_index) {
 }
 
 void Bot::jumpTo(int page, int instr) {
@@ -82,8 +82,8 @@ bool Bot::reachedMemoryLimit(void) const {
 }
 
 pair<int, int> Bot::calculateNextLocation(bool forwards) const {
-	int deltaX = dir % 2 == 1 ? 2 - dir%4 : 0;
-	int deltaY = dir % 2 == 0 ? dir%4 - 1 : 0;
+	int deltaX = mod(dir, 2) == 1 ? 2 - mod(dir, 4) : 0;
+	int deltaY = mod(dir, 2) == 0 ? mod(dir, 4) - 1 : 0;
 
 	if (!forwards) {
 		deltaX = deltaX * -1;
@@ -95,10 +95,17 @@ pair<int, int> Bot::calculateNextLocation(bool forwards) const {
 	return make_pair(x + deltaX, y + deltaY);
 }
 
-void Bot::copyPage(int targetId, vector<Parser::Statement> page) {
+void Bot::copyPage(int targetId, const vector<Parser::Statement> &page) {
 	pages[targetId] = page;
 
-	if (curInstr >= (int)pages[curPage].size()) {
+	cerr << this->index << endl;
+
+	for (Parser::Statement &instr : pages[targetId]) {
+		// Reset the linenumbers, they don't make sense anymore.
+		instr.lineNumber = -1;
+	}
+
+	if (curPage == targetId && curInstr >= (int)pages[curPage].size()) {
 		curInstr = 0;
 	}
 }
@@ -110,7 +117,8 @@ pair<int, int> Bot::executeCurrentLine() {
 	for (auto statement : statements) {
 		cout << "found statement in pages[" << curPage << "] with type: " << statement.instr << endl;
 	}
-	cout << "page: " << curPage << " | instruction: " << curInstr << endl;
+	const Parser::Statement currentStatement = pages.at(curPage).at(curInstr);
+	cout << "page: " << curPage << " | instruction: " << curInstr << ", with type " << currentStatement.instr << endl;
 	cout << "pages size: " << pages.size() << endl;
 	cout << "pages[" << curPage << "] size: " << pages.at(curPage).size() << endl;*/
 	const Parser::Statement currentStatement = pages.at(curPage).at(curInstr);
@@ -149,7 +157,7 @@ pair<int, int> Bot::executeCurrentLine() {
 			// Wrong argument type.
 			break;
 		}
-		dir += Parser::evaluateExpression(argument, lineNumber, memoryMap, program->labels) % 4;
+		dir += mod(Parser::evaluateExpression(argument, lineNumber, memoryMap, program->labels), 4);
 		break;
 	}
 
@@ -206,6 +214,8 @@ pair<int, int> Bot::executeCurrentLine() {
 		Parser::Argument pageIdArgument = currentStatement.args[0];
 		Parser::Argument targetIdArgument = currentStatement.args[1];
 
+		cout << "INSTR_TRANS " << pageIdArgument.intval << ", " << targetIdArgument.intval << endl;
+
 		if (pageIdArgument.type == Parser::EN_LABEL || targetIdArgument.type == Parser::EN_LABEL) {
 			// Wrong argument type(s).
 			break;
@@ -215,9 +225,14 @@ pair<int, int> Bot::executeCurrentLine() {
 		const pair<int, int> targetLocation = calculateNextLocation(true);
 		Bot *targetBot = board->at(targetLocation.first, targetLocation.second);
 
+		cerr << "copying to bot with id " << targetBot->index << endl;
+
 		if (targetBot != NULL) {
 			targetBot->copyPage(Parser::evaluateExpression(targetIdArgument, lineNumber, memoryMap, program->labels), page);
+			cout << "page copied" << endl;
 		}
+		cout << "copied page from one bot to the other, the instruction type of the first instruction of the copied page in the bot is " << (int) targetBot->pages[targetIdArgument.intval][0].instr << endl;
+		break;
 	}
 
 	case Parser::INSTR_PAGE: {
@@ -247,6 +262,12 @@ pair<int, int> Bot::executeCurrentLine() {
 		break;
 	}
 
+	case Parser::INSTR_SUICIDE: {
+		cout << "boom said bot with index " << index << endl;
+		isDead = true;
+		break;
+	}
+
 	case Parser::INSTR_NOP:
 	case Parser::INSTR_INVALID:
 		break;
@@ -255,13 +276,13 @@ pair<int, int> Bot::executeCurrentLine() {
 	return make_pair(curPage, curInstr + !didJump);
 }
 
-void Bot::nextTick(void) {
+bool Bot::nextTick(void) {
 	if (isAsleep) {
-		return;
+		return false;
 	}
 	if (_workingFor > 0) {
 		_workingFor--;
-		return;
+		return false;
 	} else {
 		pair<int, int> pair = executeCurrentLine();
 
@@ -277,4 +298,7 @@ void Bot::nextTick(void) {
 			curInstr = 0;
 		}
 	}
+
+	cout << "nextTicked on bot with index " << index << " at " << curPage << "." << curInstr << ", dead: " << (int) isDead << endl;
+	return isDead;
 }

@@ -62,3 +62,7 @@ void throw_error(int lineNumber, const char *message) {
 void to_lower(string &original) {
 	std::transform(original.begin(), original.end(), original.begin(), ::tolower);
 }
+
+int mod(int a, int b) {
+	return (a % b + b) % b;
+}

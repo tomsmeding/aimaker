@@ -12,8 +12,15 @@ int Board::currentTick(void) const {
 }
 
 void Board::nextTick(void) {
-	for (Bot &bot : bots) {
-		bot.nextTick();
+	for (int i = 0; i < (int)bots.size(); i++) {
+		Bot &bot = bots[i];
+		bool died = bot.nextTick();
+
+		if (died) {
+			bots.erase(bots.begin() + i);
+			cerr << "bot " << bot.index << " erased" << endl;
+			i--;
+		}
 	}
 
 	tick++;
@@ -56,10 +63,9 @@ string Board::render(void) const {
 		{' ' , ' ' , ' ' , '\\', '_' , '/' },
 		{'/' , ' ' , ' ' , '\\', ' ' , ' ' }
 	};
-	int botindex=1;
 	for (Bot b : bots) {
 		pos = b.getPos();
-		dir = b.getDir() % 4;
+		dir = mod(b.getDir(), 4);
 		idx = linelen + 3 * linelen * pos.second + 4 * pos.first + 1;
 		s[idx + 0] = dirchars[dir][0];
 		s[idx + 1] = dirchars[dir][1];
@@ -67,8 +73,7 @@ string Board::render(void) const {
 		s[idx + linelen + 0] = dirchars[dir][3];
 		s[idx + linelen + 1] = dirchars[dir][4];
 		s[idx + linelen + 2] = dirchars[dir][5];
-		s[idx+1]=botindex+'0';
-		botindex++;
+		s[idx+1]=b.index+'0';
 	}
 	return s;
 }
@@ -77,10 +82,7 @@ bool Board::canMoveTo(int x, int y) const {
 	for (const Bot &bot : bots) {
 		pair<int, int> location = bot.getPos();
 
-		if (
-			(location.first == x && location.second == y) ||
-			((x < 0 || x >= size) || (y < 0 || y >= size))
-		) return false;
+		if (location.first == x && location.second == y) return false;
 	}
-	return true;
+	return (x < 0 || x >= size) || (y < 0 || y >= size);
 }
