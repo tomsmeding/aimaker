@@ -11,19 +11,18 @@ inline double d(int W,int a,int b){
 	return sqrt((a%W-b%W)*(a%W-b%W)+(a/W-b/W)*(a/W-b/W));
 }
 
-vector<bool> makeBotDistribution(const int W,const int H,const int B){
+vector<int> makeBotDistribution(const int W,const int H,const int B){
 	assert(B<=W*H);
-	vector<bool> bd;
+	bool bd[B];
 	int bots[B];
 	double force[B];
-	bd.resize(W*H);
 	int i,j;
 	for(i=0;i<B;i++){
 		bd[i]=true;
 		bots[i]=i;
 	}
-	if(B==W*H)return bd;
-	return bd;
+	if(B==W*H)return vector<int>(bd,bd+B);
+	return vector<int>(bd,bd+B);
 	for(int iter=0;iter<100;iter++){
 		memset(force,0,B*sizeof(double));
 		for(i=0;i<B;i++){

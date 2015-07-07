@@ -4,4 +4,4 @@
 using namespace std;
 
 //width, height, numbots
-vector<bool> makeBotDistribution(const int W,const int H,const int B);
+vector<int> makeBotDistribution(const int W,const int H,const int B);
