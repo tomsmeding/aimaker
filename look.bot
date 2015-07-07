@@ -7,8 +7,8 @@
 #page 8
 start:
 	look ahead
-	ifgoto ahead&1>0, @wall
-	ifgoto ahead&2>0, @bot
+	ifgoto (ahead&1)>0, @wall
+	ifgoto (ahead&2)>0, @bot
 	move 1
 	goto @start
 
@@ -16,13 +16,11 @@ wall:
 	rot 1
 	goto @start
 bot:
-	ifgoto ahead&4>0, @mybot
-	ifgoto ahead&8>0, @othersleep
+	ifgoto (ahead&4)>0, @mybot
+	ifgoto (ahead&8)>0, @othersleep
 
 
 otherawake:
-	rot 1
-	rot -1
 	sto p, 0
 Otransloop:
 	trans 15, p
@@ -39,7 +37,7 @@ othersleep:
 
 
 mybot:
-	ifgoto ahead&8>0, @mysleep
+	ifgoto (ahead&8)>0, @mysleep
 
 
 myawake:
