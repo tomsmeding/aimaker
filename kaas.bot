@@ -17,7 +17,7 @@ turn:
 inject:
 	sto i, 0
 injectloop:
-	trans 15, i
+	trans 14, i
 	sto i, i+1
 	if i<16, @injectloop
 
