@@ -270,6 +270,7 @@ namespace Parser {
 			} else if (s[start] == '@') {
 				token.type = ETT_LABEL;
 				end = s.find_first_not_of(wordnumberchars, start + 1);
+				start++;
 			} else if (strchr(wordchars, s[start]) != NULL) {
 				token.type = ETT_WORD;
 				end = s.find_first_not_of(wordnumberchars, start + 1);
