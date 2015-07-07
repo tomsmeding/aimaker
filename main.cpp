@@ -134,14 +134,13 @@ int main(int argc, char **argv) {
 			return 0;
 		}
 
-		int tick = 0, progid;
+		int progid;
 		bool stillthere[numprogs];
 		memset(stillthere, 0, numprogs * sizeof(bool));
 		bool endgame = false;
 
 		clearScreen();
 		cout << board.render() << endl;
-		tick++;
 		usleep(1000 * 1000);
 
 		while (true) {
@@ -166,17 +165,11 @@ int main(int argc, char **argv) {
 				break;
 			}
 
-			int botindex=0;
-			for (Bot &b : board.bots) {
-				b.nextTick();
-				cerr<<"nextticking bot "<<botindex<<" to ("<<b.getPos().first<<','<<b.getPos().second<<") direction "<<b.getDir()<<endl;
-				botindex++;
-			}
+			board.nextTick();
 
 			clearScreen();
 			cout << board.render() << endl;
-			cout << "tick " << tick << endl;
-			tick++;
+			cout << "tick " << board.currentTick() << endl;
 			usleep(300000);
 		}
 	} catch (char *msg) {

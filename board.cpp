@@ -7,6 +7,10 @@ Board::Board(int size): size(size), tick(0) {
 	id = genid();
 }
 
+int Board::currentTick(void) const {
+	return tick;
+}
+
 void Board::nextTick(void) {
 	for (Bot &bot : bots) {
 		bot.nextTick();

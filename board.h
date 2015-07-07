@@ -17,6 +17,7 @@ public:
 
 	Board(int);
 	Bot* at(int, int);
+	int currentTick(void) const;
 	void nextTick(void);
 	string render(void);
 	bool canMoveTo(int, int);
