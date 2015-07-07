@@ -63,7 +63,7 @@ string Board::render(void) const {
 		{' ' , ' ' , ' ' , '\\', '_' , '/' },
 		{'/' , ' ' , ' ' , '\\', ' ' , ' ' }
 	};
-	for (Bot b : bots) {
+	for (const Bot &b : bots) {
 		pos = b.getPos();
 		dir = mod(b.getDir(), 4);
 		idx = linelen + 3 * linelen * pos.second + 4 * pos.first + 1;
@@ -85,7 +85,7 @@ bool Board::canMoveTo(int x, int y) const {
 
 		if (location.first == x && location.second == y) return false;
 	}
-	return (x < 0 || x >= size) || (y < 0 || y >= size);
+	return insideBounds(x,y);
 }
 
 bool Board::insideBounds(int x, int y) const {

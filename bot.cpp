@@ -27,9 +27,11 @@ Bot::Bot(const Parser::Program *_program, Board *_board, pair<int, int> starting
 void Bot::jumpTo(int page, int instr) {
 	if (page < 0 || page >= (int)pages.size() ||
 			instr < 0 || instr >= (int)pages[page].size()) {
+		cerr<<"Bot with index "<<this->index<<" just jumped to 0.0"<<endl;
 		curPage = 0;
 		curInstr = 0;
 	} else {
+		cerr<<"Bot with index "<<this->index<<" just jumped to "<<page<<'.'<<instr<<endl;
 		curPage = page;
 		curInstr = instr;
 	}
@@ -286,7 +288,7 @@ pair<int, int> Bot::executeCurrentLine() {
 		Bot *targetBot = board->at(targetLocation.first, targetLocation.second);
 
 		int response = 0;
-		if(targetLocation.first == this->x && targetLocation.second == this->y){
+		if(!this->board->insideBounds(targetLocation.first, targetLocation.second)){
 			response |= 1;
 		} else {
 			if(targetBot){
@@ -296,6 +298,7 @@ pair<int, int> Bot::executeCurrentLine() {
 			}
 		}
 		storeVariable(varNameArgument.strval, response);
+		cerr<<"Put "<<response<<" in "<<varNameArgument.strval<<" for bot "<<this->index<<endl;
 
 		break;
 	}
@@ -331,6 +334,6 @@ bool Bot::nextTick(void) {
 		}
 	}
 
-	cout << "nextTicked on bot with index " << index << " at " << curPage << "." << curInstr << ", dead: " << (int) isDead << endl;
+	cout << "nextTicked on bot with index " << index << " at " << curPage << "." << curInstr << ", dead: " << (int) isDead << "; next instr to exec: " << pages[curPage][curInstr].instr << endl;
 	return isDead;
 }
