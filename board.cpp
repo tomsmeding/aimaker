@@ -73,7 +73,8 @@ string Board::render(void) const {
 		s[idx + linelen + 0] = dirchars[dir][3];
 		s[idx + linelen + 1] = dirchars[dir][4];
 		s[idx + linelen + 2] = dirchars[dir][5];
-		s[idx+1]=b.index+'0';
+		s[idx+1]="0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"[b.index%62];
+		s[idx+linelen+1]=" 0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"[b.index/62];
 	}
 	return s;
 }
