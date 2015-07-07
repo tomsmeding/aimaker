@@ -22,8 +22,7 @@ Bot::Bot(const Parser::Program *_program, Board *_board, pair<int, int> starting
 	dir(0),
 	isAsleep(false),
 	id(genid()),
-	index(_index) {
-}
+	index(_index) {}
 
 void Bot::jumpTo(int page, int instr) {
 	if (page < 0 || page >= (int)pages.size() ||
@@ -172,7 +171,8 @@ pair<int, int> Bot::executeCurrentLine() {
 			throw_error(lineNumber, message);
 		}
 
-		memoryMap["_prevloc"] = labelit->second.id;
+		// TODO:
+		// memoryMap["_prevloc"] = labelit->second.id;
 		jumpTo(labelit->second.getPosition().page, labelit->second.getPosition().line);
 		didJump = true;
 		break;
@@ -230,8 +230,8 @@ pair<int, int> Bot::executeCurrentLine() {
 		if (targetBot != NULL) {
 			targetBot->copyPage(Parser::evaluateExpression(targetIdArgument, lineNumber, memoryMap, program->labels), page);
 			cout << "page copied" << endl;
+			cout << "copied page from one bot to the other, the instruction type of the first instruction of the copied page in the bot is " << (int) targetBot->pages[targetIdArgument.intval][0].instr << endl;
 		}
-		cout << "copied page from one bot to the other, the instruction type of the first instruction of the copied page in the bot is " << (int) targetBot->pages[targetIdArgument.intval][0].instr << endl;
 		break;
 	}
 

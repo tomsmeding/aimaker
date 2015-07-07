@@ -26,7 +26,7 @@ void Board::nextTick(void) {
 	tick++;
 }
 
-Bot *Board::at(int x, int y) {
+Bot* Board::at(int x, int y) {
 	for (Bot &bot : bots) {
 		pair<int, int> location = bot.getPos();
 

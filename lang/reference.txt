@@ -1,5 +1,8 @@
 Variables:
 
+All variables starting with _ are immutable, which means you can't create
+variables which name starts with a '_'.
+
 Variable: _prevloc
 Value: string
 Description: The location of the previous goto.
