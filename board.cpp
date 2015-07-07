@@ -87,3 +87,7 @@ bool Board::canMoveTo(int x, int y) const {
 	}
 	return (x < 0 || x >= size) || (y < 0 || y >= size);
 }
+
+bool Board::insideBounds(int x, int y) const {
+	return x >= 0 && x < size && y >= 0 && y < size;
+}

@@ -21,4 +21,5 @@ public:
 	void nextTick(void);
 	string render(void) const;
 	bool canMoveTo(int, int) const;
+	bool insideBounds(int, int) const;
 };
