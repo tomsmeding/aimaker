@@ -100,3 +100,9 @@ Ticks: floor(3 + log10(pagesize + 1))
 Function: suicide
 Description: Kill yourself.
 Ticks: ∞
+
+Function: build
+Description: Builds a bot infront of the current bot, if there's a bot in front
+of the current bot, this function will do nothing but will take the same amount
+of time.
+Ticks: 7
