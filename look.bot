@@ -5,15 +5,28 @@
 	page 8
 
 #page 8
+	sto justhitwall, 0
 start:
+	ifgoto justhitwall==1, @hitwall_move
+look:
 	look ahead
 	ifgoto (ahead&1)>0, @wall
 	ifgoto (ahead&2)>0, @bot
+	ifgoto justhitwall==2, @hitwall_turn
 	move 1
 	goto @start
 
+hitwall_move:
+	sto justhitwall, 2
+	goto @look
+hitwall_turn:
+	sto justhitwall, 0
+	rot 1
+	goto @look
+
 wall:
 	rot 1
+	sto justhitwall, 1
 	goto @start
 bot:
 	ifgoto (ahead&4)>0, @mybot

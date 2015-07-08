@@ -185,7 +185,7 @@ int main(int argc, char **argv) {
 			clearScreen();
 			cout << board.render() << endl;
 			cout << "tick " << board.currentTick() << endl;
-			usleep(200000);
+			usleep(20000);
 		}
 	} catch (char *msg) {
 		cerr << "ERROR CAUGHT: " << msg << endl;
