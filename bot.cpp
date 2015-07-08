@@ -124,10 +124,10 @@ pair<int, int> Bot::executeCurrentLine() {
 	cout << "pages[" << curPage << "] size: " << pages.at(curPage).size() << endl;*/
 	const Parser::Statement currentStatement = pages.at(curPage).at(curInstr);
 	bool didJump = false;
+	int workTimeArg = 0;
 	const int lineNumber = currentStatement.lineNumber;
 	memoryMap["_rip"] = curInstr;
 
-	_workingFor = instructionWorkTime(currentStatement.instr);
 	// cerr << "Working for: " << _workingFor << endl;
 
 	switch (currentStatement.instr) {
@@ -233,6 +233,9 @@ pair<int, int> Bot::executeCurrentLine() {
 			cout << "page copied" << endl;
 			cout << "copied page from one bot to the other, the instruction type of the first instruction of the copied page in the bot is " << (int) targetBot->pages[targetIdArgument.intval][0].instr << endl;
 		}
+
+		workTimeArg = page.size();
+
 		break;
 	}
 
@@ -305,6 +308,8 @@ pair<int, int> Bot::executeCurrentLine() {
 	case Parser::INSTR_INVALID:
 		break;
 	}
+
+	_workingFor = instructionWorkTime(currentStatement.instr, workTimeArg);
 
 	return make_pair(curPage, curInstr + !didJump);
 }
