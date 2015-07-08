@@ -31,6 +31,7 @@ namespace Parser {
 		else if (word == "store" || word == "sto")       return INSTR_STO;
 		else if (word == "suicide")                      return INSTR_SUICIDE;
 		else if (word == "transfer" || word == "trans")  return INSTR_TRANS;
+		else if (word == "build")                        return INSTR_BUILD;
 		else return INSTR_INVALID;
 	}
 

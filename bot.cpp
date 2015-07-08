@@ -304,6 +304,23 @@ pair<int, int> Bot::executeCurrentLine() {
 		break;
 	}
 
+	case Parser::INSTR_BUILD: {
+		const pair<int, int> targetLocation = calculateNextLocation(true);
+		Bot *targetBot = board->at(targetLocation.first, targetLocation.second);
+
+		if (targetBot != NULL || !board->insideBounds(targetLocation.first, targetLocation.second)) {
+			workTimeArg = 0;
+		} else {
+			workTimeArg = 1;
+
+			Bot bot(program, board, targetLocation, board->bots.size());
+			bot.isAsleep = true;
+			board->bots.push_back(bot);
+		}
+
+		break;
+	}
+
 	case Parser::INSTR_NOP:
 	case Parser::INSTR_INVALID:
 		break;

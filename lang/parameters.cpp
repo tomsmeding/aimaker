@@ -13,6 +13,7 @@ int instructionWorkTime (const Parser::Instruction instr, const int arg) {
 	case Parser::INSTR_PAGE:    return 2;
 	case Parser::INSTR_ROT:     return 5;
 	case Parser::INSTR_STO:     return 1;
+	case Parser::INSTR_BUILD:   return arg == 0 ? 3 : 7;
 	case Parser::INSTR_TRANS:   return floor(5 + log10(arg + 1)); // arg is page size
 	case Parser::INSTR_INVALID:
 	default:                    return 1; // eh?
