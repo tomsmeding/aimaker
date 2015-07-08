@@ -47,8 +47,8 @@ void printusage(int argc, char **argv) {
 	cerr << "Options:" << endl;
 	cerr << "\t--boardsize=<int> (50) | Sets the size of the game board." << endl;
 	cerr << "\t--maxbotmemory=<int> (5) | Sets the max memory a bot can store." << endl;
-	cerr << "\t--maxpages=<int> | Sets the max pages a program can have." << endl;
-	cerr << "\t--parseonly (16) | Quits after parsing the program(s)." << endl;
+	cerr << "\t--maxpages=<int> (16) | Sets the max pages a program can have." << endl;
+	cerr << "\t--parseonly | Quits after parsing the program(s)." << endl;
 }
 
 bool parseFlagOption(const string &s) { // True if flag, otherwise false.
