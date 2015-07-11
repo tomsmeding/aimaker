@@ -88,6 +88,15 @@ Description: Copies the page at the given `pageId` on the current bot to the
              any shorter.
 Ticks: floor(5 + log10(pagesize + 1))
 
+Function: transferlocal/translocal
+Arguments:
+	- pageId
+	- targetId
+Description: Copies the page at the given `pageId` on the current bot to the
+             given `targetId` on the current bot, overwriting everything that
+             was there originally.
+Ticks: floor(3 + log10(pagesize + 1))
+
 Function: suicide
 Description: Kill yourself.
 Ticks: ∞

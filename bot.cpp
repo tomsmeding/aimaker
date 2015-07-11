@@ -304,6 +304,22 @@ pair<int, int> Bot::executeCurrentLine() {
 		break;
 	}
 
+	case Parser::INSTR_TRANSLOCAL: {
+		Parser::Argument pageIdArgument = currentStatement.args[0];
+		Parser::Argument targetIdArgument = currentStatement.args[1];
+
+		if (pageIdArgument.type == Parser::EN_LABEL || targetIdArgument.type == Parser::EN_LABEL) {
+			// Wrong argument type(s).
+			break;
+		}
+
+		vector<Parser::Statement> page = pages[Parser::evaluateExpression(pageIdArgument, lineNumber, memoryMap, program->labels)];
+		copyPage(Parser::evaluateExpression(targetIdArgument, lineNumber, memoryMap, program->labels), page);
+		workTimeArg = page.size();
+
+		break;
+	}
+
 	case Parser::INSTR_NOP:
 	case Parser::INSTR_INVALID:
 		break;
