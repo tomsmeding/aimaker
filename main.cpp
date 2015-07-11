@@ -150,7 +150,6 @@ int main(int argc, char **argv) {
 
 		int progid;
 		bool stillthere[numprogs];
-		bool endgame = false;
 
 		clearScreen();
 		cout << board.render() << endl;
@@ -170,13 +169,17 @@ int main(int argc, char **argv) {
 				}
 			}
 
+			int stillthereCount = 0;
 			for (i = 0; i < numprogs; i++) {
-				if (stillthere[i])continue;
-				cout << "Program " << i << '(' << programs[i].name << ") has no bots left!" << endl;
-				endgame = true;
+				if (stillthere[i]) {
+					stillthereCount++;
+				} else {
+					cout << "Program " << i << '(' << programs[i].name << ") has no bots left!" << endl;
+				}
 			}
 
-			if (endgame) {
+			if (stillthereCount <= 1) {
+				cout << "Only " << stillthereCount << " program(s) left, closing game." << endl;
 				break;
 			}
 
