@@ -174,12 +174,12 @@ int main(int argc, char **argv) {
 				if (stillthere[i]) {
 					stillthereCount++;
 				} else {
-					cout << "Program " << i << '(' << programs[i].name << ") has no bots left!" << endl;
+					//cout << "Program " << i << '(' << programs[i].name << ") has no bots left!" << endl;
 				}
 			}
 
 			if (stillthereCount <= 1) {
-				cout << "Only " << stillthereCount << " program(s) left, closing game." << endl;
+				cout << "Only " << stillthereCount << " program" << (stillthereCount==1 ? "" : "s") << " left, closing game." << endl;
 				break;
 			}
 
