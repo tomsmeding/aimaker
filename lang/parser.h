@@ -24,6 +24,7 @@ namespace Parser {
 		INSTR_STO,
 		INSTR_SUICIDE,
 		INSTR_TRANS,
+		INSTR_BUILD,
 
 		INSTR_INVALID=255
 	};
