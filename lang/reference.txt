@@ -94,6 +94,6 @@ Ticks: ∞
 
 Function: build
 Description: Builds a bot infront of the current bot, if there's a bot in front
-of the current bot, this function will do nothing and will have a reduced work
-time.
-Ticks: If building a bot: 7 else 3
+of the current bot, this function will do nothing but will take the same amount
+of time.
+Ticks: 7

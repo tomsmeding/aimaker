@@ -308,13 +308,10 @@ pair<int, int> Bot::executeCurrentLine() {
 		const pair<int, int> targetLocation = calculateNextLocation(true);
 
 		if (board->canMoveTo(targetLocation.first, targetLocation.second)) {
-			workTimeArg = 1;
 
 			Bot bot(program, board, targetLocation, board->bots.size());
 			bot.isAsleep = true;
 			board->bots.push_back(bot);
-		} else {
-			workTimeArg = 0;
 		}
 
 		break;
