@@ -101,6 +101,17 @@ Function: suicide
 Description: Kill yourself.
 Ticks: ∞
 
+Function: look
+Arguments:
+	- varName
+Description: Looks whats infront of the bot and sets the value to `varName`,
+each bit of the value that is set to `varName` has a special meaning:
+   - bit 1: is_wall
+   - bit 2: is_bot
+   - bit 4: is_my_bot
+   - bit 8: is_bot_sleeping
+Ticks: 3
+
 Function: build
 Description: Builds a bot infront of the current bot, if there's a bot in front
 of the current bot, this function will do nothing but will take the same amount
