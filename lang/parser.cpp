@@ -9,12 +9,20 @@ extern Params params;
 
 namespace Parser {
 
+	Position itop(int pos) {
+		return { pos >> 24, pos & 0xffffff };
+	}
+
+	int ptoi(const Position &pos) {
+		return (pos.page<<24) + pos.line;
+	}
+
 	Position LabelInfo::getPosition(void) const {
-		return { intval >> 24, intval & 0xffffff };
+		return itop(intval);
 	}
 
 	void LabelInfo::setFromPosition(const Position &p) {
-		intval = (p.page<<24) + p.line;
+		intval = ptoi(p);
 	}
 
 	Instruction convertInstruction (string word) {

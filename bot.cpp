@@ -181,18 +181,13 @@ pair<int, int> Bot::executeCurrentLine() {
 	case Parser::INSTR_GOTO: {
 		const Parser::Argument target = currentStatement.args[0];
 
-		unordered_map<string, Parser::LabelInfo>::const_iterator labelit = program->labels.find(target.strval);
-		if (labelit == program->labels.end()) {
-			// Label not found.
-			char *message;
-			asprintf(&message, "Label not found: '%s'", target.strval.c_str());
-			throw_error(lineNumber, message);
-		}
+		int intpos = Parser::evaluateExpression(target, lineNumber, memoryMap, program->labels);
+		Parser::Position pos = Parser::itop(intpos);
 
-		// TODO:
-		// memoryMap["_prevloc"] = labelit->second.id;
-		jumpTo(labelit->second.getPosition().page, labelit->second.getPosition().line);
+		memoryMap["_prevloc"] = Parser::ptoi({ curPage, curInstr + 1 });
+		jumpTo(pos.page, pos.line);
 		didJump = true;
+
 		break;
 	}
 

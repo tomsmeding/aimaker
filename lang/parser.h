@@ -64,4 +64,7 @@ namespace Parser {
 
 	Program parse(const char *const, const vector<string>&);
 
+	Position itop(int pos);
+	int ptoi(const Position&);
+
 }
