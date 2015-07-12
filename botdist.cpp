@@ -20,7 +20,6 @@ vector<int> makeBotDistribution(const int W,const int H,const int B){
 	int bots[B];
 	int i,j;
 	int newpos;
-	int dx,dy;
 	for(i=0;i<B;i++){
 		bd[i]=true;
 		bots[i]=i;
