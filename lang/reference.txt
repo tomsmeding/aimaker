@@ -31,11 +31,11 @@ Note: All function names are case insensitve.
 
 ----
 
-Function: move
+Function: move/walk
 Description: Moves the current bot forwards (1) or backwards (0).
 Ticks: 5
 
-Function: rotate/rot
+Function: rotate/rot/turn
 Description: Rotates the current bot clockwise (1) or counter-clockwise (-1).
 Ticks: 5
 
@@ -97,7 +97,7 @@ Description: Copies the page at the given `pageId` on the current bot to the
              was there originally.
 Ticks: floor(3 + log10(pagesize + 1))
 
-Function: suicide
+Function: suicide/fuckit
 Description: Kill yourself.
 Ticks: ∞
 
