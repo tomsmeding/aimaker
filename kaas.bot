@@ -17,9 +17,10 @@ turn:
 inject:
 	sto i, 0
 injectloop:
+	look res
 	trans 14, i
 	sto i, i+1
-	if i<16, @injectloop
+	if i<16 && (res == 2 || res == 8), @injectloop
 
 	goto @main
 
