@@ -23,6 +23,11 @@ void Board::nextTick(void) {
 		}
 	}
 
+	for (const Bot &bot : botqueue) {
+		bots.push_back(bot);
+	}
+	botqueue.clear();
+
 	tick++;
 }
 
@@ -90,4 +95,8 @@ bool Board::canMoveTo(int x, int y) const {
 
 bool Board::insideBounds(int x, int y) const {
 	return x >= 0 && x < size && y >= 0 && y < size;
+}
+
+void Board::addBot(Bot bot) {
+	this->botqueue.push_back(bot);
 }

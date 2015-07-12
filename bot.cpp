@@ -24,6 +24,22 @@ Bot::Bot(const Parser::Program *_program, Board *_board, pair<int, int> starting
 	id(genid()),
 	index(_index) {}
 
+Bot::Bot(Bot *parent, pair<int, int> startingPos, int _index) :
+	program(parent->program),
+	curInstr(0),
+	curPage(0),
+	isDead(false),
+	_workingFor(0),
+	board(parent->board),
+
+	pages(parent->pages),
+
+	x(startingPos.first), y(startingPos.second),
+	dir(parent->dir),
+	isAsleep(true),
+	id(genid()),
+	index(_index) {}
+
 void Bot::jumpTo(int page, int instr) {
 	if (page < 0 || page >= (int)pages.size() ||
 			instr < 0 || instr >= (int)pages[page].size()) {
@@ -308,10 +324,8 @@ pair<int, int> Bot::executeCurrentLine() {
 		const pair<int, int> targetLocation = calculateNextLocation(true);
 
 		if (board->canMoveTo(targetLocation.first, targetLocation.second)) {
-
-			Bot bot(program, board, targetLocation, board->bots.size());
-			bot.isAsleep = true;
-			board->bots.push_back(bot);
+			Bot bot(this, targetLocation, board->bots.size());
+			board->addBot(bot);
 		}
 
 		break;

@@ -36,6 +36,7 @@ public:
 	int index;
 
 	Bot(const Parser::Program*, Board*, pair<int, int>, int);
+	Bot(Bot*, pair<int, int>, int);
 	bool isWorking(void) const;
 	int workingFor(void) const;
 	pair<int, int> getPos(void) const;
