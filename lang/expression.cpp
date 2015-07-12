@@ -5,7 +5,7 @@
 #include <functional>
 #include <cstdint>
 #include <cstring>
-#if defined(EXPRESSION_DEBUG) || defined(EXPRESSION_DEBUG_MAIN)
+#if EXPRESSION_DEBUG>0 || defined(EXPRESSION_DEBUG_MAIN)
 #include <iostream>
 #endif
 
