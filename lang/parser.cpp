@@ -20,19 +20,20 @@ namespace Parser {
 	Instruction convertInstruction (string word) {
 		to_lower(word); // Function calls are case insensitive.
 
-		if (word == "move")                                       return INSTR_MOVE;
-		else if (word == "getloc" || word == "loc")               return INSTR_LOC;
-		else if (word == "goto")                                  return INSTR_GOTO;
-		else if (word == "ifgoto" || word == "if")                return INSTR_IFGOTO;
-		else if (word == "look")                                  return INSTR_LOOK;
-		else if (word == "nop")                                   return INSTR_NOP;
-		else if (word == "page")                                  return INSTR_PAGE;
-		else if (word == "rotate" || word == "rot")               return INSTR_ROT;
-		else if (word == "store" || word == "sto")                return INSTR_STO;
-		else if (word == "suicide")                               return INSTR_SUICIDE;
-		else if (word == "transfer" || word == "trans")           return INSTR_TRANS;
-		else if (word == "transferlocal" || word == "translocal") return INSTR_TRANSLOCAL;
-		else if (word == "build")                                 return INSTR_BUILD;
+		if (word == "move")                               return INSTR_MOVE;
+		else if (word == "getloc" || word == "loc")       return INSTR_LOC;
+		else if (word == "goto")                          return INSTR_GOTO;
+		else if (word == "ifgoto" || word == "if")        return INSTR_IFGOTO;
+		else if (word == "look")                          return INSTR_LOOK;
+		else if (word == "nop")                           return INSTR_NOP;
+		else if (word == "page")                          return INSTR_PAGE;
+		else if (word == "rotate" || word == "rot")       return INSTR_ROT;
+		else if (word == "store" || word == "sto")        return INSTR_STO;
+		else if (word == "suicide")                       return INSTR_SUICIDE;
+		else if (word == "transfer" || word == "trans")   return INSTR_TRANS;
+		else if (word == "build")                         return INSTR_BUILD;
+		else if (word == "wake" || word == "shake-awake") return INSTR_WAKE;
+		else if (word == "sleep")                         return INSTR_SLEEP;
 		else return INSTR_INVALID;
 	}
 

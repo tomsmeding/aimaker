@@ -106,3 +106,11 @@ Description: Builds a bot infront of the current bot, if there's a bot in front
 of the current bot, this function will do nothing but will take the same amount
 of time.
 Ticks: 7
+
+Function: wake/shake-awake
+Description: Wakes the bot in front of you, only works if the bot is friendly
+Ticks: 3
+
+Function: sleep
+Description: zzz
+Ticks: 1
