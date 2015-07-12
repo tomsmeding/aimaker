@@ -142,7 +142,7 @@ pair<int, int> Bot::executeCurrentLine() {
 	bool didJump = false;
 	int workTimeArg = 0;
 	const int lineNumber = currentStatement.lineNumber;
-	memoryMap["_rip"] = curInstr;
+	memoryMap["_rip"] = Parser::ptoi({ curPage, curInstr });
 
 	// cerr << "Working for: " << _workingFor << endl;
 
