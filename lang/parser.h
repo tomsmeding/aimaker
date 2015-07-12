@@ -37,7 +37,6 @@ namespace Parser {
 		int lineNumber;
 	};
 
-	typedef vector<Statement> Codepage;
 	struct Position {
 		int page, line;
 	};
@@ -48,6 +47,7 @@ namespace Parser {
 		void setFromPosition(const Position&);
 	};
 
+	typedef vector<Statement> Codepage;
 	typedef unordered_map<string, LabelInfo> LabelMap;
 	struct Program {
 		int id;
