@@ -28,6 +28,7 @@ _loop:
 	trans 15, a
 	sto a, a+1
 	if a!=16, @_loop
+	shake-awake
 	goto @buildloopend
 
 
