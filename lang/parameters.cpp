@@ -1,4 +1,5 @@
 #include <cmath>
+#include <map>
 #include "parser.h"
 #include "parameters.h"
 
@@ -25,6 +26,23 @@ int instructionWorkTime (const Parser::Instruction instr, const int arg) {
 	case Parser::INSTR_INVALID:
 	default:                    return 1; // eh?
 	}
+};
+
+map<Parser::Instruction, int> instr_tier_map = {
+	{ Parser::INSTR_GOTO,        0 },
+	{ Parser::INSTR_IFGOTO,      0 },
+	{ Parser::INSTR_LOC,         0 },
+	{ Parser::INSTR_LOOK,        0 },
+	{ Parser::INSTR_MOVE,        0 },
+	{ Parser::INSTR_NOP,         0 },
+	{ Parser::INSTR_PAGE,        0 },
+	{ Parser::INSTR_ROT,         0 },
+	{ Parser::INSTR_STO,         0 },
+	{ Parser::INSTR_TRANS,       1 },
+	{ Parser::INSTR_TRANSLOCAL,  1 },
+	{ Parser::INSTR_BUILD,       2 },
+	{ Parser::INSTR_WAKE,        1 },
+	{ Parser::INSTR_SLEEP,       0 }
 };
 
 Params params;
