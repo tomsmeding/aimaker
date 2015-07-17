@@ -1,0 +1,35 @@
+#name Agar
+#author Tom Smeding
+
+#page 0
+	# `goto` is a faster `page`
+	goto @page8
+
+#page 8
+page8:
+buildloop:
+	look ahead
+	if ahead==0, @buildbot
+	if (ahead&4)!=0, @wakemybot
+	if (ahead&2)!=0, @killotherbot
+buildloopend:
+	rot 1
+	goto @buildloop
+
+buildbot:
+	build
+wakemybot:
+	shake-awake
+	goto @buildloopend
+
+killotherbot:
+	sto a, 0
+_loop:
+	trans 15, a
+	sto a, a+1
+	if a!=16, @_loop
+	goto @buildloopend
+
+
+#page 15
+	suicide
