@@ -19,7 +19,7 @@ int instructionWorkTime (const Parser::Instruction instr, const int arg) {
 	case Parser::INSTR_TRANS:   return floor(5 + log10(arg + 1));
 	case Parser::INSTR_TRANSLOCAL: return floor(3 + log10(arg + 1));
 
-	case Parser::INSTR_BUILD:   return 7;
+	case Parser::INSTR_BUILD:   return 7+4*arg;
 	case Parser::INSTR_WAKE:    return 3;
 	case Parser::INSTR_SLEEP:   return 1;
 
@@ -38,11 +38,13 @@ map<Parser::Instruction, int> instr_tier_map = {
 	{ Parser::INSTR_PAGE,        0 },
 	{ Parser::INSTR_ROT,         0 },
 	{ Parser::INSTR_STO,         0 },
+	{ Parser::INSTR_SUICIDE,     0 },
 	{ Parser::INSTR_TRANS,       1 },
 	{ Parser::INSTR_TRANSLOCAL,  1 },
 	{ Parser::INSTR_BUILD,       2 },
 	{ Parser::INSTR_WAKE,        1 },
-	{ Parser::INSTR_SLEEP,       0 }
+	{ Parser::INSTR_SLEEP,       0 },
+	{ Parser::INSTR_INVALID,     0 }
 };
 
 Params params;

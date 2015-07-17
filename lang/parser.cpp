@@ -7,6 +7,26 @@
 
 extern Params params;
 
+map<Parser::Instruction, int> instr_arity_map = {
+	{Parser::INSTR_GOTO,1},
+	{Parser::INSTR_IFGOTO,2},
+	{Parser::INSTR_LOC,1},
+	{Parser::INSTR_LOOK,1},
+	{Parser::INSTR_MOVE,1},
+	{Parser::INSTR_NOP,0},
+	{Parser::INSTR_PAGE,1},
+	{Parser::INSTR_ROT,1},
+	{Parser::INSTR_STO,2},
+	{Parser::INSTR_SUICIDE,0},
+	{Parser::INSTR_TRANS,2},
+	{Parser::INSTR_TRANSLOCAL,2},
+	{Parser::INSTR_BUILD,1},
+	{Parser::INSTR_WAKE,0},
+	{Parser::INSTR_SLEEP,0},
+
+	{Parser::INSTR_INVALID,0}
+};
+
 namespace Parser {
 
 	Position itop(int pos) {
@@ -45,6 +65,24 @@ namespace Parser {
 		else return INSTR_INVALID;
 	}
 
+	string convertInstructionReverse (Instruction instr) {
+		if (instr == INSTR_MOVE) return "MOVE";
+		else if (instr == INSTR_LOC) return "LOC";
+		else if (instr == INSTR_GOTO) return "GOTO";
+		else if (instr == INSTR_IFGOTO) return "IFGOTO";
+		else if (instr == INSTR_LOOK) return "LOOK";
+		else if (instr == INSTR_NOP) return "NOP";
+		else if (instr == INSTR_PAGE) return "PAGE";
+		else if (instr == INSTR_ROT) return "ROT";
+		else if (instr == INSTR_STO) return "STO";
+		else if (instr == INSTR_SUICIDE) return "SUICIDE";
+		else if (instr == INSTR_TRANS) return "TRANS";
+		else if (instr == INSTR_BUILD) return "BUILD";
+		else if (instr == INSTR_WAKE) return "WAKE";
+		else if (instr == INSTR_SLEEP) return "SLEEP";
+		else return "INVALID?";
+	}
+
 	// Parses the given `functionName` and `arguments` to a Statement.
 	Statement parseStatement (string functionName, string arguments, const int lineIndex) {
 		int i;
@@ -67,7 +105,7 @@ namespace Parser {
 				else if (arguments[i] == ')') depth--;
 			}
 			if (i == (int)arguments.size()) {
-				argsRaw.push_back(trim(arguments.substr(cursor)));
+				if (i != 0) argsRaw.push_back(trim(arguments.substr(cursor)));
 				break;
 			} else {
 				argsRaw.push_back(trim(arguments.substr(cursor, i - cursor)));

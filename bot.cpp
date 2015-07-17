@@ -3,11 +3,12 @@
 #include "bot.h"
 #include "board.h"
 #include "lang/parameters.h"
-#include "lang/parameters.cpp"
 
 using namespace std;
 
 extern Params params;
+extern map<Parser::Instruction, int> instr_tier_map;
+extern map<Parser::Instruction, int> instr_arity_map;
 
 Bot::Bot(const Parser::Program *_program, Board *_board, pair<int, int> startingPos, int _index) :
 	program(_program),
@@ -46,11 +47,11 @@ Bot::Bot(Bot *parent, int _tier, pair<int, int> startingPos, int _index) :
 void Bot::jumpTo(int page, int instr) {
 	if (page < 0 || page >= (int)pages.size() ||
 			instr < 0 || instr >= (int)pages[page].size()) {
-		cerr<<"Bot with index "<<this->index<<" just jumped to 0.0"<<endl;
+		//cerr<<"Bot with index "<<this->index<<" just jumped to 0.0"<<endl;
 		curPage = 0;
 		curInstr = 0;
 	} else {
-		cerr<<"Bot with index "<<this->index<<" just jumped to "<<page<<'.'<<instr<<endl;
+		//cerr<<"Bot with index "<<this->index<<" just jumped to "<<page<<'.'<<instr<<endl;
 		curPage = page;
 		curInstr = instr;
 	}
@@ -110,7 +111,7 @@ pair<int, int> Bot::calculateNextLocation(bool forwards) const {
 		deltaY = deltaY * -1;
 	}
 
-	cerr<<"calculateNextLocation: dx="<<deltaX<<" dy="<<deltaY<<endl;
+	//cerr<<"calculateNextLocation: dx="<<deltaX<<" dy="<<deltaY<<endl;
 
 	return make_pair(x + deltaX, y + deltaY);
 }
@@ -152,6 +153,18 @@ pair<int, int> Bot::executeCurrentLine() {
 	// cerr << "Working for: " << _workingFor << endl;
 
 	if (canExecute) {
+
+		if((int)currentStatement.args.size() != instr_arity_map[currentStatement.instr]){
+			throw_error(lineNumber, string(
+				"Instruction " +
+				Parser::convertInstructionReverse(currentStatement.instr) +
+				" has " +
+				to_string(currentStatement.args.size()) +
+				" argument" + (currentStatement.args.size()==1?"":"s") + ", expected " +
+				to_string(instr_arity_map[currentStatement.instr])
+			).c_str());
+		}
+
 		switch (currentStatement.instr) {
 		case Parser::INSTR_MOVE: {
 			const Parser::Argument argument = currentStatement.args[0];
@@ -316,7 +329,7 @@ pair<int, int> Bot::executeCurrentLine() {
 				}
 			}
 			storeVariable(varNameArgument.strval, response);
-			cerr<<"Put "<<response<<" in "<<varNameArgument.strval<<" for bot "<<this->index<<endl;
+			//cerr<<"Put "<<response<<" in "<<varNameArgument.strval<<" for bot "<<this->index<<endl;
 
 			break;
 		}
