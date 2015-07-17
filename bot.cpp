@@ -138,6 +138,7 @@ pair<int, int> Bot::executeCurrentLine() {
 	cout << "page: " << curPage << " | instruction: " << curInstr << ", with type " << currentStatement.instr << endl;
 	cout << "pages size: " << pages.size() << endl;
 	cout << "pages[" << curPage << "] size: " << pages.at(curPage).size() << endl;*/
+	if(pages.at(curPage).size()==0)return {curPage,curInstr}; //and caller will put bot to sleep
 	const Parser::Statement currentStatement = pages.at(curPage).at(curInstr);
 	bool didJump = false;
 	int workTimeArg = 0;
@@ -387,6 +388,9 @@ bool Bot::nextTick(void) {
 		}
 	}
 
-	cout << "nextTicked on bot with index " << index << " at " << curPage << "." << curInstr << ", dead: " << (int) isDead << "; next instr to exec: " << pages[curPage][curInstr].instr << endl;
+	cout << "nextTicked on bot with index " << index << " at " << curPage << "." << curInstr << ", dead: " << (int) isDead << "; asleep: " << (int) isAsleep << "; next instr to exec: ";
+	if(curInstr >= (int)pages[curPage].size())cout << "--end of page--";
+	else cout << pages[curPage][curInstr].instr;
+	cout << endl;
 	return isDead;
 }
