@@ -17,7 +17,7 @@ buildloopend:
 	goto @buildloop
 
 buildbot:
-	build
+	build 2
 wakemybot:
 	shake-awake
 	goto @buildloopend

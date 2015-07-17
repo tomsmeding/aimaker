@@ -351,12 +351,18 @@ pair<int, int> Bot::executeCurrentLine() {
 		}
 
 		case Parser::INSTR_BUILD: {
+			const Parser::Argument target = currentStatement.args[0];
+
+			int newtier = Parser::evaluateExpression(target, lineNumber, memoryMap, program->labels);
+
 			const pair<int, int> targetLocation = calculateNextLocation(true);
 
 			if (board->canMoveTo(targetLocation.first, targetLocation.second)) {
-				Bot bot(this, targetLocation, board->bots.size());
+				Bot bot(this, newtier, targetLocation, board->bots.size());
 				board->addBot(bot);
 			}
+
+			workTimeArg = newtier;
 
 			break;
 		}
