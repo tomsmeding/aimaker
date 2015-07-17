@@ -70,6 +70,8 @@ namespace Parser {
 		EN_VARIABLE, // [a-zA-Z_][a-zA-Z0-9_]*
 		EN_LABEL, // @[a-zA-Z0-9_]+
 
+		EN_NIL, // nil
+
 		EN_SUBTRACT_OR_NEGATE_CONFLICT,
 		EN_INVALID
 	};
@@ -92,6 +94,8 @@ namespace Parser {
 		ExprNode(ExprNodeType,ExprNode*,ExprNode*,const int);
 		~ExprNode(void);
 		void setNullChildren(void);
+
+		bool equals(const ExprNode*) const;
 	};
 
 	bool leftAssoc(ExprNodeType);
@@ -104,6 +108,22 @@ namespace Parser {
 	vector<ExprToken> tokeniseExpression(const string&);
 	void parseExpression(/*out*/ExprNode*, const vector<ExprToken>&);
 
-	// Throws if a variable in the expression is not found in the map.
-	int evaluateExpression(const ExprNode&, const int lineNumber, const unordered_map<string, Variable>&, const LabelMap&);
+	struct EvaluationResult {
+		enum ResultType {
+			RES_NIL,
+			RES_NUMBER
+		};
+
+		ResultType type;
+		union {
+			int intVal;
+		};
+	};
+
+	class Comparable {
+		bool equals(Comparable c);
+	};
+
+	int runExprNodeFunction(const ExprNodeType, const ExprNode*, const ExprNode*, const int, const unordered_map<string, Variable>&, const LabelMap&);
+	EvaluationResult evaluateExpression(const ExprNode&, const int lineNumber, const unordered_map<string, Variable>&, const LabelMap&);
 };

@@ -109,6 +109,25 @@ namespace Parser {
 		left = right = NULL;
 	}
 
+	bool ExprNode::equals(const ExprNode *node) const {
+		bool typeEquals = this->type == node->type;
+
+		bool valueEquals = false;
+		if (this->hasval == 0) {
+			valueEquals = true;
+		} else if (this->hasval == 1) {
+			valueEquals = this->strval == node->strval;
+		} else if (this->hasval == 2) {
+			valueEquals = this->intval == node->intval;
+		} else {
+			char *buf;
+			asprintf(&buf, "Values can't be compared.");
+			throw buf;
+		}
+
+		return typeEquals && valueEquals;
+	}
+
 
 	bool leftAssoc(ExprNodeType type) {
 		switch (type) {
@@ -503,8 +522,11 @@ namespace Parser {
 		[](int a, int b) { return a &  b; }, //EN_BITAND
 		[](int a, int b) { return a |  b; }, //EN_BITOR
 		[](int a, int b) { return a ^  b; }, //EN_BITXOR
+
+		// not used
 		[](int a, int b) { return a == b; }, //EN_EQUALS
 		[](int a, int b) { return a != b; }, //EN_NOTEQUAL
+
 		[](int a, int b) { return a >  b; }, //EN_GREATER
 		[](int a, int b) { return a >= b; }, //EN_GREATEREQUAL
 		[](int a, int b) { return a <  b; }, //EN_LESS
@@ -517,12 +539,54 @@ namespace Parser {
 		[](int _, int b) { return -b;     }, //EN_NEGATE
 	};
 
-	int evaluateExpression(
+
+	int runExprNodeFunction(
+		const ExprNodeType type,
+		const ExprNode *a,
+		const ExprNode *b,
+		const int lineNumber,
+		const unordered_map<string, Variable> &vars,
+		const LabelMap &labels
+	) {
+		// use special function for equals.
+		if (
+			type == ExprNodeType::EN_EQUALS ||
+			type == ExprNodeType::EN_NOTEQUAL
+		) {
+			return a->equals(b);
+		}
+
+		EvaluationResult *l = NULL, *r = NULL;
+		if (a != NULL) {
+			EvaluationResult left = evaluateExpression(*a, lineNumber, vars, labels);
+			l = &left;
+		}
+		if (b != NULL) {
+			EvaluationResult right = evaluateExpression(*b, lineNumber, vars, labels);
+			r = &right;
+		}
+
+		if (l->type != EvaluationResult::RES_NUMBER || r->type != EvaluationResult::RES_NUMBER) {
+			char *buf;
+			asprintf(&buf, "Couldn't evaluate at least one side to an int.");
+			throw_error(lineNumber, buf);
+			return 0;
+		}
+
+		return exprnode_functions[type](
+			l != NULL ? l->intVal : 0,
+			r != NULL ? r->intVal : 0
+		);
+	}
+
+	EvaluationResult evaluateExpression(
 		const ExprNode &root,
 		const int lineNumber,
 		const unordered_map<string, Variable> &vars,
 		const LabelMap &labels
 	) {
+		EvaluationResult res;
+
 		if (root.hasval == 1 && root.type == EN_VARIABLE) {
 			unordered_map<string, Variable>::const_iterator varit = vars.find(root.strval);
 			if (varit == vars.end()) {
@@ -538,7 +602,9 @@ namespace Parser {
 			} else if (varit->second.type != Variable::VAR_INT) {
 				throw_error(lineNumber, "Expected an int variable.");
 			} else {
-				return varit->second.intVal;
+				res.type = EvaluationResult::RES_NUMBER;
+				res.intVal = varit->second.intVal;
+				return res;
 			}
 		} else if (root.hasval == 1 && root.type == EN_LABEL) {
 			unordered_map<string, LabelInfo>::const_iterator labit = labels.find(root.strval);
@@ -547,10 +613,16 @@ namespace Parser {
 				asprintf(&buf, "Label '@%s' not found", root.strval.c_str());
 				throw_error(lineNumber, buf);
 			}
-			return labit->second.intval;
+			res.type = EvaluationResult::RES_NUMBER;
+			res.intVal = labit->second.intval;
+			return res;
 		}
 
-		if (root.hasval == 2) return root.intval;
+		if (root.hasval == 2) {
+			res.type = EvaluationResult::RES_NUMBER;
+			res.intVal = root.intval;
+			return res;
+		}
 		if (root.type > sizeof(exprnode_functions) / sizeof(exprnode_functions[0])) {
 			char *buf;
 			asprintf(&buf, "Non-normal operator %s in expression tree (internal error)", operatorToString(root.type));
@@ -571,10 +643,9 @@ namespace Parser {
 			}
 		}
 
-		return exprnode_functions[root.type](
-			root.left != NULL ? evaluateExpression(*root.left, lineNumber, vars, labels) : 0,
-			root.right != NULL ? evaluateExpression(*root.right, lineNumber, vars, labels) : 0
-		);
+		res.type = EvaluationResult::RES_NUMBER;
+		res.intVal = runExprNodeFunction(root.type, root.left, root.right, lineNumber, vars, labels);
+		return res;
 	}
 
 };
