@@ -74,7 +74,7 @@ Ticks: 2
 
 Function: getdir/dir
 Arguments:
-	- dir variable naem
+	- dir variable name
 Description: Gets the current direction and puts the value in the given variable
              name
 Ticks: 2
