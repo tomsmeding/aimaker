@@ -10,7 +10,8 @@ Example: `goto _prevloc`
 
 Variable: _rip
 Value: string
-Description: The current location in the page
+Description: The current location in the code pages.
+             (current page and current instruction)
 Example: `goto _rip`
 
 ----
