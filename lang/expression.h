@@ -115,15 +115,11 @@ namespace Parser {
 		};
 
 		ResultType type;
-		union {
-			int intVal;
-		};
-	};
-
-	class Comparable {
-		bool equals(Comparable c);
+		int intVal;
 	};
 
 	int runExprNodeFunction(const ExprNodeType, const ExprNode*, const ExprNode*, const int, const unordered_map<string, Variable>&, const LabelMap&);
+
+	// Throws if a variable in the expression is not found in the map.
 	EvaluationResult evaluateExpression(const ExprNode&, const int lineNumber, const unordered_map<string, Variable>&, const LabelMap&);
 };

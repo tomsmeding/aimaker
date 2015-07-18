@@ -110,22 +110,20 @@ namespace Parser {
 	}
 
 	bool ExprNode::equals(const ExprNode *node) const {
-		bool typeEquals = this->type == node->type;
+		assert (node != NULL);
+		if (this->type != node->type) return false;
 
-		bool valueEquals = false;
-		if (this->hasval == 0) {
-			valueEquals = true;
+		if (this->hasval != node->hasval) {
+			return false;
+		} else if (this->hasval == 0) {
+			return true;
 		} else if (this->hasval == 1) {
-			valueEquals = this->strval == node->strval;
+			return this->strval == node->strval;
 		} else if (this->hasval == 2) {
-			valueEquals = this->intval == node->intval;
+			return this->intval == node->intval;
 		} else {
-			char *buf;
-			asprintf(&buf, "Values can't be compared.");
-			throw buf;
+			throw "Values can't be compared.";
 		}
-
-		return typeEquals && valueEquals;
 	}
 
 
@@ -556,26 +554,25 @@ namespace Parser {
 			return a->equals(b);
 		}
 
-		EvaluationResult *l = NULL, *r = NULL;
+		EvaluationResult left, right;
 		if (a != NULL) {
-			EvaluationResult left = evaluateExpression(*a, lineNumber, vars, labels);
-			l = &left;
+			left = evaluateExpression(*a, lineNumber, vars, labels);
 		}
 		if (b != NULL) {
-			EvaluationResult right = evaluateExpression(*b, lineNumber, vars, labels);
-			r = &right;
+			right = evaluateExpression(*b, lineNumber, vars, labels);
 		}
 
-		if (l->type != EvaluationResult::RES_NUMBER || r->type != EvaluationResult::RES_NUMBER) {
+		if ((a != NULL && left.type != EvaluationResult::RES_NUMBER) ||
+			(b != NULL && right.type != EvaluationResult::RES_NUMBER)) {
 			char *buf;
-			asprintf(&buf, "Couldn't evaluate at least one side to an int.");
+			asprintf(&buf, "Couldn't evaluate at least one side of operator %s to an int.", operatorToString(type));
 			throw_error(lineNumber, buf);
 			return 0;
 		}
 
 		return exprnode_functions[type](
-			l != NULL ? l->intVal : 0,
-			r != NULL ? r->intVal : 0
+			a != NULL ? left.intVal : 0,
+			b != NULL ? right.intVal : 0
 		);
 	}
 
