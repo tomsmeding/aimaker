@@ -4,49 +4,41 @@
 #page 0
 	rot 1
 	sto x, 4
-	sto retloc, @ret1
+	sto retloc, _rip+2
 	page 2
-ret1:
 	sto x, 6
-	sto retloc, @ret2
+	sto retloc, _rip+2
 	page 1
-ret2:
 	rot 1
 	rot 1
 	sto x, 3
-	sto retloc, @ret3
+	sto retloc, _rip+2
 	page 2
-ret3:
 	rot -1
 	move 1
 	rot -1
 	move 1
 	rot -1
 	sto x, 3
-	sto retloc, @ret4
+	sto retloc, _rip+2
 	page 1
-ret4:
 	sto x, 3
-	sto retloc, @ret5
+	sto retloc, _rip+2
 	page 3
-ret5:
 	sto x, 3
-	sto retloc, @ret6
+	sto retloc, _rip+2
 	page 1
-ret6:
 	rot -1
 	move 1
 	move 1
 	rot 1
 	sto x, 4
-	sto retloc, @ret7
+	sto retloc, _rip+2
 	page 2
-ret7:
 	rot 1
 	sto x, 6
-	sto retloc, @ret8
+	sto retloc, _rip+2
 	page 1
-ret8:
 	sleep
 
 
