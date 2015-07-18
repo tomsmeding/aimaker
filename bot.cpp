@@ -267,10 +267,12 @@ pair<int, int> Bot::executeCurrentLine() {
 		Parser::Argument xTarget = currentStatement.args[0];
 		Parser::Argument yTarget = currentStatement.args[1];
 
+		pair<int, int> location = getPos();
+
 		if (xTarget.type == Parser::EN_VARIABLE &&
 				yTarget.type == Parser::EN_VARIABLE) {
-			storeVariable(xTarget.strval, this->x);
-			storeVariable(yTarget.strval, this->y);
+			storeVariable(xTarget.strval, location.first);
+			storeVariable(yTarget.strval, location.second);
 		} else {
 			// Wrong argument type.
 		}
