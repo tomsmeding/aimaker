@@ -280,6 +280,20 @@ pair<int, int> Bot::executeCurrentLine() {
 		break;
 	}
 
+	case Parser::INSTR_DIR: {
+		Parser::Argument target = currentStatement.args[0];
+
+		int direction = getDir();
+
+		if (target.type == Parser::EN_VARIABLE) {
+			storeVariable(target.strval, direction);
+		} else {
+			// Wrong argment type.
+		}
+
+		break;
+	}
+
 	case Parser::INSTR_SUICIDE: {
 		cout << "boom said bot with index " << index << endl;
 		isDead = true;

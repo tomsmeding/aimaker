@@ -30,6 +30,7 @@ namespace Parser {
 
 		if (word == "move" || word == "walk")                          return INSTR_MOVE;
 		else if (word == "getloc" || word == "loc")                    return INSTR_LOC;
+		else if (word == "getdir" || word == "dir")                    return INSTR_DIR;
 		else if (word == "goto")                                       return INSTR_GOTO;
 		else if (word == "ifgoto" || word == "if")                     return INSTR_IFGOTO;
 		else if (word == "look")                                       return INSTR_LOOK;
