@@ -214,7 +214,7 @@ pair<int, int> Bot::executeCurrentLine() {
 		Parser::Argument varNameArgument = currentStatement.args[0];
 		Parser::Argument valueArgument = currentStatement.args[1];
 
-		if (varNameArgument.type != Parser::EN_VARIABLE || valueArgument.type == Parser::EN_LABEL) {
+		if (varNameArgument.type != Parser::EN_VARIABLE) {
 			// Wrong argument type(s).
 			break;
 		}
