@@ -1,0 +1,92 @@
+#name Letterbot A
+#author Tom Smeding
+
+#page 0
+	rot 1
+	sto x, 4
+	sto retloc, @ret1
+	page 2
+ret1:
+	sto x, 6
+	sto retloc, @ret2
+	page 1
+ret2:
+	rot 1
+	rot 1
+	sto x, 3
+	sto retloc, @ret3
+	page 2
+ret3:
+	rot -1
+	move 1
+	rot -1
+	move 1
+	rot -1
+	sto x, 3
+	sto retloc, @ret4
+	page 1
+ret4:
+	sto x, 3
+	sto retloc, @ret5
+	page 3
+ret5:
+	sto x, 3
+	sto retloc, @ret6
+	page 1
+ret6:
+	rot -1
+	move 1
+	move 1
+	rot 1
+	sto x, 4
+	sto retloc, @ret7
+	page 2
+ret7:
+	rot 1
+	sto x, 6
+	sto retloc, @ret8
+	page 1
+ret8:
+	sleep
+
+
+#build x bots in front of bot, to the right
+#page 1
+	sto i, x
+p1_buildloop:
+	build 0
+	sto i, i-1
+	if i<=0, @p1_exitbuildloop
+	rot 1
+	move 1
+	rot -1
+	goto @p1_buildloop
+p1_exitbuildloop:
+	sto i, x-1
+	rot -1
+p1_moveloop:
+	move 1
+	sto i, i-1
+	if i>0, @p1_moveloop
+	rot 1
+	goto retloc
+
+
+#move by x forward
+#page 2
+	sto i, x
+p2_moveloop:
+	move 1
+	sto i, i-1
+	if i>0, @p2_moveloop
+	goto retloc
+
+
+#move by x backward
+#page 3
+	sto i, x
+p3_moveloop:
+	move 0
+	sto i, i-1
+	if i>0, @p3_moveloop
+	goto retloc
