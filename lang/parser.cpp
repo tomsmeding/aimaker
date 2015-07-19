@@ -125,7 +125,7 @@ namespace Parser {
 				program.name = words[1];
 			} else if (words[0] == "#author") { // author
 				program.author = words[1];
-			} else if (words[0][0] == '#') { // meta attribute
+			} else if (words[0][0] == '#') { // unknown meta attribute
 				char *message;
 				asprintf(&message, "Unrecognised meta-attribute '%s'.", words[0].c_str());
 				throw_error(lineIndex, message);
