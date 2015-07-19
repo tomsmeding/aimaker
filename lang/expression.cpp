@@ -246,7 +246,7 @@ namespace Parser {
 		}
 	}
 
-	vector<ExprToken> tokeniseExpression(const string &s) {
+	vector<ExprToken> tokeniseExpression(const string &s, const int lineIndex) {
 		const char *const whitespace =
 			"\x01\x02\x03\x04\x05\x06\a\b\t\x0a\v\f\x0d\x0e\x0f\n\x11\x12\r\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f ";
 		const char *const wordchars =
@@ -297,7 +297,7 @@ namespace Parser {
 			if (token.type == ETT_SYMBOL && interpretOperator(token.val) == EN_INVALID) {
 				char *buf;
 				asprintf(&buf, "Invalid operator '%s'", token.val.c_str());
-				throw buf;
+				throw_error(lineIndex, buf);
 			}
 
 			tkns.push_back(token);
@@ -332,7 +332,7 @@ namespace Parser {
 		}
 	}
 #endif
-	void parseExpression(/*out*/ExprNode *root, const vector<ExprToken> &tkns) {
+	void parseExpression(/*out*/ExprNode *root, const vector<ExprToken> &tkns, const int lineIndex) {
 		// This implements Dijkstra's Shunting Yard algorithm, skipping functions.
 		deque<ExprNode> nodedeq;
 		vector<ExprNode> opstack;
@@ -358,7 +358,7 @@ namespace Parser {
 				if (i > 0 || weGotALabel) {
 					char *buf;
 					asprintf(&buf, "Invalid label '@%s' in expression", token.val.c_str());
-					throw buf;
+					throw_error(lineIndex, buf);
 				}
 				weGotALabel = true;
 				nodedeq.emplace_back(EN_LABEL, token.val);
@@ -370,7 +370,7 @@ namespace Parser {
 				if (type == EN_INVALID) {
 					char *buf;
 					asprintf(&buf, "Invalid operator '%s'", token.val.c_str());
-					throw buf;
+					throw_error(lineIndex, buf);
 				}
 
 				if (type == EN_SUBTRACT_OR_NEGATE_CONFLICT) {
@@ -395,7 +395,7 @@ namespace Parser {
 					if (!foundLeftParen) {
 						char *buf;
 						asprintf(&buf, "Closing parenthesis without matching open '('");
-						throw buf;
+						throw_error(lineIndex, buf);
 					}
 					lastWasOperator = false;
 				} else {
@@ -447,13 +447,13 @@ namespace Parser {
 			if (ar == 0) {
 				char *buf;
 				asprintf(&buf, "Invalid operator in stack: %s", operatorToString(node.type));
-				throw buf;
+				throw_error(lineIndex, buf);
 			}
 			if (ar == 1) {
 				if (i < 1) {
 					char *buf;
 					asprintf(&buf, "Not enough arguments for unary %s on stack", operatorToString(node.type));
-					throw buf;
+					throw_error(lineIndex, buf);
 				}
 				if (leftAssoc(node.type)) nodedeq[i].left = new ExprNode(move(nodedeq[i - 1]));
 				else nodedeq[i].right = new ExprNode(move(nodedeq[i - 1]));
@@ -464,7 +464,7 @@ namespace Parser {
 				if (i < 2) {
 					char *buf;
 					asprintf(&buf, "Not enough arguments for %s on stack", operatorToString(node.type));
-					throw buf;
+					throw_error(lineIndex, buf);
 				}
 				nodedeq[i].left = new ExprNode(move(nodedeq[i - 2]));
 				//nodedeq[i - 2].setNullChildren();
@@ -481,7 +481,7 @@ namespace Parser {
 		if (nodedeq.size() != 1) {
 			char *buf;
 			asprintf(&buf, "Excess items on expression stack!");
-			throw buf;
+			throw_error(lineIndex, buf);
 		}
 #if EXPRESSION_DEBUG==2
 		cerr<<"\x1B[33mReturning now...\x1B[0m"<<endl;
