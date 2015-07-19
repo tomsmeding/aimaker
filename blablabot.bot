@@ -4,8 +4,8 @@
 #page 0
 loop:
 	rot 1
-	#rot 1
-	#rot -1
-	#rot -1
-	#rot 1/0
+	//rot 1
+	//rot -1
+	//rot -1
+	//rot 1/0
 	goto @loop

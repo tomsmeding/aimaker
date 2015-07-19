@@ -100,9 +100,13 @@ namespace Parser {
 			// printf("%d: %s\n", lineIndex, lines[lineIndex].c_str());
 
 			string line = lines[lineIndex];
-			string trimmed = trim(line);
-			if (trimmed.size() == 0) continue;
-			vector<string> words = split(trimmed, ' ', 1);
+			size_t pos = line.find("//");
+			if (pos != string::npos) {
+				line.erase(pos);
+			}
+			line = trim(line);
+			if (line.size() == 0) continue;
+			vector<string> words = split(line, ' ', 1);
 
 			if (words[0] == "#page") { // page
 				int id = stoi(words[1]);
@@ -122,9 +126,11 @@ namespace Parser {
 			} else if (words[0] == "#author") { // author
 				program.author = words[1];
 			} else if (words[0][0] == '#') { // meta attribute
-				continue;
-			} else if (trimmed[trimmed.size() - 1] == ':') { // label
-				string labelName = trimmed.substr(0, trimmed.size() - 1);
+				char *message;
+				asprintf(&message, "Unrecognised meta-attribute '%s'.", words[0].c_str());
+				throw_error(lineIndex, message);
+			} else if (line[line.size() - 1] == ':') { // label
+				string labelName = line.substr(0, line.size() - 1);
 
 				int id = genid();
 				Position position = {curPage, curInstr};

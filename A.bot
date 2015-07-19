@@ -42,7 +42,7 @@
 	sleep
 
 
-#build x bots in front of bot, to the right
+//build x bots in front of bot, to the right
 #page 1
 	sto i, x
 p1_buildloop:
@@ -64,7 +64,7 @@ p1_moveloop:
 	goto retloc
 
 
-#move by x forward
+//move by x forward
 #page 2
 	sto i, x
 p2_moveloop:
@@ -74,7 +74,7 @@ p2_moveloop:
 	goto retloc
 
 
-#move by x backward
+//move by x backward
 #page 3
 	sto i, x
 p3_moveloop:
