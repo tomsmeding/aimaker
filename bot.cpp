@@ -69,14 +69,14 @@ int Bot::getDir(void) const {
 	return dir;
 }
 
-void Bot::storeVariable(const string &varName, const int value, const int lineIndex) {
+void Bot::storeVariable(const string &varName, const Parser::Variable &var, const int lineIndex) {
 	if (!reachedMemoryLimit()) {
 		if (varName.find('_') == 0) {
 			// Unmutable or disposal variable.
 			return;
 		}
 
-		memoryMap[varName] = value;
+		memoryMap[varName] = var;
 	} else {
 		char *message;
 		asprintf(&message, "Bot memory reached ('%d')", params.maxBotMemory);
@@ -218,8 +218,8 @@ pair<int, int> Bot::executeCurrentLine() {
 			break;
 		}
 
-		const int value = Parser::evaluateExpression(valueArgument, lineNumber, memoryMap, program->labels).getInt(lineNumber);
-		storeVariable(varNameArgument.strval, value, curInstr);
+		const Parser::Variable var = Parser::evaluateExpression(valueArgument, lineNumber, memoryMap, program->labels).toVar();
+		storeVariable(varNameArgument.strval, var, curInstr);
 		break;
 	}
 

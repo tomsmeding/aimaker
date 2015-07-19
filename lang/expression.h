@@ -15,15 +15,21 @@ namespace Parser {
 
 	struct Variable {
 		enum VariableType {
-			VAR_ARR, VAR_INT
+			VAR_ARR,
+			VAR_INT,
+			VAR_NIL,
+			VAR_STRING
 		};
 
 		VariableType type;
 		vector<Variable> arrVal;
+		string strVal;
 		int32_t intVal;
 
 		Variable(void);
 		Variable(int32_t);
+		Variable(string);
+		Variable(VariableType type);
 
 		int getSize(void) const;
 		string toString(void) const;
@@ -118,6 +124,7 @@ namespace Parser {
 		int intVal;
 
 		int getInt(int) const;
+		Variable toVar(void) const;
 	};
 
 	int runExprNodeFunction(const ExprNodeType, const ExprNode*, const ExprNode*, const int, const unordered_map<string, Variable>&, const LabelMap&);

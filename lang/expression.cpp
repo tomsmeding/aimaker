@@ -19,6 +19,13 @@ namespace Parser {
 		type = VAR_INT;
 		intVal = i;
 	}
+	Variable::Variable(string s) {
+		type = VAR_STRING;
+		strVal = s;
+	}
+	Variable::Variable(VariableType type) {
+		this->type = type;
+	}
 
 	int Variable::getSize(void) const {
 		switch (type) {
@@ -31,6 +38,8 @@ namespace Parser {
 		}
 
 		case VAR_INT: return 4;
+		case VAR_STRING: return strVal.size();
+		case VAR_NIL: return 0;
 		}
 	}
 
@@ -45,6 +54,8 @@ namespace Parser {
 		}
 
 		case VAR_INT: return to_string(intVal);
+		case VAR_STRING: return strVal;
+		case VAR_NIL: return "[nil]";
 		}
 	}
 
@@ -544,6 +555,24 @@ namespace Parser {
 		}
 
 		return intVal;
+	}
+
+	Variable EvaluationResult::toVar(void) const {
+		Variable res;
+
+		switch(this->type) {
+		case RES_NIL: {
+			res.type = Variable::VAR_NIL;
+			break;
+		}
+		case RES_NUMBER: {
+			res.type = Variable::VAR_INT;
+			res.intVal = intVal;
+			break;
+		}
+		}
+
+		return res;
 	}
 
 	int runExprNodeFunction(
