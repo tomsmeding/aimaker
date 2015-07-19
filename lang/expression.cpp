@@ -5,6 +5,7 @@
 #include <functional>
 #include <cstdint>
 #include <cstring>
+#include <cassert>
 #if EXPRESSION_DEBUG>0 || defined(EXPRESSION_DEBUG_MAIN)
 #include <iostream>
 #endif
@@ -537,6 +538,13 @@ namespace Parser {
 		[](int _, int b) { return -b;     }, //EN_NEGATE
 	};
 
+	int EvaluationResult::getInt(int lineNumber) const {
+		if (type != ResultType::RES_NUMBER) {
+			throw_error(lineNumber, "Couldn't evaluate expression to a number.");
+		}
+
+		return intVal;
+	}
 
 	int runExprNodeFunction(
 		const ExprNodeType type,

@@ -116,6 +116,8 @@ namespace Parser {
 
 		ResultType type;
 		int intVal;
+
+		int getInt(int) const;
 	};
 
 	int runExprNodeFunction(const ExprNodeType, const ExprNode*, const ExprNode*, const int, const unordered_map<string, Variable>&, const LabelMap&);

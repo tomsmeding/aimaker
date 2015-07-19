@@ -153,7 +153,7 @@ pair<int, int> Bot::executeCurrentLine() {
 			// Wrong argument type.
 			break;
 		}
-		const bool forwards = (bool) Parser::evaluateExpression(argument, lineNumber, memoryMap, program->labels);
+		const bool forwards = (bool) Parser::evaluateExpression(argument, lineNumber, memoryMap, program->labels).getInt(lineNumber);
 
 		const pair<int, int> newLocation = calculateNextLocation(forwards);
 		const int x = newLocation.first;
@@ -174,14 +174,14 @@ pair<int, int> Bot::executeCurrentLine() {
 			// Wrong argument type.
 			break;
 		}
-		dir += mod(Parser::evaluateExpression(argument, lineNumber, memoryMap, program->labels), 4);
+		dir += mod(Parser::evaluateExpression(argument, lineNumber, memoryMap, program->labels).getInt(lineNumber), 4);
 		break;
 	}
 
 	case Parser::INSTR_GOTO: {
 		const Parser::Argument target = currentStatement.args[0];
 
-		int intpos = Parser::evaluateExpression(target, lineNumber, memoryMap, program->labels);
+		int intpos = Parser::evaluateExpression(target, lineNumber, memoryMap, program->labels).getInt(lineNumber);
 		Parser::Position pos = Parser::itop(intpos);
 
 		memoryMap["_prevloc"] = Parser::ptoi({ curPage, curInstr + 1 });
@@ -198,7 +198,7 @@ pair<int, int> Bot::executeCurrentLine() {
 			// Wrong argument type(s).
 			break;
 		}
-		if (!Parser::evaluateExpression(condition, lineNumber, memoryMap, program->labels)) break; // that's the `if`
+		if (!Parser::evaluateExpression(condition, lineNumber, memoryMap, program->labels).getInt(lineNumber)) break; // that's the `if`
 		unordered_map<string, Parser::LabelInfo>::const_iterator labelit = program->labels.find(target.strval);
 		if (labelit == program->labels.end()) {
 			// Label not found.
@@ -218,7 +218,7 @@ pair<int, int> Bot::executeCurrentLine() {
 			break;
 		}
 
-		const int value = Parser::evaluateExpression(valueArgument, lineNumber, memoryMap, program->labels);
+		const int value = Parser::evaluateExpression(valueArgument, lineNumber, memoryMap, program->labels).getInt(lineNumber);
 		storeVariable(varNameArgument.strval, value, curInstr);
 		break;
 	}
@@ -231,7 +231,7 @@ pair<int, int> Bot::executeCurrentLine() {
 			// Wrong argument type(s).
 			break;
 		}
-		vector<Parser::Statement> page = pages[Parser::evaluateExpression(pageIdArgument, lineNumber, memoryMap, program->labels)];
+		vector<Parser::Statement> page = pages[Parser::evaluateExpression(pageIdArgument, lineNumber, memoryMap, program->labels).getInt(lineNumber)];
 
 		const pair<int, int> targetLocation = calculateNextLocation(true);
 		Bot *targetBot = board->at(targetLocation.first, targetLocation.second);
@@ -239,7 +239,7 @@ pair<int, int> Bot::executeCurrentLine() {
 		if (targetBot != NULL) {
 			cerr << "copying to bot with id " << targetBot->index << endl;
 
-			targetBot->copyPage(Parser::evaluateExpression(targetIdArgument, lineNumber, memoryMap, program->labels), page);
+			targetBot->copyPage(Parser::evaluateExpression(targetIdArgument, lineNumber, memoryMap, program->labels).getInt(lineNumber), page);
 
 			cout << "page copied" << endl;
 			cout << "copied page from one bot to the other, the instruction type of the first instruction of the copied page in the bot is " << (int) targetBot->pages[targetIdArgument.intval][0].instr << endl;
@@ -257,7 +257,7 @@ pair<int, int> Bot::executeCurrentLine() {
 			// Wrong argument type.
 			break;
 		}
-		jumpTo(Parser::evaluateExpression(target, lineNumber, memoryMap, program->labels), 0);
+		jumpTo(Parser::evaluateExpression(target, lineNumber, memoryMap, program->labels).getInt(lineNumber), 0);
 		didJump = true;
 		break;
 	}
@@ -324,8 +324,8 @@ pair<int, int> Bot::executeCurrentLine() {
 			break;
 		}
 
-		vector<Parser::Statement> page = pages[Parser::evaluateExpression(pageIdArgument, lineNumber, memoryMap, program->labels)];
-		copyPage(Parser::evaluateExpression(targetIdArgument, lineNumber, memoryMap, program->labels), page);
+		vector<Parser::Statement> page = pages[Parser::evaluateExpression(pageIdArgument, lineNumber, memoryMap, program->labels).getInt(lineNumber)];
+		copyPage(Parser::evaluateExpression(targetIdArgument, lineNumber, memoryMap, program->labels).getInt(lineNumber), page);
 		workTimeArg = page.size();
 
 		break;
