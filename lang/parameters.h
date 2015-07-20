@@ -8,5 +8,5 @@ struct Params {
 	int boardSize = 5;
 	int maxBotMemory = 50;
 	int maxPages = 16;
-	bool parseOnly;
+	bool parseOnly = false;
 };
