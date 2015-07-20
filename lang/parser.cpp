@@ -10,7 +10,8 @@ extern Params params;
 map<Parser::Instruction, int> instr_arity_map = {
 	{Parser::INSTR_GOTO,1},
 	{Parser::INSTR_IFGOTO,2},
-	{Parser::INSTR_LOC,1},
+	{Parser::INSTR_LOC,2},
+	{Parser::INSTR_DIR,1},
 	{Parser::INSTR_LOOK,1},
 	{Parser::INSTR_MOVE,1},
 	{Parser::INSTR_NOP,0},

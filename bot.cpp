@@ -296,6 +296,18 @@ pair<int, int> Bot::executeCurrentLine() {
 			break;
 		}
 
+		case Parser::INSTR_DIR: {
+			Parser::Argument dTarget = currentStatement.args[0];
+
+			if (dTarget.type == Parser::EN_VARIABLE) {
+				storeVariable(dTarget.strval, this->dir);
+			} else {
+				// Wrong argument type.
+			}
+
+			break;
+		}
+
 		case Parser::INSTR_SUICIDE: {
 			cout << "boom said bot with index " << index << endl;
 			isDead = true;

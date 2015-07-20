@@ -32,6 +32,7 @@ map<Parser::Instruction, int> instr_tier_map = {
 	{ Parser::INSTR_GOTO,        0 },
 	{ Parser::INSTR_IFGOTO,      0 },
 	{ Parser::INSTR_LOC,         0 },
+	{ Parser::INSTR_DIR,         0 },
 	{ Parser::INSTR_LOOK,        0 },
 	{ Parser::INSTR_MOVE,        0 },
 	{ Parser::INSTR_NOP,         0 },
