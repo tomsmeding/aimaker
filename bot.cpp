@@ -301,8 +301,10 @@ pair<int, int> Bot::executeCurrentLine() {
 		case Parser::INSTR_DIR: {
 			Parser::Argument dTarget = currentStatement.args[0];
 
+			int direction = getDir();
+
 			if (dTarget.type == Parser::EN_VARIABLE) {
-				storeVariable(dTarget.strval, this->dir);
+				storeVariable(dTarget.strval, direction);
 			} else {
 				// Wrong argument type.
 			}
