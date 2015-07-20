@@ -1,0 +1,113 @@
+#name Defensebot
+#author Tom Smeding
+
+#page 0
+	loc x, y
+	dir dir
+	if x==y, @p0_xeqy
+	if x>y, @p0_righttop
+p0_leftbottom:
+	page 10
+
+p0_righttop:
+	rot 1
+	rot 1
+	page 10
+
+p0_xeqy:
+	if x==0, @p0_lefttop
+p0_rightbottom:
+	rot -1
+	page 10
+
+p0_lefttop:
+	rot 1
+	page 10
+
+
+
+#page 10
+	build 1
+	trans 11, 0
+	trans 13, 8
+	trans 15, 15
+	wake
+	rot 1
+	build 1
+	trans 12, 0
+	trans 13, 8
+	trans 15, 15
+	wake
+	rot -1
+
+	sto i, 1 //skip zero!
+	trans i, i
+	sto i, i+1
+	if i<16, _rip-2
+	wake
+	rot 1
+	sto i, 1 //skip zero!
+	trans i, i
+	sto i, i+1
+	if i<16, _rip-2
+	wake
+	rot -1
+	page 10
+
+
+
+
+
+//CHILD BOT PAGES
+
+#page 11 //child turning right page 0
+	sto rotdir, 1
+	page 8
+
+
+
+#page 12 //child turning left page 0
+	sto rotdir, -1
+	page 8
+
+
+
+#page 13 //child page 8
+	look ahead
+	goto _rip+1+ahead
+	goto @p13_rotate_contemplate //0 nothing -- just turn...
+	goto @p13_rotate_contemplate //1 wall -- should not happen
+	goto @infect //2 other bot -- infect them
+	nop //3 ?
+	nop //4 ?
+	nop //5 ?
+	goto @p13_rotate_contemplate //6 my bot -- what?
+	nop //7 ?
+	nop //8 ?
+	nop //9 ?
+	goto @infect //10 other bot sleeping -- infect them for when they wake up, maybe
+	nop //11 ?
+	nop //12 ?
+	nop //13 ?
+	goto @p13_rotate_contemplate //14 my bot sleeping -- what?
+	nop //15 ?
+
+p13_rotate_contemplate:
+	rot rotdir
+	sto rotdir, -rotdir
+	page 13
+
+infect:
+	sto infect_retloc, _prevloc
+	sto i, 0
+infect_loop:
+	trans 15, i
+	sto i, i+1
+	look infect_ahead
+	if (infect_ahead&6)==2, @infect_loop
+	goto infect_retloc
+
+
+
+#page 15
+	suicide
