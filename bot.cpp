@@ -35,14 +35,16 @@ Bot::Bot(Bot *parent, int _tier, pair<int, int> startingPos, int _index) :
 	_workingFor(0),
 	board(parent->board),
 
-	pages(parent->pages),
+	//pages(parent->pages), //on purpose commented out
 
 	x(startingPos.first), y(startingPos.second),
 	dir(parent->dir),
 	isAsleep(true),
 	id(genid()),
 	index(_index),
-	tier(_tier) {}
+	tier(_tier) {
+		pages.resize(params.maxPages);
+	}
 
 void Bot::jumpTo(int page, int instr) {
 	if (page < 0 || page >= (int)pages.size() ||
