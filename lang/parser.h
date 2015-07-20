@@ -62,6 +62,7 @@ namespace Parser {
 	};
 
 	Instruction convertInstruction(string word);
+	string convertInstructionReverse(Instruction instr);
 
 	Program parse(const char *const, const vector<string>&);
 
