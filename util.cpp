@@ -55,7 +55,13 @@ bool is_numeric(const string &s) {
 
 void throw_error(int lineNumber, const char *message) {
 	char *error;
-	asprintf(&error, "Error at line %d: %s", lineNumber, message);
+
+	if (lineNumber > -1) {
+		asprintf(&error, "Error at line %d: %s", lineNumber, message);
+	} else {
+		asprintf(&error, "%s", message);
+	}
+
 	throw error;
 }
 
