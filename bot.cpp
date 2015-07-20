@@ -252,18 +252,19 @@ pair<int, int> Bot::executeCurrentLine() {
 				// Wrong argument type(s).
 				break;
 			}
-			vector<Parser::Statement> page = pages[Parser::evaluateExpression(pageIdArgument, lineNumber, memoryMap, program->labels)];
+			int fromId = Parser::evaluateExpression(pageIdArgument, lineNumber, memoryMap, program->labels);
+			int toId = Parser::evaluateExpression(targetIdArgument, lineNumber, memoryMap, program->labels);
+			const vector<Parser::Statement> &page = pages[fromId];
 
 			const pair<int, int> targetLocation = calculateNextLocation(true);
 			Bot *targetBot = board->at(targetLocation.first, targetLocation.second);
 
 			if (targetBot != NULL) {
-				cerr << "copying to bot with id " << targetBot->index << endl;
+				//cerr << "copying to bot with id " << targetBot->index << endl;
 
-				targetBot->copyPage(Parser::evaluateExpression(targetIdArgument, lineNumber, memoryMap, program->labels), page);
+				targetBot->copyPage(toId, page);
 
-				cout << "page copied" << endl;
-				cout << "copied page from one bot to the other, the instruction type of the first instruction of the copied page in the bot is " << (int) targetBot->pages[targetIdArgument.intval][0].instr << endl;
+				//cout << "page copied" << endl;
 			}
 
 			workTimeArg = page.size();
