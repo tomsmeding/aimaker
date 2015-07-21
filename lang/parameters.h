@@ -9,4 +9,6 @@ struct Params {
 	int maxBotMemory = 50;
 	int maxPages = 16;
 	bool parseOnly = false;
+	int sleepTime = 20; // in ms
+	bool resultOnly = false;
 };

@@ -48,6 +48,8 @@ void printusage(int argc, char **argv) {
 	cerr << "\t--boardsize=<int> (5) | Sets the size of the game board." << endl;
 	cerr << "\t--maxbotmemory=<int> (50) | Sets the max memory a bot can store." << endl;
 	cerr << "\t--maxpages=<int> (16) | Sets the max pages a program can have." << endl;
+	cerr << "\t--sleeptime=<int> (20) | Sets the amount of time to wait between each tick in milliseconds." << endl;
+	cerr << "\t--resultonly | Only print the result of the match on stdin (Other stuff will still be printed on cerr)." << endl;
 	cerr << "\t--parseonly | Quits after parsing the program(s)." << endl;
 }
 
@@ -64,6 +66,10 @@ bool parseFlagOption(const string &s) { // True if flag, otherwise false.
 			params.boardSize = stoi(splitted[1]);
 		} else if (splitted[0] == "maxpages") {
 			params.maxPages = stoi(splitted[1]);
+		} else if (splitted[0] == "sleeptime") {
+			params.sleepTime = stoi(splitted[1]);
+		} else if (splitted[0] == "resultonly") {
+			params.resultOnly = true;
 		} else {
 			char *message;
 			asprintf(&message, "Unknown flag '%s'.", splitted[0].c_str());
@@ -134,7 +140,6 @@ int main(int argc, char **argv) {
 
 		cerr << "Done reading in programs" << endl;
 
-
 		vector<int> botDist = makeBotDistribution(params.boardSize, params.boardSize, board.bots.size());
 		for (i = 0; i < (int)botDist.size(); i++) {
 			int loc = botDist[i];
@@ -151,10 +156,11 @@ int main(int argc, char **argv) {
 		int progid;
 		bool stillthere[numprogs];
 
-		clearScreen();
-		cout << board.render() << endl;
+		if (!params.resultOnly) {
+			clearScreen();
+			cout << board.render() << endl;
+		}
 		usleep(1000 * 1000);
-
 
 		while (true) {
 			memset(stillthere, 0, numprogs * sizeof(bool));
@@ -174,26 +180,41 @@ int main(int argc, char **argv) {
 				if (stillthere[i]) {
 					stillthereCount++;
 				} else {
-					//cout << "Program " << i << '(' << programs[i].name << ") has no bots left!" << endl;
+					//cerr | update << "Program " << i << '(' << programs[i].name << ") has no bots left!" << endl;
 				}
 			}
 
 			if (stillthereCount <= 1) {
-				cout << "Only " << stillthereCount << " program" << (stillthereCount==1 ? "" : "s") << " left, closing game" << (stillthereCount==0 ? '.' : ':') << endl;
+				cerr << "Only " << stillthereCount << " program" << (stillthereCount==1 ? "" : "s") << " left, closing game" << (stillthereCount==0 ? '.' : ':') << endl;
 				for (i = 0; i < numprogs; i++) {
 					if (stillthere[i]) {
 						cerr << "> " << programs[i].name << endl;
 					}
 				}
+
+				if (params.resultOnly) {
+					if (stillthereCount == 1) {
+						for (i = 0; i < numprogs; i++) {
+							if (stillthere[i]) {
+								cout << "W-" << i << endl;
+							}
+						}
+					} else {
+						cout << "T" << endl;
+					}
+				}
+
 				break;
 			}
 
 			board.nextTick();
 
-			clearScreen();
-			cout << board.render() << endl;
-			cout << "tick " << board.currentTick() << endl;
-			usleep(20000);
+			if (!params.resultOnly) {
+				clearScreen();
+				cout << board.render() << endl;
+				cout << "tick " << board.currentTick() << endl;
+			}
+			usleep(params.sleepTime * 1000);
 		}
 	} catch (char *msg) {
 		cerr << "ERROR CAUGHT: " << msg << endl;

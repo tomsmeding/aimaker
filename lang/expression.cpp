@@ -601,19 +601,19 @@ void printtree__node(const Parser::ExprNode &node, const int thisid) {
 	int leftid = uniqid(), rightid = uniqid();
 
 	if (node.left) {
-		cout << "\t\"" << nodeToString(node, thisid) << "\"->\"" << nodeToString(*node.left, leftid) << '"' << endl;
+		cerr << "\t\"" << nodeToString(node, thisid) << "\"->\"" << nodeToString(*node.left, leftid) << '"' << endl;
 		printtree__node(*node.left, leftid);
 	}
 
 	if (node.right) {
-		cout << "\t\"" << nodeToString(node, thisid) << "\"->\"" << nodeToString(*node.right, rightid) << '"' << endl;
+		cerr << "\t\"" << nodeToString(node, thisid) << "\"->\"" << nodeToString(*node.right, rightid) << '"' << endl;
 		printtree__node(*node.right, rightid);
 	}
 }
 void printtree(const Parser::ExprNode &root) {
-	cout << "digraph G{" << endl;
+	cerr << "digraph G{" << endl;
 	printtree__node(root, uniqid());
-	cout << "}" << endl;
+	cerr << "}" << endl;
 }
 
 int main(void) {
