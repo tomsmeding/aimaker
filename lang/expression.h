@@ -36,7 +36,7 @@ namespace Parser {
 	};
 
 	enum ExprTokenType {
-		ETT_WORD, ETT_NUMBER, ETT_LABEL, ETT_SYMBOL
+		ETT_WORD, ETT_NUMBER, ETT_LABEL, ETT_SYMBOL, ETT_STRING
 	};
 
 	struct ExprToken {
@@ -73,6 +73,7 @@ namespace Parser {
 		EN_PAREN2, // )
 
 		EN_NUMBER, // [0-9]+
+		EN_STRING, // "[^"]*"
 		EN_VARIABLE, // [a-zA-Z_][a-zA-Z0-9_]*
 		EN_LABEL, // @[a-zA-Z0-9_]+
 
@@ -111,8 +112,8 @@ namespace Parser {
 	ExprNodeType interpretOperator(const string&);
 
 	// These two throw char* for invalid operator.
-	vector<ExprToken> tokeniseExpression(const string&);
-	void parseExpression(/*out*/ExprNode*, const vector<ExprToken>&);
+	vector<ExprToken> tokeniseExpression(const string&, const int);
+	void parseExpression(/*out*/ExprNode*, const vector<ExprToken>&, const int);
 
 	struct EvaluationResult {
 		enum ResultType {

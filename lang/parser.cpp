@@ -42,6 +42,7 @@ namespace Parser {
 		else if (word == "build")                                      return INSTR_BUILD;
 		else if (word == "wake" || word == "shake-awake")              return INSTR_WAKE;
 		else if (word == "sleep")                                      return INSTR_SLEEP;
+		else if (word == "print")                                      return INSTR_PRINT;
 		else return INSTR_INVALID;
 	}
 
@@ -77,7 +78,7 @@ namespace Parser {
 		statement.args.resize(argsRaw.size());
 
 		for (i = 0; i < (int)argsRaw.size(); i++) {
-			parseExpression(&statement.args[i], tokeniseExpression(argsRaw[i]));
+			parseExpression(&statement.args[i], tokeniseExpression(argsRaw[i], lineIndex), lineIndex);
 		}
 
 		return statement;

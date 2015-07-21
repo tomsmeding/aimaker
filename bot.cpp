@@ -354,6 +354,14 @@ pair<int, int> Bot::executeCurrentLine() {
 		break;
 	}
 
+	case Parser::INSTR_PRINT: {
+		Parser::Argument arg = currentStatement.args[0];
+		const int val = Parser::evaluateExpression(arg, lineNumber, memoryMap, program->labels).getInt(lineNumber);
+
+		cerr << '[' << curPage << '.' << curInstr << "]: " << val << endl;
+		break;
+	}
+
 	case Parser::INSTR_NOP:
 	case Parser::INSTR_INVALID:
 		break;
@@ -374,7 +382,7 @@ bool Bot::nextTick(void) {
 	} else {
 		pair<int, int> pair = executeCurrentLine();
 
-		_workingFor--;
+		if (_workingFor > 0) _workingFor--;
 
 		curPage = pair.first;
 		curInstr = pair.second;

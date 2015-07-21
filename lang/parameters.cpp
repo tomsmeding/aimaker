@@ -21,6 +21,7 @@ int instructionWorkTime (const Parser::Instruction instr, const int arg) {
 	case Parser::INSTR_BUILD:   return 7;
 	case Parser::INSTR_WAKE:    return 3;
 	case Parser::INSTR_SLEEP:   return 1;
+	case Parser::INSTR_PRINT:   return 1;
 
 	case Parser::INSTR_INVALID:
 	default:                    return 1; // eh?

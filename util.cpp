@@ -40,7 +40,7 @@ vector<string> split(const string &s, const char *delims, int numsplits) {
 
 string trim(const string &s) {
 	string::size_type begin = s.find_first_not_of(" \t"),
-					  end = s.find_last_not_of(" \t");
+                      end = s.find_last_not_of(" \t");
 	if (begin == string::npos)return string();
 	else return s.substr(begin, end - begin + 1);
 }
