@@ -144,16 +144,16 @@ namespace Parser {
 		left = right = NULL;
 	}
 
-	bool resultsEqual(const EvaluationResult &a, const EvaluationResult &b) {
+	bool resultsEqual(const EvaluationResult &a, const EvaluationResult &b, const int lineNumber=-1) {
 		if (a.type != b.type) return false;
 
-		if (a.type == EvaluationResult::RES_NUMBER && a.intVal != b.intVal) return false;
-		else if (a.type == EvaluationResult::RES_STRING && a.strVal != b.strVal) return false;
+		if (a.type == EvaluationResult::RES_NUMBER) return a.intVal == b.intVal;
+		else if (a.type == EvaluationResult::RES_STRING) return a.strVal == b.strVal;
 		else if (a.type == EvaluationResult::RES_NIL) return true;
 		else {
 			char *message;
 			asprintf(&message, "Unknown EvaluationResult type %d (internal error)", a.type);
-			throw_error(-1, message);
+			throw_error(lineNumber, message);
 		}
 		return -1; //eh?
 	}
@@ -652,8 +652,8 @@ namespace Parser {
 		}
 
 		// use the special function for equality.
-		if (type == ExprNodeType::EN_EQUALS) return resultsEqual(left,right);
-		else if (type == ExprNodeType::EN_NOTEQUAL) return !resultsEqual(left,right);
+		if (type == ExprNodeType::EN_EQUALS) return resultsEqual(left,right,lineNumber);
+		else if (type == ExprNodeType::EN_NOTEQUAL) return !resultsEqual(left,right,lineNumber);
 
 		if ((a != NULL && left.type != EvaluationResult::RES_NUMBER) ||
 			(b != NULL && right.type != EvaluationResult::RES_NUMBER)) {
