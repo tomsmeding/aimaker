@@ -164,7 +164,9 @@ int main(int argc, char **argv) {
 
 		while (true) {
 			memset(stillthere, 0, numprogs * sizeof(bool));
+			bool anyNotAsleep = false;
 			for (Bot &b : board.bots) {
+				if (!b.isAsleep) anyNotAsleep = true;
 				progid = b.program->id;
 
 				for (i = 0; i < numprogs; i++) {
@@ -173,6 +175,13 @@ int main(int argc, char **argv) {
 						break;
 					}
 				}
+			}
+			if (!anyNotAsleep) {
+				cerr << "All bots are sleeping. Closing game due to inactivity." << endl;
+				if (params.resultOnly) {
+					cout << "T" << endl;
+				}
+				break;
 			}
 
 			int stillthereCount = 0;
