@@ -74,6 +74,7 @@ namespace Parser {
 		else if (word == "wake" || word == "shake-awake")              return INSTR_WAKE;
 		else if (word == "sleep")                                      return INSTR_SLEEP;
 		else if (word == "stop-match")                                 return INSTR_STOP_MATCH;
+		else if (word == "print")                                      return INSTR_PRINT;
 		else return INSTR_INVALID;
 	}
 

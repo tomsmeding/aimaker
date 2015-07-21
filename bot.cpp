@@ -76,14 +76,14 @@ int Bot::getDir(void) const {
 	return dir;
 }
 
-void Bot::storeVariable(const string &varName, const int value, const int lineIndex) {
+void Bot::storeVariable(const string &varName, const Parser::Variable &var, const int lineIndex) {
 	if (!reachedMemoryLimit()) {
 		if (varName.find('_') == 0) {
 			// Unmutable or disposal variable.
 			return;
 		}
 
-		memoryMap[varName] = value;
+		memoryMap[varName] = var;
 	} else {
 		char *message;
 		asprintf(&message, "Bot memory reached ('%d')", params.maxBotMemory);
@@ -171,7 +171,7 @@ pair<int, int> Bot::executeCurrentLine() {
 		switch (currentStatement.instr) {
 		case Parser::INSTR_MOVE: {
 			const Parser::Argument argument = currentStatement.args[0];
-			const bool forwards = (bool) Parser::evaluateExpression(argument, lineNumber, memoryMap, program->labels);
+			const bool forwards = (bool) Parser::evaluateExpression(argument, lineNumber, memoryMap, program->labels).getInt(lineNumber);
 
 			const pair<int, int> newLocation = calculateNextLocation(forwards);
 			const int x = newLocation.first;
@@ -188,14 +188,14 @@ pair<int, int> Bot::executeCurrentLine() {
 
 		case Parser::INSTR_ROT: {
 			const Parser::Argument argument = currentStatement.args[0];
-			dir += mod(Parser::evaluateExpression(argument, lineNumber, memoryMap, program->labels), 4);
+			dir += mod(Parser::evaluateExpression(argument, lineNumber, memoryMap, program->labels).getInt(lineNumber), 4);
 			break;
 		}
 
 		case Parser::INSTR_GOTO: {
 			const Parser::Argument target = currentStatement.args[0];
 
-			int intpos = Parser::evaluateExpression(target, lineNumber, memoryMap, program->labels);
+			int intpos = Parser::evaluateExpression(target, lineNumber, memoryMap, program->labels).getInt(lineNumber);
 			Parser::Position pos = Parser::itop(intpos);
 
 			memoryMap["_prevloc"] = Parser::ptoi({ curPage, curInstr + 1 });
@@ -208,8 +208,8 @@ pair<int, int> Bot::executeCurrentLine() {
 		case Parser::INSTR_IFGOTO: {
 			const Parser::Argument condition = currentStatement.args[0];
 			const Parser::Argument target = currentStatement.args[1];
-			if (!Parser::evaluateExpression(condition, lineNumber, memoryMap, program->labels)) break; // that's the `if`
-			Parser::Position targetpos = Parser::itop(Parser::evaluateExpression(target, lineNumber, memoryMap, program->labels));
+			if (!Parser::evaluateExpression(condition, lineNumber, memoryMap, program->labels).getInt(lineNumber)) break; // that's the `if`
+			Parser::Position targetpos = Parser::itop(Parser::evaluateExpression(target, lineNumber, memoryMap, program->labels).getInt(lineNumber));
 			jumpTo(targetpos.page, targetpos.line); // that's the `goto`
 			didJump = true;
 			break;
@@ -224,7 +224,7 @@ pair<int, int> Bot::executeCurrentLine() {
 				break;
 			}
 
-			const int value = Parser::evaluateExpression(valueArgument, lineNumber, memoryMap, program->labels);
+			const int value = Parser::evaluateExpression(valueArgument, lineNumber, memoryMap, program->labels).getInt(lineNumber);
 			storeVariable(varNameArgument.strval, value, curInstr);
 			break;
 		}
@@ -233,8 +233,8 @@ pair<int, int> Bot::executeCurrentLine() {
 			Parser::Argument pageIdArgument = currentStatement.args[0];
 			Parser::Argument targetIdArgument = currentStatement.args[1];
 
-			int fromId = Parser::evaluateExpression(pageIdArgument, lineNumber, memoryMap, program->labels);
-			int toId = Parser::evaluateExpression(targetIdArgument, lineNumber, memoryMap, program->labels);
+			int fromId = Parser::evaluateExpression(pageIdArgument, lineNumber, memoryMap, program->labels).getInt(lineNumber);
+			int toId = Parser::evaluateExpression(targetIdArgument, lineNumber, memoryMap, program->labels).getInt(lineNumber);
 			const vector<Parser::Statement> &page = pages[fromId];
 
 			const pair<int, int> targetLocation = calculateNextLocation(true);
@@ -256,7 +256,7 @@ pair<int, int> Bot::executeCurrentLine() {
 		case Parser::INSTR_PAGE: {
 			Parser::Argument target = currentStatement.args[0];
 
-			jumpTo(Parser::evaluateExpression(target, lineNumber, memoryMap, program->labels), 0);
+			jumpTo(Parser::evaluateExpression(target, lineNumber, memoryMap, program->labels).getInt(lineNumber), 0);
 			didJump = true;
 			break;
 		}
@@ -331,8 +331,8 @@ pair<int, int> Bot::executeCurrentLine() {
 			Parser::Argument pageIdArgument = currentStatement.args[0];
 			Parser::Argument targetIdArgument = currentStatement.args[1];
 
-			vector<Parser::Statement> page = pages[Parser::evaluateExpression(pageIdArgument, lineNumber, memoryMap, program->labels)];
-			copyPage(Parser::evaluateExpression(targetIdArgument, lineNumber, memoryMap, program->labels), page);
+			vector<Parser::Statement> page = pages[Parser::evaluateExpression(pageIdArgument, lineNumber, memoryMap, program->labels).getInt(lineNumber)];
+			copyPage(Parser::evaluateExpression(targetIdArgument, lineNumber, memoryMap, program->labels).getInt(lineNumber), page);
 			workTimeArg = page.size();
 
 			break;
@@ -340,7 +340,7 @@ pair<int, int> Bot::executeCurrentLine() {
 
 		case Parser::INSTR_BUILD: {
 			const Parser::Argument tierArgument = currentStatement.args[0];
-			int tier = Parser::evaluateExpression(tierArgument, lineNumber, memoryMap, program->labels);
+			int tier = Parser::evaluateExpression(tierArgument, lineNumber, memoryMap, program->labels).getInt(lineNumber);
 
 			const pair<int, int> targetLocation = calculateNextLocation(true);
 
@@ -363,6 +363,29 @@ pair<int, int> Bot::executeCurrentLine() {
 
 		case Parser::INSTR_SLEEP: {
 			isAsleep = true;
+			break;
+		}
+
+		case Parser::INSTR_PRINT: {
+			Parser::Argument arg = currentStatement.args[0];
+			const Parser::EvaluationResult res = Parser::evaluateExpression(arg, lineNumber, memoryMap, program->labels);
+			string s;
+
+			switch(res.type) {
+			case Parser::EvaluationResult::RES_NIL:
+				s = "-nil-";
+				break;
+
+			case Parser::EvaluationResult::RES_NUMBER:
+				s = to_string(res.intVal);
+				break;
+
+			case Parser::EvaluationResult::RES_STRING:
+				s = "\"" + res.strVal + "\"";
+				break;
+			}
+
+			cerr << index << '[' << curPage << '.' << curInstr << "]: " << s << endl;
 			break;
 		}
 
@@ -393,7 +416,7 @@ bool Bot::nextTick(void) {
 	} else {
 		pair<int, int> pair = executeCurrentLine();
 
-		_workingFor--;
+		if (_workingFor > 0) _workingFor--;
 
 		curPage = pair.first;
 		curInstr = pair.second;

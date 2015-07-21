@@ -5,6 +5,7 @@
 #include <functional>
 #include <cstdint>
 #include <cstring>
+#include <cassert>
 #if EXPRESSION_DEBUG>0 || defined(EXPRESSION_DEBUG_MAIN)
 #include <iostream>
 #endif
@@ -18,6 +19,13 @@ namespace Parser {
 		type = VAR_INT;
 		intVal = i;
 	}
+	Variable::Variable(string s) {
+		type = VAR_STRING;
+		strVal = s;
+	}
+	Variable::Variable(VariableType type) {
+		this->type = type;
+	}
 
 	int Variable::getSize(void) const {
 		switch (type) {
@@ -30,6 +38,8 @@ namespace Parser {
 		}
 
 		case VAR_INT: return 4;
+		case VAR_STRING: return strVal.size();
+		case VAR_NIL: return 0;
 		}
 	}
 
@@ -44,7 +54,32 @@ namespace Parser {
 		}
 
 		case VAR_INT: return to_string(intVal);
+		case VAR_STRING: return strVal;
+		case VAR_NIL: return "[nil]";
 		}
+	}
+
+	EvaluationResult Variable::toER(void) const {
+		EvaluationResult res;
+
+		switch(this->type) {
+			case VAR_INT: {
+				res.type = EvaluationResult::RES_NUMBER;
+				res.intVal = intVal;
+				break;
+			}
+			case VAR_STRING: {
+				res.type = EvaluationResult::RES_STRING;
+				res.strVal = strVal;
+				break;
+			}
+			case VAR_NIL: {
+				res.type = EvaluationResult::RES_NIL;
+				break;
+			}
+		}
+
+		return res;
 	}
 
 #if EXPRESSION_DEBUG==2
@@ -109,6 +144,19 @@ namespace Parser {
 		left = right = NULL;
 	}
 
+	bool resultsEqual(const EvaluationResult &a, const EvaluationResult &b, const int lineNumber=-1) {
+		if (a.type != b.type) return false;
+
+		if (a.type == EvaluationResult::RES_NUMBER) return a.intVal == b.intVal;
+		else if (a.type == EvaluationResult::RES_STRING) return a.strVal == b.strVal;
+		else if (a.type == EvaluationResult::RES_NIL) return true;
+		else {
+			char *message;
+			asprintf(&message, "Unknown EvaluationResult type %d (internal error)", a.type);
+			throw_error(lineNumber, message);
+		}
+		return -1; //eh?
+	}
 
 	bool leftAssoc(ExprNodeType type) {
 		switch (type) {
@@ -214,7 +262,7 @@ namespace Parser {
 		return EN_INVALID;
 	}
 
-	const char *operatorToString(ExprNodeType type) {
+	const char* operatorToString(ExprNodeType type) {
 		switch (type) {
 		case EN_ADD: return "EN_ADD";
 		case EN_SUBTRACT: return "EN_SUBTRACT";
@@ -238,12 +286,14 @@ namespace Parser {
 		case EN_PAREN1: return "EN_PAREN1";
 		case EN_PAREN2: return "EN_PAREN2";
 		case EN_NUMBER: return "EN_NUMBER";
+		case EN_STRING: return "EN_STRING";
 		case EN_VARIABLE: return "EN_VARIABLE";
 		case EN_LABEL: return "EN_LABEL";
 		case EN_SUBTRACT_OR_NEGATE_CONFLICT: return "EN_SUBTRACT_OR_NEGATE_CONFLICT";
 		case EN_INVALID: return "EN_INVALID";
-		default: return "?";
+		case EN_NIL: return "EN_NIL";
 		}
+		return "<<unknown exprnodetype>>";
 	}
 
 	vector<ExprToken> tokeniseExpression(const string &s, const int lineIndex) {
@@ -270,6 +320,18 @@ namespace Parser {
 			} else if (s[start] == '@') {
 				token.type = ETT_LABEL;
 				end = s.find_first_not_of(wordnumberchars, start + 1);
+				start++;
+			} else if (s[start] == '"' && strchr(wordchars, s[start]) != NULL) {
+				token.type = ETT_STRING;
+				auto endindex = s.find_last_of("\"", start + 1);
+
+				if (endindex == string::npos) {
+					char *buf;
+					asprintf(&buf, "String not ended correctly.");
+					throw_error(lineIndex, buf);
+				}
+
+				end = endindex;
 				start++;
 			} else if (strchr(wordchars, s[start]) != NULL) {
 				token.type = ETT_WORD;
@@ -350,7 +412,16 @@ namespace Parser {
 				break;
 
 			case ETT_WORD:
-				nodedeq.emplace_back(EN_VARIABLE, token.val);
+				if (token.val == "nil") {
+					nodedeq.emplace_back(EN_NIL);
+				} else {
+					nodedeq.emplace_back(EN_VARIABLE, token.val);
+				}
+				lastWasOperator = false;
+				break;
+
+			case ETT_STRING:
+				nodedeq.emplace_back(EN_STRING, token.val);
 				lastWasOperator = false;
 				break;
 
@@ -442,7 +513,12 @@ namespace Parser {
 		for (i = 0; i < (int)nodedeq.size(); i++) {
 			//for(ExprNode &n : nodedeq)cerr<<operatorToString(n.type)<<' '; cerr<<endl;
 			const ExprNode &node = nodedeq[i];
-			if (node.type == EN_NUMBER || node.type == EN_VARIABLE || node.type == EN_LABEL)continue;
+			if (node.type == EN_NUMBER ||
+			    node.type == EN_VARIABLE ||
+			    node.type == EN_LABEL ||
+			    node.type == EN_NIL) {
+					continue;
+			}
 			const int ar = arity(node.type);
 			if (ar == 0) {
 				char *buf;
@@ -503,8 +579,11 @@ namespace Parser {
 		[](int a, int b) { return a &  b; }, //EN_BITAND
 		[](int a, int b) { return a |  b; }, //EN_BITOR
 		[](int a, int b) { return a ^  b; }, //EN_BITXOR
+
+		// not used
 		[](int a, int b) { return a == b; }, //EN_EQUALS
 		[](int a, int b) { return a != b; }, //EN_NOTEQUAL
+
 		[](int a, int b) { return a >  b; }, //EN_GREATER
 		[](int a, int b) { return a >= b; }, //EN_GREATEREQUAL
 		[](int a, int b) { return a <  b; }, //EN_LESS
@@ -517,28 +596,99 @@ namespace Parser {
 		[](int _, int b) { return -b;     }, //EN_NEGATE
 	};
 
-	int evaluateExpression(
+	int EvaluationResult::getInt(int lineNumber) const {
+		if (type != ResultType::RES_NUMBER) {
+			throw_error(lineNumber, "Couldn't evaluate expression to a number.");
+		}
+
+		return intVal;
+	}
+
+	string EvaluationResult::getString(int lineNumber) const {
+		if (type != ResultType::RES_STRING) {
+			throw_error(lineNumber, "Couldn't evaluate expression to a string.");
+		}
+
+		return strVal;
+	}
+
+	Variable EvaluationResult::toVar(void) const {
+		Variable res;
+
+		switch(this->type) {
+			case RES_NIL: {
+				res.type = Variable::VAR_NIL;
+				break;
+			}
+			case RES_NUMBER: {
+				res.type = Variable::VAR_INT;
+				res.intVal = intVal;
+				break;
+			}
+			case RES_STRING: {
+				res.type = Variable::VAR_STRING;
+				res.strVal = strVal;
+				break;
+			}
+		}
+
+		return res;
+	}
+
+	int runExprNodeFunction(
+		const ExprNodeType type,
+		const ExprNode *a,
+		const ExprNode *b,
+		const int lineNumber,
+		const unordered_map<string, Variable> &vars,
+		const LabelMap &labels
+	) {
+		EvaluationResult left, right;
+		if (a != NULL) {
+			left = evaluateExpression(*a, lineNumber, vars, labels);
+		}
+		if (b != NULL) {
+			right = evaluateExpression(*b, lineNumber, vars, labels);
+		}
+
+		// use the special function for equality.
+		if (type == ExprNodeType::EN_EQUALS) return resultsEqual(left,right,lineNumber);
+		else if (type == ExprNodeType::EN_NOTEQUAL) return !resultsEqual(left,right,lineNumber);
+
+		if ((a != NULL && left.type != EvaluationResult::RES_NUMBER) ||
+			(b != NULL && right.type != EvaluationResult::RES_NUMBER)) {
+			char *buf;
+			asprintf(&buf, "All operands of operator %s should be integers.", operatorToString(type));
+			throw_error(lineNumber, buf);
+			return 0; //eh?
+		}
+
+		return exprnode_functions[type](
+			a != NULL ? left.intVal : 0,
+			b != NULL ? right.intVal : 0
+		);
+	}
+
+	EvaluationResult evaluateExpression(
 		const ExprNode &root,
 		const int lineNumber,
 		const unordered_map<string, Variable> &vars,
 		const LabelMap &labels
 	) {
+		EvaluationResult res;
+
+		if (root.type == EN_NIL) {
+			res.type = EvaluationResult::RES_NIL;
+			return res;
+		}
+
 		if (root.hasval == 1 && root.type == EN_VARIABLE) {
 			unordered_map<string, Variable>::const_iterator varit = vars.find(root.strval);
-			if (varit == vars.end()) {
-				char *buf;
-
-				cerr << "vars size: " << vars.size() << endl;
-				for (const auto &x : vars) {
-					cerr << x.first << ", " << x.second.toString() << endl;
-				}
-
-				asprintf(&buf, "Variable '%s' not found", root.strval.c_str());
-				throw_error(lineNumber, buf);
-			} else if (varit->second.type != Variable::VAR_INT) {
-				throw_error(lineNumber, "Expected an int variable.");
+			if (varit == vars.end()) { // variable not found, return nil.
+				res.type = EvaluationResult::RES_NIL;
+				return res;
 			} else {
-				return varit->second.intVal;
+				return varit->second.toER();
 			}
 		} else if (root.hasval == 1 && root.type == EN_LABEL) {
 			unordered_map<string, LabelInfo>::const_iterator labit = labels.find(root.strval);
@@ -547,10 +697,16 @@ namespace Parser {
 				asprintf(&buf, "Label '@%s' not found", root.strval.c_str());
 				throw_error(lineNumber, buf);
 			}
-			return labit->second.intval;
+			res.type = EvaluationResult::RES_NUMBER;
+			res.intVal = labit->second.intval;
+			return res;
 		}
 
-		if (root.hasval == 2) return root.intval;
+		if (root.hasval == 2) {
+			res.type = EvaluationResult::RES_NUMBER;
+			res.intVal = root.intval;
+			return res;
+		}
 		if (root.type > sizeof(exprnode_functions) / sizeof(exprnode_functions[0])) {
 			char *buf;
 			asprintf(&buf, "Non-normal operator %s in expression tree (internal error)", operatorToString(root.type));
@@ -571,10 +727,9 @@ namespace Parser {
 			}
 		}
 
-		return exprnode_functions[root.type](
-			root.left != NULL ? evaluateExpression(*root.left, lineNumber, vars, labels) : 0,
-			root.right != NULL ? evaluateExpression(*root.right, lineNumber, vars, labels) : 0
-		);
+		res.type = EvaluationResult::RES_NUMBER;
+		res.intVal = runExprNodeFunction(root.type, root.left, root.right, lineNumber, vars, labels);
+		return res;
 	}
 
 };

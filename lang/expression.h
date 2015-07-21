@@ -11,26 +11,35 @@ using namespace std;
 namespace Parser {
 
 	struct LabelInfo;
+	struct EvaluationResult;
 	typedef unordered_map<string, LabelInfo> LabelMap;
 
 	struct Variable {
 		enum VariableType {
-			VAR_ARR, VAR_INT
+			VAR_ARR,
+			VAR_INT,
+			VAR_NIL,
+			VAR_STRING
 		};
 
 		VariableType type;
 		vector<Variable> arrVal;
+		string strVal;
 		int32_t intVal;
 
 		Variable(void);
 		Variable(int32_t);
+		Variable(string);
+		Variable(VariableType type);
 
 		int getSize(void) const;
 		string toString(void) const;
+
+		EvaluationResult toER(void) const;
 	};
 
 	enum ExprTokenType {
-		ETT_WORD, ETT_NUMBER, ETT_LABEL, ETT_SYMBOL
+		ETT_WORD, ETT_NUMBER, ETT_LABEL, ETT_SYMBOL, ETT_STRING
 	};
 
 	struct ExprToken {
@@ -67,8 +76,11 @@ namespace Parser {
 		EN_PAREN2, // )
 
 		EN_NUMBER, // [0-9]+
+		EN_STRING, // "[^"]*"
 		EN_VARIABLE, // [a-zA-Z_][a-zA-Z0-9_]*
 		EN_LABEL, // @[a-zA-Z0-9_]+
+
+		EN_NIL, // nil
 
 		EN_SUBTRACT_OR_NEGATE_CONFLICT,
 		EN_INVALID
@@ -104,6 +116,24 @@ namespace Parser {
 	vector<ExprToken> tokeniseExpression(const string&, const int);
 	void parseExpression(/*out*/ExprNode*, const vector<ExprToken>&, const int);
 
+	struct EvaluationResult {
+		enum ResultType {
+			RES_NIL,
+			RES_NUMBER,
+			RES_STRING
+		};
+
+		ResultType type;
+		int intVal;
+		string strVal;
+
+		int getInt(int) const;
+		string getString(int) const;
+		Variable toVar(void) const;
+	};
+
+	int runExprNodeFunction(const ExprNodeType, const ExprNode*, const ExprNode*, const int, const unordered_map<string, Variable>&, const LabelMap&);
+
 	// Throws if a variable in the expression is not found in the map.
-	int evaluateExpression(const ExprNode&, const int lineNumber, const unordered_map<string, Variable>&, const LabelMap&);
+	EvaluationResult evaluateExpression(const ExprNode&, const int lineNumber, const unordered_map<string, Variable>&, const LabelMap&);
 };
