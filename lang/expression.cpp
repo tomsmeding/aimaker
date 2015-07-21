@@ -584,6 +584,14 @@ namespace Parser {
 		return intVal;
 	}
 
+	string EvaluationResult::getString(int lineNumber) const {
+		if (type != ResultType::RES_STRING) {
+			throw_error(lineNumber, "Couldn't evaluate expression to a string.");
+		}
+
+		return strVal;
+	}
+
 	Variable EvaluationResult::toVar(void) const {
 		Variable res;
 
@@ -595,6 +603,11 @@ namespace Parser {
 		case RES_NUMBER: {
 			res.type = Variable::VAR_INT;
 			res.intVal = intVal;
+			break;
+		}
+		case RES_STRING: {
+			res.type = Variable::VAR_STRING;
+			res.strVal = strVal;
 			break;
 		}
 		}

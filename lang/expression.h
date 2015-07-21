@@ -118,13 +118,16 @@ namespace Parser {
 	struct EvaluationResult {
 		enum ResultType {
 			RES_NIL,
-			RES_NUMBER
+			RES_NUMBER,
+			RES_STRING
 		};
 
 		ResultType type;
 		int intVal;
+		string strVal;
 
 		int getInt(int) const;
+		string getString(int) const;
 		Variable toVar(void) const;
 	};
 
