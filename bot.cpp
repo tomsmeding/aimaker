@@ -170,10 +170,6 @@ pair<int, int> Bot::executeCurrentLine() {
 		switch (currentStatement.instr) {
 		case Parser::INSTR_MOVE: {
 			const Parser::Argument argument = currentStatement.args[0];
-			if (argument.type == Parser::EN_LABEL) {
-				// Wrong argument type.
-				break;
-			}
 			const bool forwards = (bool) Parser::evaluateExpression(argument, lineNumber, memoryMap, program->labels);
 
 			const pair<int, int> newLocation = calculateNextLocation(forwards);
@@ -191,10 +187,6 @@ pair<int, int> Bot::executeCurrentLine() {
 
 		case Parser::INSTR_ROT: {
 			const Parser::Argument argument = currentStatement.args[0];
-			if (argument.type == Parser::EN_LABEL) {
-				// Wrong argument type.
-				break;
-			}
 			dir += mod(Parser::evaluateExpression(argument, lineNumber, memoryMap, program->labels), 4);
 			break;
 		}
@@ -215,17 +207,9 @@ pair<int, int> Bot::executeCurrentLine() {
 		case Parser::INSTR_IFGOTO: {
 			const Parser::Argument condition = currentStatement.args[0];
 			const Parser::Argument target = currentStatement.args[1];
-			if (condition.type == Parser::EN_LABEL || target.type != Parser::EN_LABEL) {
-				// Wrong argument type(s).
-				break;
-			}
 			if (!Parser::evaluateExpression(condition, lineNumber, memoryMap, program->labels)) break; // that's the `if`
-			unordered_map<string, Parser::LabelInfo>::const_iterator labelit = program->labels.find(target.strval);
-			if (labelit == program->labels.end()) {
-				// Label not found.
-				break;
-			}
-			jumpTo(labelit->second.getPosition().page, labelit->second.getPosition().line); // that's the `goto`
+			Parser::Position targetpos = Parser::itop(Parser::evaluateExpression(target, lineNumber, memoryMap, program->labels));
+			jumpTo(targetpos.page, targetpos.line); // that's the `goto`
 			didJump = true;
 			break;
 		}
@@ -234,7 +218,7 @@ pair<int, int> Bot::executeCurrentLine() {
 			Parser::Argument varNameArgument = currentStatement.args[0];
 			Parser::Argument valueArgument = currentStatement.args[1];
 
-			if (varNameArgument.type != Parser::EN_VARIABLE || valueArgument.type == Parser::EN_LABEL) {
+			if (varNameArgument.type != Parser::EN_VARIABLE) {
 				// Wrong argument type(s).
 				break;
 			}
@@ -248,10 +232,6 @@ pair<int, int> Bot::executeCurrentLine() {
 			Parser::Argument pageIdArgument = currentStatement.args[0];
 			Parser::Argument targetIdArgument = currentStatement.args[1];
 
-			if (pageIdArgument.type == Parser::EN_LABEL || targetIdArgument.type == Parser::EN_LABEL) {
-				// Wrong argument type(s).
-				break;
-			}
 			int fromId = Parser::evaluateExpression(pageIdArgument, lineNumber, memoryMap, program->labels);
 			int toId = Parser::evaluateExpression(targetIdArgument, lineNumber, memoryMap, program->labels);
 			const vector<Parser::Statement> &page = pages[fromId];
@@ -275,10 +255,6 @@ pair<int, int> Bot::executeCurrentLine() {
 		case Parser::INSTR_PAGE: {
 			Parser::Argument target = currentStatement.args[0];
 
-			if (target.type == Parser::EN_LABEL) {
-				// Wrong argument type.
-				break;
-			}
 			jumpTo(Parser::evaluateExpression(target, lineNumber, memoryMap, program->labels), 0);
 			didJump = true;
 			break;
@@ -288,8 +264,7 @@ pair<int, int> Bot::executeCurrentLine() {
 			Parser::Argument xTarget = currentStatement.args[0];
 			Parser::Argument yTarget = currentStatement.args[1];
 
-			if (xTarget.type == Parser::EN_VARIABLE &&
-					yTarget.type == Parser::EN_VARIABLE) {
+			if (xTarget.type == Parser::EN_VARIABLE && yTarget.type == Parser::EN_VARIABLE) {
 				storeVariable(xTarget.strval, this->x);
 				storeVariable(yTarget.strval, this->y);
 			} else {
@@ -354,11 +329,6 @@ pair<int, int> Bot::executeCurrentLine() {
 		case Parser::INSTR_TRANSLOCAL: {
 			Parser::Argument pageIdArgument = currentStatement.args[0];
 			Parser::Argument targetIdArgument = currentStatement.args[1];
-
-			if (pageIdArgument.type == Parser::EN_LABEL || targetIdArgument.type == Parser::EN_LABEL) {
-				// Wrong argument type(s).
-				break;
-			}
 
 			vector<Parser::Statement> page = pages[Parser::evaluateExpression(pageIdArgument, lineNumber, memoryMap, program->labels)];
 			copyPage(Parser::evaluateExpression(targetIdArgument, lineNumber, memoryMap, program->labels), page);
@@ -429,9 +399,9 @@ bool Bot::nextTick(void) {
 		}
 	}
 
-	cout << "nextTicked on bot with index " << index << " at " << curPage << "." << curInstr << ", dead: " << (int) isDead << "; asleep: " << (int) isAsleep << "; next instr to exec: ";
+	/*cout << "nextTicked on bot with index " << index << " at " << curPage << "." << curInstr << ", dead: " << (int) isDead << "; asleep: " << (int) isAsleep << "; next instr to exec: ";
 	if(curInstr >= (int)pages[curPage].size())cout << "--end of page--";
 	else cout << pages[curPage][curInstr].instr;
-	cout << endl;
+	cout << endl;*/
 	return isDead;
 }
