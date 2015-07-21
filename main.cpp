@@ -159,8 +159,8 @@ int main(int argc, char **argv) {
 		if (!params.resultOnly) {
 			clearScreen();
 			cout << board.render() << endl;
+			usleep(1000 * 1000);
 		}
-		usleep(1000 * 1000);
 
 		while (true) {
 			memset(stillthere, 0, numprogs * sizeof(bool));
@@ -213,8 +213,8 @@ int main(int argc, char **argv) {
 				clearScreen();
 				cout << board.render() << endl;
 				cout << "tick " << board.currentTick() << endl;
+				usleep(params.sleepTime * 1000);
 			}
-			usleep(params.sleepTime * 1000);
 		}
 	} catch (char *msg) {
 		cerr << "ERROR CAUGHT: " << msg << endl;
