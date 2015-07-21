@@ -121,7 +121,7 @@ pair<int, int> Bot::calculateNextLocation(bool forwards) const {
 void Bot::copyPage(int targetId, const vector<Parser::Statement> &page) {
 	pages[targetId] = page;
 
-	cerr << this->index << endl;
+	//cerr << this->index << endl;
 
 	for (Parser::Statement &instr : pages[targetId]) {
 		// Reset the linenumbers, they don't make sense anymore.
