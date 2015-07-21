@@ -358,7 +358,7 @@ pair<int, int> Bot::executeCurrentLine() {
 		Parser::Argument arg = currentStatement.args[0];
 		const int val = Parser::evaluateExpression(arg, lineNumber, memoryMap, program->labels).getInt(lineNumber);
 
-		cerr << '[' << curPage << '.' << curInstr << "]: " << val << endl;
+		cerr << index << '[' << curPage << '.' << curInstr << "]: " << val << endl;
 		break;
 	}
 
