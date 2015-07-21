@@ -54,12 +54,7 @@ mybot:
 
 
 myawake:
-	sto p, 0
-Mtransloop:
-	trans 8, p
-	sto p, p+1
-	look ahead
-	ifgoto ahead==6&&p<16, @Mtransloop
+	trans 8, 8
 	goto @start
 
 

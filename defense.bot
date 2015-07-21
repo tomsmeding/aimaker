@@ -29,13 +29,13 @@ p0_lefttop:
 #page 10
 	build 1
 	trans 11, 0
-	trans 13, 8
+	trans 13, 13
 	trans 15, 15
 	wake
 	rot 1
 	build 1
 	trans 12, 0
-	trans 13, 8
+	trans 13, 13
 	trans 15, 15
 	wake
 	rot -1
@@ -72,7 +72,7 @@ p0_lefttop:
 
 
 
-#page 13 //child page 8
+#page 13
 	look ahead
 	goto _rip+1+ahead
 	goto @p13_rotate_contemplate //0 nothing -- just turn...
