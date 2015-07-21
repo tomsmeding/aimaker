@@ -18,10 +18,10 @@ buildloopend:
 
 buildbot:
 	build 2
+wakemybot:
 	trans 0, 0
 	trans 8, 8
 	trans 15, 15
-wakemybot:
 	shake-awake
 	goto @buildloopend
 
