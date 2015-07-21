@@ -59,7 +59,7 @@ void throw_error(int lineNumber, const char *message) {
 	if (lineNumber > -1) {
 		asprintf(&error, "Error at line %d: %s", lineNumber, message);
 	} else {
-		asprintf(&error, "%s", message);
+		asprintf(&error, "Error at copied code: %s", message);
 	}
 
 	throw error;
