@@ -51,6 +51,7 @@ void printusage(int argc, char **argv) {
 	cerr << "\t--sleeptime=<int> (20) | Sets the amount of time to wait between each tick in milliseconds." << endl;
 	cerr << "\t--resultonly | Only print the result of the match on stdout (Other stuff will still be printed on cerr)." << endl;
 	cerr << "\t--parseonly | Quits after parsing the program(s)." << endl;
+	cerr << "\t--allowdebug | Allow bots to call debugging functions." << endl;
 }
 
 bool parseFlagOption(const string &s) { // True if flag, otherwise false.
@@ -70,6 +71,8 @@ bool parseFlagOption(const string &s) { // True if flag, otherwise false.
 			params.sleepTime = stoi(splitted[1]);
 		} else if (splitted[0] == "resultonly") {
 			params.resultOnly = true;
+		} else if (splitted[0] == "allowdebug") {
+			params.allowDebug = true;
 		} else {
 			char *message;
 			asprintf(&message, "Unknown flag '%s'.", splitted[0].c_str());

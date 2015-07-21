@@ -1,7 +1,8 @@
-#include <utility>
 #include <cassert>
-#include "bot.h"
+#include <cstdlib>
+#include <utility>
 #include "board.h"
+#include "bot.h"
 #include "lang/parameters.h"
 
 using namespace std;
@@ -362,6 +363,12 @@ pair<int, int> Bot::executeCurrentLine() {
 
 		case Parser::INSTR_SLEEP: {
 			isAsleep = true;
+			break;
+		}
+
+		case Parser::INSTR_STOP_MATCH: {
+			cerr << "Bot with index " << index << " is stopping the match (INSTR_STOP_MATCH)" << endl;
+			exit(0);
 			break;
 		}
 

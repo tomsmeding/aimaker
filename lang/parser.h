@@ -29,6 +29,7 @@ namespace Parser {
 		INSTR_WAKE,
 		INSTR_SLEEP,
 		INSTR_DIR,
+		INSTR_STOP_MATCH,
 
 		INSTR_INVALID=255
 	};

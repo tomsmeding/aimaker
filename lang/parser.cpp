@@ -25,6 +25,7 @@ map<Parser::Instruction, int> instr_arity_map = {
 	{Parser::INSTR_BUILD,1},
 	{Parser::INSTR_WAKE,0},
 	{Parser::INSTR_SLEEP,0},
+	{Parser::INSTR_STOP_MATCH, 0},
 
 	{Parser::INSTR_INVALID,0}
 };
@@ -47,6 +48,13 @@ namespace Parser {
 		intval = ptoi(p);
 	}
 
+	bool isDebugInstr(Instruction instr) {
+		switch (instr) {
+			case INSTR_STOP_MATCH: return true;
+			default: return false;
+		}
+	}
+
 	Instruction convertInstruction (string word) {
 		to_lower(word); // Function calls are case insensitive.
 
@@ -65,6 +73,7 @@ namespace Parser {
 		else if (word == "build")                                      return INSTR_BUILD;
 		else if (word == "wake" || word == "shake-awake")              return INSTR_WAKE;
 		else if (word == "sleep")                                      return INSTR_SLEEP;
+		else if (word == "stop-match")                                 return INSTR_STOP_MATCH;
 		else return INSTR_INVALID;
 	}
 
@@ -83,6 +92,7 @@ namespace Parser {
 		else if (instr == INSTR_BUILD) return "BUILD";
 		else if (instr == INSTR_WAKE) return "WAKE";
 		else if (instr == INSTR_SLEEP) return "SLEEP";
+		else if (instr == INSTR_STOP_MATCH) return "STOP_MATCH";
 		else return "INVALID?";
 	}
 
@@ -95,6 +105,10 @@ namespace Parser {
 		if (statement.instr == INSTR_INVALID) {
 			char *message;
 			asprintf(&message, "Invalid instruction '%s'.", functionName.c_str());
+			throw_error(lineIndex, message);
+		} else if (isDebugInstr(statement.instr) && !params.allowDebug) {
+			char *message;
+			asprintf(&message, "Can only use instruction '%s' with debugging allowed (--allowdebug).", functionName.c_str());
 			throw_error(lineIndex, message);
 		}
 

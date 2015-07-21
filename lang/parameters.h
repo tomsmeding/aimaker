@@ -11,4 +11,5 @@ struct Params {
 	bool parseOnly = false;
 	int sleepTime = 20; // in ms
 	bool resultOnly = false;
+	bool allowDebug = false;
 };
