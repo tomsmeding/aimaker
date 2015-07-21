@@ -101,8 +101,6 @@ namespace Parser {
 		ExprNode(ExprNodeType,ExprNode*,ExprNode*,const int);
 		~ExprNode(void);
 		void setNullChildren(void);
-
-		bool equals(const ExprNode*) const;
 	};
 
 	bool leftAssoc(ExprNodeType);
