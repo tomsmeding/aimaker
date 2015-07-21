@@ -374,7 +374,7 @@ pair<int, int> Bot::executeCurrentLine() {
 			const pair<int, int> targetLocation = calculateNextLocation(true);
 
 			if (board->canMoveTo(targetLocation.first, targetLocation.second)) {
-				Bot bot(this, tier, targetLocation, board->bots.size());
+				Bot bot(this, tier, targetLocation, board->nextIndex());
 				board->addBot(bot);
 			}
 

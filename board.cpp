@@ -100,3 +100,7 @@ bool Board::insideBounds(int x, int y) const {
 void Board::addBot(Bot bot) {
 	this->botqueue.push_back(bot);
 }
+
+int Board::nextIndex(void) const {
+	return this->bots.size()+this->botqueue.size();
+}
