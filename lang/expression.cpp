@@ -121,21 +121,18 @@ namespace Parser {
 		left = right = NULL;
 	}
 
-	bool ExprNode::equals(const ExprNode *node) const {
-		assert (node != NULL);
-		if (this->type != node->type) return false;
+	bool resultsEqual(const EvaluationResult &a, const EvaluationResult &b) {
+		if (a.type != b.type) return false;
 
-		if (this->hasval != node->hasval) {
-			return false;
-		} else if (this->hasval == 0) {
-			return true;
-		} else if (this->hasval == 1) {
-			return this->strval == node->strval;
-		} else if (this->hasval == 2) {
-			return this->intval == node->intval;
-		} else {
-			throw "Values can't be compared.";
+		if (a.type == EvaluationResult::RES_NUMBER && a.intVal != b.intVal) return false;
+		else if (a.type == EvaluationResult::RES_STRING && a.strVal != b.strVal) return false;
+		else if (a.type == EvaluationResult::RES_NIL) return true;
+		else {
+			char *message;
+			asprintf(&message, "Unknown EvaluationResult type %d (internal error)", a.type);
+			throw_error(-1, message);
 		}
+		return -1; //eh?
 	}
 
 	bool leftAssoc(ExprNodeType type) {
@@ -596,20 +593,20 @@ namespace Parser {
 		Variable res;
 
 		switch(this->type) {
-		case RES_NIL: {
-			res.type = Variable::VAR_NIL;
-			break;
-		}
-		case RES_NUMBER: {
-			res.type = Variable::VAR_INT;
-			res.intVal = intVal;
-			break;
-		}
-		case RES_STRING: {
-			res.type = Variable::VAR_STRING;
-			res.strVal = strVal;
-			break;
-		}
+			case RES_NIL: {
+				res.type = Variable::VAR_NIL;
+				break;
+			}
+			case RES_NUMBER: {
+				res.type = Variable::VAR_INT;
+				res.intVal = intVal;
+				break;
+			}
+			case RES_STRING: {
+				res.type = Variable::VAR_STRING;
+				res.strVal = strVal;
+				break;
+			}
 		}
 
 		return res;
@@ -623,14 +620,6 @@ namespace Parser {
 		const unordered_map<string, Variable> &vars,
 		const LabelMap &labels
 	) {
-		// use special function for equals.
-		if (
-			type == ExprNodeType::EN_EQUALS ||
-			type == ExprNodeType::EN_NOTEQUAL
-		) {
-			return a->equals(b);
-		}
-
 		EvaluationResult left, right;
 		if (a != NULL) {
 			left = evaluateExpression(*a, lineNumber, vars, labels);
@@ -639,12 +628,16 @@ namespace Parser {
 			right = evaluateExpression(*b, lineNumber, vars, labels);
 		}
 
+		// use the special function for equality.
+		if (type == ExprNodeType::EN_EQUALS) return resultsEqual(left,right);
+		else if (type == ExprNodeType::EN_NOTEQUAL) return !resultsEqual(left,right);
+
 		if ((a != NULL && left.type != EvaluationResult::RES_NUMBER) ||
 			(b != NULL && right.type != EvaluationResult::RES_NUMBER)) {
 			char *buf;
-			asprintf(&buf, "Couldn't evaluate at least one side of operator %s to an int.", operatorToString(type));
+			asprintf(&buf, "All operands of operator %s should be integers.", operatorToString(type));
 			throw_error(lineNumber, buf);
-			return 0;
+			return 0; //eh?
 		}
 
 		return exprnode_functions[type](
