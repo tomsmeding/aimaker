@@ -25,4 +25,6 @@ public:
 	bool canMoveTo(int, int) const;
 	bool insideBounds(int, int) const;
 	void addBot(Bot);
+
+	int nextIndex(void) const;
 };

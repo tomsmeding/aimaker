@@ -121,7 +121,7 @@ pair<int, int> Bot::calculateNextLocation(bool forwards) const {
 void Bot::copyPage(int targetId, const vector<Parser::Statement> &page) {
 	pages[targetId] = page;
 
-	cerr << this->index << endl;
+	//cerr << this->index << endl;
 
 	for (Parser::Statement &instr : pages[targetId]) {
 		// Reset the linenumbers, they don't make sense anymore.
@@ -135,15 +135,15 @@ void Bot::copyPage(int targetId, const vector<Parser::Statement> &page) {
 
 pair<int, int> Bot::executeCurrentLine() {
 	/*cerr << "------------------------" << endl;
-	cout << curPage << "." << curInstr << endl;
+	cerr << curPage << "." << curInstr << endl;
 	auto statements = pages.at(curPage);
 	for (auto statement : statements) {
-		cout << "found statement in pages[" << curPage << "] with type: " << statement.instr << endl;
+		cerr << "found statement in pages[" << curPage << "] with type: " << statement.instr << endl;
 	}
 	const Parser::Statement currentStatement = pages.at(curPage).at(curInstr);
-	cout << "page: " << curPage << " | instruction: " << curInstr << ", with type " << currentStatement.instr << endl;
-	cout << "pages size: " << pages.size() << endl;
-	cout << "pages[" << curPage << "] size: " << pages.at(curPage).size() << endl;*/
+	cerr << "page: " << curPage << " | instruction: " << curInstr << ", with type " << currentStatement.instr << endl;
+	cerr << "pages size: " << pages.size() << endl;
+	cerr << "pages[" << curPage << "] size: " << pages.at(curPage).size() << endl;*/
 	if(pages.at(curPage).size()==0)return {curPage,curInstr}; //and caller will put bot to sleep
 	const Parser::Statement currentStatement = pages.at(curPage).at(curInstr);
 	bool canExecute = tier >= instr_tier_map.at(currentStatement.instr);
@@ -244,7 +244,7 @@ pair<int, int> Bot::executeCurrentLine() {
 
 				targetBot->copyPage(toId, page);
 
-				//cout << "page copied" << endl;
+				//cerr << "page copied" << endl;
 			}
 
 			workTimeArg = page.size();
@@ -289,7 +289,7 @@ pair<int, int> Bot::executeCurrentLine() {
 		}
 
 		case Parser::INSTR_SUICIDE: {
-			cout << "boom said bot with index " << index << endl;
+			cerr << "boom said bot with index " << index << endl;
 			isDead = true;
 			break;
 		}
@@ -344,7 +344,7 @@ pair<int, int> Bot::executeCurrentLine() {
 			const pair<int, int> targetLocation = calculateNextLocation(true);
 
 			if (board->canMoveTo(targetLocation.first, targetLocation.second)) {
-				Bot bot(this, tier, targetLocation, board->bots.size());
+				Bot bot(this, tier, targetLocation, board->nextIndex());
 				board->addBot(bot);
 			}
 

@@ -25,7 +25,7 @@ vector<int> makeBotDistribution(const int W,const int H,const int B){
 		bots[i]=i;
 	}
 	if(B==W*H)return vector<int>(bots,bots+B);
-	for(int y=0;y<H;y++){
+	/*for(int y=0;y<H;y++){
 		for(int x=0;x<W;x++){
 			for(i=0;i<B;i++){
 				if(bots[i]==W*y+x)break;
@@ -35,7 +35,7 @@ vector<int> makeBotDistribution(const int W,const int H,const int B){
 		}
 		cerr<<endl;
 	}
-	cerr<<endl;
+	cerr<<endl;*/
 #if 0
 	double dist,maxdist; int maxatdx,maxatdy;
 	for(int iter=0;iter<10;iter++){
@@ -96,8 +96,8 @@ vector<int> makeBotDistribution(const int W,const int H,const int B){
 			minat=-1;
 			for(newpos=0;newpos<W*H;newpos++){
 				if(bd[newpos]&&newpos!=bots[i]){
-					cerr<<"-- ";
-					if(newpos%W==W-1)cerr<<endl;
+					//cerr<<"-- ";
+					//if(newpos%W==W-1)cerr<<endl;
 					continue;
 				}
 				dist=0;
@@ -105,8 +105,8 @@ vector<int> makeBotDistribution(const int W,const int H,const int B){
 					if(i==j)continue;
 					dist+=1.0/d(W,newpos,bots[j]);
 				}
-				cerr<<dist<<' ';
-				if(newpos%W==W-1)cerr<<endl;
+				//cerr<<dist<<' ';
+				//if(newpos%W==W-1)cerr<<endl;
 				if(mindist==-1||dist<mindist){
 					mindist=dist;
 					minat=newpos;
@@ -114,13 +114,13 @@ vector<int> makeBotDistribution(const int W,const int H,const int B){
 			}
 			if(mindist!=-1){
 				bd[bots[i]]=false;
-				cerr<<"bot "<<i<<", "<<bots[i]<<"->"<<newpos<<" with mindist="<<mindist<<" minat="<<minat<<endl;
+				//cerr<<"bot "<<i<<", "<<bots[i]<<"->"<<newpos<<" with mindist="<<mindist<<" minat="<<minat<<endl;
 				bd[minat]=true;
 				bots[i]=minat;
 			}
 		}
 
-		for(int y=0;y<H;y++){
+		/*for(int y=0;y<H;y++){
 			for(int x=0;x<W;x++){
 				for(i=0;i<B;i++){
 					if(bots[i]==W*y+x)break;
@@ -130,7 +130,7 @@ vector<int> makeBotDistribution(const int W,const int H,const int B){
 			}
 			cerr<<endl;
 		}
-		cerr<<endl;
+		cerr<<endl;*/
 	}
 #endif
 	return vector<int>(bots,bots+B);
