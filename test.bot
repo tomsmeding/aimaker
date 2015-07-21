@@ -1,0 +1,26 @@
+#name testbot
+#author Tom Smeding
+
+#page 0
+	sto a, nil
+	sto b, 42
+	print a
+	print b
+	print d
+	if a==nil, @good1
+	rot 1
+	print 666
+	sleep
+good1:
+	sto a, 42
+	if a!=nil, @good2
+	rot -1
+	print 667
+	sleep
+good2:
+	move 1
+	move 1
+	move 0
+	move 0
+	print 42
+	GOTO @good2
