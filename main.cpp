@@ -176,13 +176,6 @@ int main(int argc, char **argv) {
 					}
 				}
 			}
-			if (!anyNotAsleep) {
-				cerr << "All bots are sleeping. Closing game due to inactivity." << endl;
-				if (params.resultOnly) {
-					cout << "T" << endl;
-				}
-				break;
-			}
 
 			int stillthereCount = 0;
 			for (i = 0; i < numprogs; i++) {
@@ -213,6 +206,14 @@ int main(int argc, char **argv) {
 					}
 				}
 
+				break;
+			}
+
+			if (!anyNotAsleep) {
+				cerr << "All bots are sleeping. Closing game due to inactivity." << endl;
+				if (params.resultOnly) {
+					cout << "T" << endl;
+				}
 				break;
 			}
 
