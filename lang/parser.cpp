@@ -1,6 +1,7 @@
 #include <string>
 #include <cstdio>
 #include <cstring>
+#include <cassert>
 #include "parser.h"
 #include "parameters.h"
 #include "../util.h"
@@ -123,6 +124,40 @@ namespace Parser {
 		return statement;
 	}
 
+	void inlineLabels (ExprNode *node, const LabelMap &labels, const int lineNumber) {
+		assert(node);
+		if(node->type==EN_LABEL){
+			if(node->hasval!=1){
+				throw_error(lineNumber,"Label node at %p does not have a strval (internal error)",node);
+			}
+			if(node->left||node->right){
+				throw_error(lineNumber,"Label node at %p has unexpected children (internal error)",node);
+			}
+			LabelMap::const_iterator it=labels.find(node->strval);
+			if(it==labels.cend()){
+				throw_error(lineNumber,"Label not found: '%s'",node->strval);
+			}
+			cerr<<"replacing label "<<node->strval<<" with value "<<it->second.intval<<endl;
+			node->type=EN_NUMBER;
+			node->hasval=2; //int
+			node->strval.clear();
+			node->intval=it->second.intval;
+		} else {
+			if(node->left)inlineLabels(node->left,labels,lineNumber);
+			if(node->right)inlineLabels(node->right,labels,lineNumber);
+		}
+	}
+
+	void inlineLabels (Program &program) {
+		for(Codepage &page : program.pages){
+			for(Statement &stmt : page){
+				for(ExprNode &node : stmt.args){
+					inlineLabels(&node,program.labels,stmt.lineNumber);
+				}
+			}
+		}
+	}
+
 	// Parses the given `lines` with the given `fname`.
 	Program parse (const char *const fname, const vector<string> &lines) {
 		int curPage = 0, curInstr = 0;
@@ -185,6 +220,8 @@ namespace Parser {
 				curInstr++;
 			}
 		}
+
+		inlineLabels (program);
 
 		return program;
 	}

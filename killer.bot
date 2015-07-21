@@ -6,9 +6,8 @@
 	trans 1, 0
 	page 2
 #page 1
-loop:
 	suicide
-	goto @loop
+	goto _rip-1
 #page 2
 dance:
 	rotate 1
