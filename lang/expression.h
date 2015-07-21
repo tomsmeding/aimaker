@@ -11,6 +11,7 @@ using namespace std;
 namespace Parser {
 
 	struct LabelInfo;
+	struct EvaluationResult;
 	typedef unordered_map<string, LabelInfo> LabelMap;
 
 	struct Variable {
@@ -33,6 +34,8 @@ namespace Parser {
 
 		int getSize(void) const;
 		string toString(void) const;
+
+		EvaluationResult toER(void) const;
 	};
 
 	enum ExprTokenType {

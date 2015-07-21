@@ -59,6 +59,29 @@ namespace Parser {
 		}
 	}
 
+	EvaluationResult Variable::toER(void) const {
+		EvaluationResult res;
+
+		switch(this->type) {
+			case VAR_INT: {
+				res.type = EvaluationResult::RES_NUMBER;
+				res.intVal = intVal;
+				break;
+			}
+			case VAR_STRING: {
+				res.type = EvaluationResult::RES_STRING;
+				res.strVal = strVal;
+				break;
+			}
+			case VAR_NIL: {
+				res.type = EvaluationResult::RES_NIL;
+				break;
+			}
+		}
+
+		return res;
+	}
+
 #if EXPRESSION_DEBUG==2
 	ostream &operator<<(ostream &os, const ExprNode &en) {
 		os << &en << " (" << operatorToString(en.type) << ',';
@@ -664,12 +687,8 @@ namespace Parser {
 			if (varit == vars.end()) { // variable not found, return nil.
 				res.type = EvaluationResult::RES_NIL;
 				return res;
-			} else if (varit->second.type != Variable::VAR_INT) {
-				throw_error(lineNumber, "Expected an int variable.");
 			} else {
-				res.type = EvaluationResult::RES_NUMBER;
-				res.intVal = varit->second.intVal;
-				return res;
+				return varit->second.toER();
 			}
 		} else if (root.hasval == 1 && root.type == EN_LABEL) {
 			unordered_map<string, LabelInfo>::const_iterator labit = labels.find(root.strval);
