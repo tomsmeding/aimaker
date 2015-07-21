@@ -5,6 +5,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <cstring>
 
 using namespace std;
 
@@ -18,6 +19,22 @@ string trim(const string&);
 bool is_numeric(const string&);
 
 void throw_error(int, const char*);
+
+template <typename... Args>
+void throw_error(int lineNumber, const char *message, Args... parameters){
+	string errorstr;
+	char *error;
+
+	asprintf(&error, message, parameters...);
+
+	if (lineNumber > -1) {
+		errorstr = "Error at line " + to_string(lineNumber) + ": " + error;
+		free(error);
+		error = new char[errorstr.size()];
+		memcpy(error, errorstr.c_str(), errorstr.size() * sizeof(char));
+	}
+	throw error;
+}
 
 void to_lower(string&);
 
