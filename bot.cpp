@@ -356,9 +356,24 @@ pair<int, int> Bot::executeCurrentLine() {
 
 	case Parser::INSTR_PRINT: {
 		Parser::Argument arg = currentStatement.args[0];
-		const int val = Parser::evaluateExpression(arg, lineNumber, memoryMap, program->labels).getInt(lineNumber);
+		const Parser::EvaluationResult res = Parser::evaluateExpression(arg, lineNumber, memoryMap, program->labels);
+		string s;
 
-		cerr << index << '[' << curPage << '.' << curInstr << "]: " << val << endl;
+		switch(res.type) {
+		case Parser::EvaluationResult::RES_NIL:
+			s = "-nil-";
+			break;
+
+		case Parser::EvaluationResult::RES_NUMBER:
+			s = res.intVal;
+			break;
+
+		case Parser::EvaluationResult::RES_STRING:
+			s = "\"" + res.strVal + "\"";
+			break;
+		}
+
+		cerr << index << '[' << curPage << '.' << curInstr << "]: " << s << endl;
 		break;
 	}
 
