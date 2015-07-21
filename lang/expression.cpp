@@ -271,8 +271,9 @@ namespace Parser {
 		case EN_LABEL: return "EN_LABEL";
 		case EN_SUBTRACT_OR_NEGATE_CONFLICT: return "EN_SUBTRACT_OR_NEGATE_CONFLICT";
 		case EN_INVALID: return "EN_INVALID";
-		default: return "?";
+		case EN_NIL: return "EN_NIL";
 		}
+		return "<<unknown exprnodetype>>";
 	}
 
 	vector<ExprToken> tokeniseExpression(const string &s, const int lineIndex) {
@@ -492,7 +493,12 @@ namespace Parser {
 		for (i = 0; i < (int)nodedeq.size(); i++) {
 			//for(ExprNode &n : nodedeq)cerr<<operatorToString(n.type)<<' '; cerr<<endl;
 			const ExprNode &node = nodedeq[i];
-			if (node.type == EN_NUMBER || node.type == EN_VARIABLE || node.type == EN_LABEL)continue;
+			if (node.type == EN_NUMBER ||
+			    node.type == EN_VARIABLE ||
+			    node.type == EN_LABEL ||
+			    node.type == EN_NIL) {
+					continue;
+			}
 			const int ar = arity(node.type);
 			if (ar == 0) {
 				char *buf;
