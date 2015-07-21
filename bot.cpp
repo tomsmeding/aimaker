@@ -365,7 +365,7 @@ pair<int, int> Bot::executeCurrentLine() {
 			break;
 
 		case Parser::EvaluationResult::RES_NUMBER:
-			s = res.intVal;
+			s = to_string(res.intVal);
 			break;
 
 		case Parser::EvaluationResult::RES_STRING:
