@@ -149,7 +149,7 @@ namespace Parser {
 			}
 			LabelMap::const_iterator it=labels.find(node->strval);
 			if(it==labels.cend()){
-				throw_error(lineNumber,"Label not found: '%s'",node->strval);
+				throw_error(lineNumber,"Label not found: '%s'",node->strval.c_str());
 			}
 			cerr<<"replacing label "<<node->strval<<" with value "<<it->second.intval<<endl;
 			node->type=EN_NUMBER;
