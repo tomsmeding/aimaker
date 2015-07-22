@@ -23,6 +23,7 @@ int instructionWorkTime (const Parser::Instruction instr, const int arg) {
 	case Parser::INSTR_WAKE:    return 3;
 	case Parser::INSTR_SLEEP:   return 1;
 	case Parser::INSTR_PRINT:   return 1;
+	case Parser::INSTR_BREAK:   return 1;
 
 	case Parser::INSTR_INVALID:
 	default:                    return 1; // eh?
@@ -48,6 +49,7 @@ map<Parser::Instruction, int> instr_tier_map = {
 	{ Parser::INSTR_SLEEP,       0 },
 	{ Parser::INSTR_STOP_MATCH,  0 },
 	{ Parser::INSTR_PRINT,       0 },
+	{ Parser::INSTR_BREAK,       0 },
 	{ Parser::INSTR_INVALID,     0 }
 };
 

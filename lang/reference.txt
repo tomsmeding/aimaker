@@ -148,3 +148,7 @@ Ticks: 1
 Function: stop-match
 Description: Stops the current match.
 Ticks: 1
+
+Function: break/breakpoint
+Description: Breaks execution, resumes after pressing the <enter> key.
+Ticks: 1

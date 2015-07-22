@@ -27,6 +27,7 @@ map<Parser::Instruction, int> instr_arity_map = {
 	{ Parser::INSTR_SLEEP,       0 },
 	{ Parser::INSTR_STOP_MATCH,  0 },
 	{ Parser::INSTR_PRINT,       1 },
+	{ Parser::INSTR_BREAK,       0 },
 
 	{ Parser::INSTR_INVALID,     0 }
 };
@@ -51,8 +52,11 @@ namespace Parser {
 
 	bool isDebugInstr(Instruction instr) {
 		switch (instr) {
-			case INSTR_STOP_MATCH: return true;
-			default: return false;
+			case INSTR_STOP_MATCH:
+			case INSTR_BREAK:
+				return true;
+			default:
+				return false;
 		}
 	}
 
@@ -76,6 +80,7 @@ namespace Parser {
 		else if (word == "sleep")                                      return INSTR_SLEEP;
 		else if (word == "stop-match")                                 return INSTR_STOP_MATCH;
 		else if (word == "print")                                      return INSTR_PRINT;
+		else if (word == "break" || word == "breakpoint")              return INSTR_BREAK;
 		else return INSTR_INVALID;
 	}
 
@@ -96,6 +101,7 @@ namespace Parser {
 		else if (instr == INSTR_SLEEP) return "SLEEP";
 		else if (instr == INSTR_STOP_MATCH) return "STOP_MATCH";
 		else if (instr == INSTR_PRINT) return "PRINT";
+		else if (instr == INSTR_BREAK) return "BREAK";
 		else if (instr == INSTR_NOP || instr == INSTR_INVALID) return "-INVALID-";
 		else return "-UNKNOWN- ";
 	}

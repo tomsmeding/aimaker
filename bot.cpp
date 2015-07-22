@@ -399,6 +399,12 @@ pair<int, int> Bot::executeCurrentLine() {
 			break;
 		}
 
+		case Parser::INSTR_BREAK: {
+			cerr << "Breaking on breakpoint " << index << ':' << lineNumber << ", press enter to continue.";
+			cin.get();
+			break;
+		}
+
 		case Parser::INSTR_NOP:
 		case Parser::INSTR_INVALID:
 			break;
