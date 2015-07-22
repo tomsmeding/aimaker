@@ -47,6 +47,7 @@ map<Parser::Instruction, int> instr_tier_map = {
 	{ Parser::INSTR_WAKE,        1 },
 	{ Parser::INSTR_SLEEP,       0 },
 	{ Parser::INSTR_STOP_MATCH,  0 },
+	{ Parser::INSTR_PRINT,       0 },
 	{ Parser::INSTR_INVALID,     0 }
 };
 

@@ -9,25 +9,26 @@
 extern Params params;
 
 map<Parser::Instruction, int> instr_arity_map = {
-	{Parser::INSTR_GOTO,1},
-	{Parser::INSTR_IFGOTO,2},
-	{Parser::INSTR_LOC,2},
-	{Parser::INSTR_DIR,1},
-	{Parser::INSTR_LOOK,1},
-	{Parser::INSTR_MOVE,1},
-	{Parser::INSTR_NOP,0},
-	{Parser::INSTR_PAGE,1},
-	{Parser::INSTR_ROT,1},
-	{Parser::INSTR_STO,2},
-	{Parser::INSTR_SUICIDE,0},
-	{Parser::INSTR_TRANS,2},
-	{Parser::INSTR_TRANSLOCAL,2},
-	{Parser::INSTR_BUILD,1},
-	{Parser::INSTR_WAKE,0},
-	{Parser::INSTR_SLEEP,0},
-	{Parser::INSTR_STOP_MATCH, 0},
+	{ Parser::INSTR_GOTO,        1 },
+	{ Parser::INSTR_IFGOTO,      2 },
+	{ Parser::INSTR_LOC,         2 },
+	{ Parser::INSTR_DIR,         1 },
+	{ Parser::INSTR_LOOK,        1 },
+	{ Parser::INSTR_MOVE,        1 },
+	{ Parser::INSTR_NOP,         0 },
+	{ Parser::INSTR_PAGE,        1 },
+	{ Parser::INSTR_ROT,         1 },
+	{ Parser::INSTR_STO,         2 },
+	{ Parser::INSTR_SUICIDE,     0 },
+	{ Parser::INSTR_TRANS,       2 },
+	{ Parser::INSTR_TRANSLOCAL,  2 },
+	{ Parser::INSTR_BUILD,       1 },
+	{ Parser::INSTR_WAKE,        0 },
+	{ Parser::INSTR_SLEEP,       0 },
+	{ Parser::INSTR_STOP_MATCH,  0 },
+	{ Parser::INSTR_PRINT,       1 },
 
-	{Parser::INSTR_INVALID,0}
+	{ Parser::INSTR_INVALID,     0 }
 };
 
 namespace Parser {
@@ -94,6 +95,7 @@ namespace Parser {
 		else if (instr == INSTR_WAKE) return "WAKE";
 		else if (instr == INSTR_SLEEP) return "SLEEP";
 		else if (instr == INSTR_STOP_MATCH) return "STOP_MATCH";
+		else if (instr == INSTR_PRINT) return "PRINT";
 		else if (instr == INSTR_NOP || instr == INSTR_INVALID) return "-INVALID-";
 		else return "-UNKNOWN- ";
 	}
