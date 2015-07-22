@@ -143,6 +143,7 @@ int main(int argc, char **argv) {
 
 		cerr << "Done reading in programs" << endl;
 
+		srand(time(NULL));
 		vector<int> botDist = makeBotDistribution(params.boardSize, params.boardSize, board.bots.size());
 		for (i = 0; i < (int)botDist.size(); i++) {
 			int loc = botDist[i];
@@ -150,6 +151,7 @@ int main(int argc, char **argv) {
 
 			bot.x = loc % params.boardSize;
 			bot.y = loc / params.boardSize;
+			bot.dir = rand() % 4;
 		}
 
 		if (params.parseOnly) {
