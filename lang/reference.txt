@@ -133,3 +133,18 @@ Ticks: 3
 Function: sleep
 Description: zzz
 Ticks: 1
+
+Function: print
+Arguments:
+	- thing
+Description: Prints the given `thing`
+Ticks: 1
+
+.--- Debugging functions ---.
+| Requires you to use the   |
+| --allowdebug flag         |
+.---------------------------.
+
+Function: stop-match
+Description: Stops the current match.
+Ticks: 1
