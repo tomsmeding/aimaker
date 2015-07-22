@@ -60,18 +60,31 @@ bool parseFlagOption(const string &s) { // True if flag, otherwise false.
 		string trimmed = trim(s.substr(2, s.size() - 2));
 		vector<string> splitted = split(trimmed, '=', 1);
 
+		auto requireParam = [&splitted] () {
+			if (splitted.size() != 2) {
+				char *message;
+				asprintf(&message, "Flag '%s' requires a parameter.", splitted[0].c_str());
+				throw message;
+			}
+		};
+
 		if (splitted[0] == "maxbotmemory") {
+			requireParam();
 			params.maxBotMemory = stoi(splitted[1]);
-		} else if (splitted[0] == "parseonly") {
-			params.parseOnly = true;
 		} else if (splitted[0] == "boardsize") {
+			requireParam();
 			params.boardSize = stoi(splitted[1]);
 		} else if (splitted[0] == "maxpages") {
+			requireParam();
 			params.maxPages = stoi(splitted[1]);
 		} else if (splitted[0] == "sleeptime") {
+			requireParam();
 			params.sleepTime = stoi(splitted[1]);
 		} else if (splitted[0] == "maxticks") {
+			requireParam();
 			params.maxTicks = stoi(splitted[1]);
+		} else if (splitted[0] == "parseonly") {
+			params.parseOnly = true;
 		} else if (splitted[0] == "resultonly") {
 			params.resultOnly = true;
 		} else if (splitted[0] == "allowdebug") {
