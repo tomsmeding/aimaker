@@ -228,8 +228,8 @@ pair<int, int> Bot::executeCurrentLine() {
 				break;
 			}
 
-			const int value = Parser::evaluateExpression(valueArgument, lineNumber, memoryMap, program->labels).getInt(lineNumber);
-			storeVariable(varNameArgument.strval, value, curInstr);
+			Parser::Variable var = Parser::evaluateExpression(valueArgument, lineNumber, memoryMap, program->labels).toVar();
+			storeVariable(varNameArgument.strval, var, curInstr);
 			break;
 		}
 
