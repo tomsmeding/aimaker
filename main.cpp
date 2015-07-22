@@ -266,6 +266,7 @@ int main(int argc, char **argv) {
 		}
 	} catch (char *msg) {
 		cerr << "ERROR CAUGHT: " << msg << endl;
+		return 1;
 	}
 
 	return 0;
