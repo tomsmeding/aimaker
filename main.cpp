@@ -49,6 +49,7 @@ void printusage(int argc, char **argv) {
 	cerr << "\t--maxbotmemory=<int> (50) | Sets the max memory a bot can store." << endl;
 	cerr << "\t--maxpages=<int> (16) | Sets the max pages a program can have." << endl;
 	cerr << "\t--sleeptime=<int> (20) | Sets the amount of time to wait between each tick in milliseconds." << endl;
+	cerr << "\t--maxticks=<int> (-1) | Sets the amount of ticks that may elapse before the game is stopped as a tie." << endl;
 	cerr << "\t--resultonly | Only print the result of the match on stdout (Other stuff will still be printed on cerr)." << endl;
 	cerr << "\t--parseonly | Quits after parsing the program(s)." << endl;
 	cerr << "\t--allowdebug | Allow bots to call debugging functions." << endl;
@@ -69,6 +70,8 @@ bool parseFlagOption(const string &s) { // True if flag, otherwise false.
 			params.maxPages = stoi(splitted[1]);
 		} else if (splitted[0] == "sleeptime") {
 			params.sleepTime = stoi(splitted[1]);
+		} else if (splitted[0] == "maxticks") {
+			params.maxTicks = stoi(splitted[1]);
 		} else if (splitted[0] == "resultonly") {
 			params.resultOnly = true;
 		} else if (splitted[0] == "allowdebug") {
@@ -189,6 +192,22 @@ int main(int argc, char **argv) {
 				} else {
 					//cerr | update << "Program " << i << '(' << programs[i].name << ") has no bots left!" << endl;
 				}
+			}
+
+			if (params.maxTicks > 0 && board.currentTick() >= params.maxTicks) {
+				cerr << "Game elapsed for more than the max amount of ticks (" << params.maxTicks << "). Game ended as a tie." << endl;
+				cerr << "Left bots:" << endl;
+				for (i = 0; i < numprogs; i++) {
+					if (stillthere[i]) {
+						cerr << "> " << programs[i].name << endl;
+					}
+				}
+
+				if (params.resultOnly) {
+					cout << "T" << endl;
+				}
+
+				return 0;
 			}
 
 			if (stillthereCount <= 1) {
