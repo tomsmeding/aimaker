@@ -49,7 +49,7 @@ void printusage(int argc, char **argv) {
 	cerr << "\t--maxbotmemory=<int> (50) | Sets the max memory a bot can store." << endl;
 	cerr << "\t--maxpages=<int> (16) | Sets the max pages a program can have." << endl;
 	cerr << "\t--sleeptime=<int> (20) | Sets the amount of time to wait between each tick in milliseconds." << endl;
-	cerr << "\t--maxticks=<int> (-1) | Sets the amount of ticks that may elapse before the game is stopped as a tie." << endl;
+	cerr << "\t--maxticks=<int> (10000) | Sets the amount of ticks that may elapse before the game is stopped as a tie. -1 for unlimited" << endl;
 	cerr << "\t--resultonly | Only print the result of the match on stdout (Other stuff will still be printed on cerr)." << endl;
 	cerr << "\t--parseonly | Quits after parsing the program(s)." << endl;
 	cerr << "\t--allowdebug | Allow bots to call debugging functions." << endl;

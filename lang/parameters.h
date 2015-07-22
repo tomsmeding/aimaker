@@ -12,5 +12,5 @@ struct Params {
 	int sleepTime = 20; // in ms
 	bool resultOnly = false;
 	bool allowDebug = false;
-	int maxTicks = -1;
+	int maxTicks = 10000;
 };
