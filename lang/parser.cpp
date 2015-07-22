@@ -94,7 +94,8 @@ namespace Parser {
 		else if (instr == INSTR_WAKE) return "WAKE";
 		else if (instr == INSTR_SLEEP) return "SLEEP";
 		else if (instr == INSTR_STOP_MATCH) return "STOP_MATCH";
-		else return "INVALID?";
+		else if (instr == INSTR_NOP || instr == INSTR_INVALID) return "-INVALID-";
+		else return "-UNKNOWN- ";
 	}
 
 	// Parses the given `functionName` and `arguments` to a Statement.

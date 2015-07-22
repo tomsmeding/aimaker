@@ -147,7 +147,11 @@ pair<int, int> Bot::executeCurrentLine() {
 	cerr << "pages[" << curPage << "] size: " << pages.at(curPage).size() << endl;*/
 	if(pages.at(curPage).size()==0)return {curPage,curInstr}; //and caller will put bot to sleep
 	const Parser::Statement currentStatement = pages.at(curPage).at(curInstr);
+
+	auto tieri = instr_tier_map.find(currentStatement.instr);
+	if (tieri == instr_tier_map.end()) throw_error(currentStatement.lineNumber, ("No tier found for instruction: " + convertInstructionReverse(currentStatement.instr)).c_str());
 	bool canExecute = tier >= instr_tier_map.at(currentStatement.instr);
+
 	bool didJump = false;
 	int workTimeArg = 0;
 	const int lineNumber = currentStatement.lineNumber;
