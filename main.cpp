@@ -117,6 +117,7 @@ int main(int argc, char **argv) {
 					continue;
 				}
 			} catch (const char *str) { // Unknown flag given.
+				cerr << str << endl << endl;
 				printusage(argc, argv);
 				return 1;
 			}
