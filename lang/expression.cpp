@@ -3,6 +3,7 @@
 #include "../util.h"
 #include <deque>
 #include <functional>
+#include <sstream>
 #include <cstdint>
 #include <cstring>
 #include <cassert>
@@ -46,16 +47,22 @@ namespace Parser {
 	string Variable::toString(void) const {
 		switch (type) {
 		case VAR_ARR: {
-			string s = "";
-			for (const Variable &v : arrVal) {
-				s += v.toString();
+			stringstream ss;
+
+			ss << '[';
+			for (int i = 0; i < (int)arrVal.size(); i++) {
+				const Variable &v = arrVal[i];
+				if (i != 0) ss << ", ";
+				ss << v.toString();
 			}
-			return s;
+			ss << ']';
+
+			return ss.str();
 		}
 
 		case VAR_INT: return to_string(intVal);
-		case VAR_STRING: return strVal;
-		case VAR_NIL: return "[nil]";
+		case VAR_STRING: "\"" + strVal + "\"";
+		case VAR_NIL: return "-nil-";
 		}
 	}
 
