@@ -396,14 +396,6 @@ pair<int, int> Bot::executeCurrentLine() {
 				break;
 			}
 
-			// log stuff
-			cerr << arrayNameArgument.strval << endl;
-			for (auto x : memoryMap) {
-				cerr << "- " << x.first << ": ";
-				cerr << x.second.toString();
-				cerr << endl;
-			}
-
 			const Parser::Variable arrVar = memoryMap[arrayNameArgument.strval];
 			if (arrVar.type != Parser::Variable::VAR_ARR) {
 				// given array name isnt an array.
