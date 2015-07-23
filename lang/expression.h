@@ -121,6 +121,8 @@ namespace Parser {
 			RES_NIL,
 			RES_NUMBER,
 			RES_STRING,
+			// no RES_ARR, since we don't have expressions to create an array,
+			// arrays can currently only be created using `makearr` or `arr`.
 			RES_VAR
 		};
 
