@@ -30,7 +30,7 @@ namespace Parser {
 		Variable(void);
 		Variable(int32_t);
 		Variable(string);
-		Variable(VariableType type);
+		Variable(VariableType);
 
 		int getSize(void) const;
 		string toString(void) const;
@@ -120,16 +120,19 @@ namespace Parser {
 		enum ResultType {
 			RES_NIL,
 			RES_NUMBER,
-			RES_STRING
+			RES_STRING,
+			RES_VAR
 		};
 
 		ResultType type;
 		int intVal;
 		string strVal;
+		const Variable *varVal;
 
 		int getInt(int) const;
 		string getString(int) const;
 		Variable toVar(void) const;
+		string toString(void) const;
 	};
 
 	int runExprNodeFunction(const ExprNodeType, const ExprNode*, const ExprNode*, const int, const unordered_map<string, Variable>&, const LabelMap&);

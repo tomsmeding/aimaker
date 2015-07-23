@@ -28,6 +28,10 @@ map<Parser::Instruction, int> instr_arity_map = {
 	{ Parser::INSTR_STOP_MATCH,  0 },
 	{ Parser::INSTR_PRINT,       1 },
 	{ Parser::INSTR_BREAK,       0 },
+	{ Parser::INSTR_AT,          3 },
+	{ Parser::INSTR_MAKEARR,     1 },
+	{ Parser::INSTR_PUSH,        2 },
+	{ Parser::INSTR_DEL,         2 },
 
 	{ Parser::INSTR_INVALID,     0 }
 };
@@ -63,7 +67,7 @@ namespace Parser {
 	Instruction convertInstruction (string word) {
 		to_lower(word); // Function calls are case insensitive.
 
-		if (word == "move" || word == "walk")                          return INSTR_MOVE;
+		if      (word == "move" || word == "walk")                     return INSTR_MOVE;
 		else if (word == "getloc" || word == "loc")                    return INSTR_LOC;
 		else if (word == "getdir" || word == "dir")                    return INSTR_DIR;
 		else if (word == "goto")                                       return INSTR_GOTO;
@@ -81,6 +85,10 @@ namespace Parser {
 		else if (word == "stop-match")                                 return INSTR_STOP_MATCH;
 		else if (word == "print")                                      return INSTR_PRINT;
 		else if (word == "break" || word == "breakpoint")              return INSTR_BREAK;
+		else if (word == "getat" || word == "at")                      return INSTR_AT;
+		else if (word == "makearr" || word == "arr")                   return INSTR_MAKEARR;
+		else if (word == "push")                                       return INSTR_PUSH;
+		else if (word == "del")                                        return INSTR_DEL;
 		else return INSTR_INVALID;
 	}
 
@@ -102,6 +110,10 @@ namespace Parser {
 		else if (instr == INSTR_STOP_MATCH) return "STOP_MATCH";
 		else if (instr == INSTR_PRINT) return "PRINT";
 		else if (instr == INSTR_BREAK) return "BREAK";
+		else if (instr == INSTR_AT) return "AT";
+		else if (instr == INSTR_MAKEARR) return "MAKEARR";
+		else if (instr == INSTR_PUSH) return "PUSH";
+		else if (instr == INSTR_DEL) return "DEL";
 		else if (instr == INSTR_NOP || instr == INSTR_INVALID) return "-INVALID-";
 		else return "-UNKNOWN- ";
 	}

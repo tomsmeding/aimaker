@@ -1,0 +1,19 @@
+#name arr
+#author Lieuwe
+
+#page 0
+	makearr arr
+	push arr, 5
+	push arr, 10
+	push arr, 8
+	push arr, 1
+	push arr, 2
+
+	del arr, 2
+	at arr, 2, p
+	page p
+
+#page 1
+loop:
+	rot 1
+	goto @loop

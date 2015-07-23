@@ -77,6 +77,11 @@ namespace Parser {
 				res.type = EvaluationResult::RES_NIL;
 				break;
 			}
+			default: {
+				res.type = EvaluationResult::RES_VAR;
+				res.varVal = this;
+				break;
+			}
 		}
 
 		return res;
@@ -597,6 +602,10 @@ namespace Parser {
 	};
 
 	int EvaluationResult::getInt(int lineNumber) const {
+		if (type == ResultType::RES_VAR && varVal->type == Variable::VAR_INT) {
+			return varVal->intVal;
+		}
+
 		if (type != ResultType::RES_NUMBER) {
 			throw_error(lineNumber, "Couldn't evaluate expression to a number.");
 		}
@@ -605,6 +614,10 @@ namespace Parser {
 	}
 
 	string EvaluationResult::getString(int lineNumber) const {
+		if (type == ResultType::RES_VAR && varVal->type == Variable::VAR_STRING) {
+			return varVal->strVal;
+		}
+
 		if (type != ResultType::RES_STRING) {
 			throw_error(lineNumber, "Couldn't evaluate expression to a string.");
 		}
@@ -630,9 +643,28 @@ namespace Parser {
 				res.strVal = strVal;
 				break;
 			}
+			case RES_VAR: {
+				return *varVal;
+			}
 		}
 
 		return res;
+	}
+
+	string EvaluationResult::toString(void) const {
+		switch(type) {
+		case EvaluationResult::RES_NIL:
+			return "-nil-";
+
+		case EvaluationResult::RES_NUMBER:
+			return to_string(intVal);
+
+		case EvaluationResult::RES_STRING:
+			return "\"" + strVal + "\"";
+
+		case EvaluationResult::RES_VAR:
+			return varVal->toString();
+		}
 	}
 
 	int runExprNodeFunction(

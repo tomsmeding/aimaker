@@ -373,29 +373,98 @@ pair<int, int> Bot::executeCurrentLine() {
 		case Parser::INSTR_PRINT: {
 			Parser::Argument arg = currentStatement.args[0];
 			const Parser::EvaluationResult res = Parser::evaluateExpression(arg, lineNumber, memoryMap, program->labels);
-			string s;
-
-			switch(res.type) {
-			case Parser::EvaluationResult::RES_NIL:
-				s = "-nil-";
-				break;
-
-			case Parser::EvaluationResult::RES_NUMBER:
-				s = to_string(res.intVal);
-				break;
-
-			case Parser::EvaluationResult::RES_STRING:
-				s = "\"" + res.strVal + "\"";
-				break;
-			}
-
-			cerr << index << '[' << curPage << '.' << curInstr << "]: " << s << endl;
+			cerr << index << '[' << curPage << '.' << curInstr << "]: " << res.toString() << endl;
 			break;
 		}
 
 		case Parser::INSTR_STOP_MATCH: {
 			cerr << "Bot with index " << index << " is stopping the match (INSTR_STOP_MATCH)" << endl;
 			exit(0);
+			break;
+		}
+
+		case Parser::INSTR_AT: {
+			Parser::Argument arrayNameArgument = currentStatement.args[0];
+			Parser::Argument indexArgument = currentStatement.args[1];
+			Parser::Argument varNameArgument = currentStatement.args[2];
+
+			if (
+				arrayNameArgument.type != Parser::EN_VARIABLE ||
+				varNameArgument.type != Parser::EN_VARIABLE
+			) {
+				// Wrong argument type(s).
+				break;
+			}
+
+			// log stuff
+			cerr << arrayNameArgument.strval << endl;
+			for (auto x : memoryMap) {
+				cerr << "- " << x.first << ": ";
+				cerr << x.second.toString();
+				cerr << endl;
+			}
+
+			const Parser::Variable arrVar = memoryMap[arrayNameArgument.strval];
+			if (arrVar.type != Parser::Variable::VAR_ARR) {
+				// given array name isnt an array.
+			}
+
+			const Parser::Variable var = arrVar.arrVal.at(Parser::evaluateExpression(indexArgument, lineNumber, memoryMap, program->labels).getInt(lineNumber));
+			storeVariable(varNameArgument.strval, var, curInstr);
+
+			break;
+		}
+
+		case Parser::INSTR_MAKEARR: {
+			Parser::Argument arrayNameArgument = currentStatement.args[0];
+
+			if (arrayNameArgument.type != Parser::EN_VARIABLE) {
+				// Wrong argument type.
+				break;
+			}
+
+			storeVariable(arrayNameArgument.strval, Parser::Variable::VAR_ARR, curInstr);
+			break;
+		}
+
+		case Parser::INSTR_PUSH: {
+			Parser::Argument arrayNameArgument = currentStatement.args[0];
+			Parser::Argument valueArgument = currentStatement.args[1];
+
+			if (arrayNameArgument.type != Parser::EN_VARIABLE) {
+				// Wrong argument type.
+				break;
+			}
+
+			Parser::Variable &var = memoryMap[arrayNameArgument.strval];
+			if (var.type != Parser::Variable::VAR_ARR) {
+				// given array name isnt an array.
+			}
+
+			auto value = Parser::evaluateExpression(valueArgument, lineNumber, memoryMap, program->labels);
+			var.arrVal.push_back(value.toVar());
+			break;
+		}
+
+		case Parser::INSTR_DEL: {
+			Parser::Argument arrayNameArgument = currentStatement.args[0];
+			Parser::Argument indexArgument = currentStatement.args[1];
+
+			if (
+				arrayNameArgument.type != Parser::EN_VARIABLE ||
+				indexArgument.type != Parser::EN_NUMBER
+			) {
+				// Wrong argument type.
+				break;
+			}
+
+			Parser::Variable &var = memoryMap[arrayNameArgument.strval];
+			if (var.type != Parser::Variable::VAR_ARR) {
+				// given array name isnt an array.
+			}
+
+			var.arrVal.erase(var.arrVal.begin() + indexArgument.intval);
+
 			break;
 		}
 

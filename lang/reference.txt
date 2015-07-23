@@ -134,6 +134,34 @@ Function: sleep
 Description: zzz
 Ticks: 1
 
+Function: getat/at
+Arguments:
+	- arrayVarName
+	- index
+	- varName
+Description: `varName = arrayVarName[index]`
+Ticks: 1
+
+Function: makearr/arr
+Arguments:
+	- varName
+Description: Creates an array on `varName`, overwriting whats already there.
+Ticks: 1
+
+Function: push
+Arguments:
+	- arrayVarName
+	- value
+Description: Pushes `value` to the array at `arrayVarName`.
+Ticks: 1
+
+Function: del
+Arguments:
+	- arrayVarName
+	- index
+Description: Removes the item at `index` on the array at `arrayVarName`.
+Ticks: 1
+
 Function: print
 Arguments:
 	- thing
