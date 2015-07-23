@@ -229,7 +229,7 @@ pair<int, int> Bot::executeCurrentLine() {
 			}
 
 			Parser::Variable var = Parser::evaluateExpression(valueArgument, lineNumber, memoryMap, program->labels).toVar();
-			storeVariable(varNameArgument.strval, var, curInstr);
+			storeVariable(varNameArgument.strval, var, lineNumber);
 			break;
 		}
 
@@ -270,8 +270,8 @@ pair<int, int> Bot::executeCurrentLine() {
 			Parser::Argument yTarget = currentStatement.args[1];
 
 			if (xTarget.type == Parser::EN_VARIABLE && yTarget.type == Parser::EN_VARIABLE) {
-				storeVariable(xTarget.strval, this->x);
-				storeVariable(yTarget.strval, this->y);
+				storeVariable(xTarget.strval, this->x, lineNumber);
+				storeVariable(yTarget.strval, this->y, lineNumber);
 			} else {
 				// Wrong argument type.
 			}
@@ -285,7 +285,7 @@ pair<int, int> Bot::executeCurrentLine() {
 			int direction = getDir();
 
 			if (dTarget.type == Parser::EN_VARIABLE) {
-				storeVariable(dTarget.strval, direction);
+				storeVariable(dTarget.strval, direction, lineNumber);
 			} else {
 				// Wrong argument type.
 			}
@@ -325,7 +325,7 @@ pair<int, int> Bot::executeCurrentLine() {
 					if(targetBot->isAsleep) response |= 8;
 				}
 			}
-			storeVariable(varNameArgument.strval, response);
+			storeVariable(varNameArgument.strval, response, lineNumber);
 			//cerr<<"Put "<<response<<" in "<<varNameArgument.strval<<" for bot "<<this->index<<endl;
 
 			break;
@@ -433,7 +433,7 @@ pair<int, int> Bot::executeCurrentLine() {
 				break;
 			}
 
-			storeVariable(arrayNameArgument.strval, Parser::Variable::VAR_ARR, curInstr);
+			storeVariable(arrayNameArgument.strval, Parser::Variable::VAR_ARR, lineNumber);
 			break;
 		}
 
