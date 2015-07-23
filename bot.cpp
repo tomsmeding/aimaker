@@ -377,6 +377,15 @@ pair<int, int> Bot::executeCurrentLine() {
 			break;
 		}
 
+		case Parser::INSTR_PRINT_VARS: {
+			for (auto x : memoryMap) {
+				cerr << "- " << x.first << ": ";
+				cerr << x.second.toString();
+				cerr << endl;
+			}
+			break;
+		}
+
 		case Parser::INSTR_STOP_MATCH: {
 			cerr << "Bot with index " << index << " is stopping the match (INSTR_STOP_MATCH)" << endl;
 			exit(0);

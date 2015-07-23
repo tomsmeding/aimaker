@@ -168,6 +168,10 @@ Arguments:
 Description: Prints the given `thing`
 Ticks: 1
 
+Function: print-vars
+Description: Prints all the vars in the variablemap.
+Ticks: 1
+
 .--- Debugging functions ---.
 | Requires you to use the   |
 | --allowdebug flag         |

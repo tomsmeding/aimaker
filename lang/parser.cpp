@@ -27,6 +27,7 @@ map<Parser::Instruction, int> instr_arity_map = {
 	{ Parser::INSTR_SLEEP,       0 },
 	{ Parser::INSTR_STOP_MATCH,  0 },
 	{ Parser::INSTR_PRINT,       1 },
+	{ Parser::INSTR_PRINT_VARS,  0 },
 	{ Parser::INSTR_BREAK,       0 },
 	{ Parser::INSTR_AT,          3 },
 	{ Parser::INSTR_MAKEARR,     1 },
@@ -84,6 +85,7 @@ namespace Parser {
 		else if (word == "sleep")                                      return INSTR_SLEEP;
 		else if (word == "stop-match")                                 return INSTR_STOP_MATCH;
 		else if (word == "print")                                      return INSTR_PRINT;
+		else if (word == "print-vars")                                 return INSTR_PRINT_VARS;
 		else if (word == "break" || word == "breakpoint")              return INSTR_BREAK;
 		else if (word == "getat" || word == "at")                      return INSTR_AT;
 		else if (word == "makearr" || word == "arr")                   return INSTR_MAKEARR;
@@ -109,6 +111,7 @@ namespace Parser {
 		else if (instr == INSTR_SLEEP) return "SLEEP";
 		else if (instr == INSTR_STOP_MATCH) return "STOP_MATCH";
 		else if (instr == INSTR_PRINT) return "PRINT";
+		else if (instr == INSTR_PRINT_VARS) return "PRINT_VARS";
 		else if (instr == INSTR_BREAK) return "BREAK";
 		else if (instr == INSTR_AT) return "AT";
 		else if (instr == INSTR_MAKEARR) return "MAKEARR";
