@@ -410,17 +410,16 @@ pair<int, int> Bot::executeCurrentLine() {
 				// given array name isnt an array.
 			}
 
-			const int index = Parser::evaluateExpression(indexArgument, lineNumber, memoryMap, program->labels).getInt(lineNumber);
+			const int arrIndex = Parser::evaluateExpression(indexArgument, lineNumber, memoryMap, program->labels).getInt(lineNumber);
 
-			auto inrange = index < (int)arrVar.arrVal.size();
-			if (!inrange) {
+			if (arrIndex < 0 || arrIndex >= (int)arrVar.arrVal.size()) {
 				char *message;
-				asprintf(&message, "Given index (%d) is out of bounds. (size of array is %d)", index, (int) arrVar.arrVal.size());
+				asprintf(&message, "Given index (%d) is out of bounds. (size of array is %d)", arrIndex, (int) arrVar.arrVal.size());
 				throw_error(lineNumber, message);
 				break;
 			}
 
-			const Parser::Variable var = arrVar.arrVal.at(index);
+			const Parser::Variable var = arrVar.arrVal.at(arrIndex);
 			storeVariable(varNameArgument.strval, var, curInstr);
 
 			break;
