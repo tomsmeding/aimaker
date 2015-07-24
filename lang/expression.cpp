@@ -59,8 +59,8 @@ namespace Parser {
 		}
 	}
 
-	EvaluationResult Variable::toER(void) const {
-		EvaluationResult res;
+	EvaluationResult Variable::toER(int lineNumber) const {
+		EvaluationResult res(lineNumber);
 
 		switch(this->type) {
 			case VAR_INT: {
@@ -596,7 +596,10 @@ namespace Parser {
 		[](int _, int b) { return -b;     }, //EN_NEGATE
 	};
 
-	int EvaluationResult::getInt(int lineNumber) const {
+	EvaluationResult::EvaluationResult()       : lineNumber(-1) {}
+	EvaluationResult::EvaluationResult(int ln) : lineNumber(ln) {}
+
+	int EvaluationResult::getInt() const {
 		if (type != ResultType::RES_NUMBER) {
 			throw_error(lineNumber, "Couldn't evaluate expression to a number.");
 		}
@@ -604,7 +607,7 @@ namespace Parser {
 		return intVal;
 	}
 
-	string EvaluationResult::getString(int lineNumber) const {
+	string EvaluationResult::getString() const {
 		if (type != ResultType::RES_STRING) {
 			throw_error(lineNumber, "Couldn't evaluate expression to a string.");
 		}
@@ -675,7 +678,7 @@ namespace Parser {
 		const unordered_map<string, Variable> &vars,
 		const LabelMap &labels
 	) {
-		EvaluationResult res;
+		EvaluationResult res(lineNumber);
 
 		if (root.type == EN_NIL) {
 			res.type = EvaluationResult::RES_NIL;
@@ -688,7 +691,7 @@ namespace Parser {
 				res.type = EvaluationResult::RES_NIL;
 				return res;
 			} else {
-				return varit->second.toER();
+				return varit->second.toER(lineNumber);
 			}
 		} else if (root.hasval == 1 && root.type == EN_LABEL) {
 			unordered_map<string, LabelInfo>::const_iterator labit = labels.find(root.strval);

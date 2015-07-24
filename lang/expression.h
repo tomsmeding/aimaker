@@ -35,7 +35,7 @@ namespace Parser {
 		int getSize(void) const;
 		string toString(void) const;
 
-		EvaluationResult toER(void) const;
+		EvaluationResult toER(int) const;
 	};
 
 	enum ExprTokenType {
@@ -117,18 +117,24 @@ namespace Parser {
 	void parseExpression(/*out*/ExprNode*, const vector<ExprToken>&, const int);
 
 	struct EvaluationResult {
+	private:
+		int lineNumber;
+	public:
 		enum ResultType {
 			RES_NIL,
 			RES_NUMBER,
 			RES_STRING
 		};
 
+		EvaluationResult();
+		EvaluationResult(int);
+
 		ResultType type;
 		int intVal;
 		string strVal;
 
-		int getInt(int) const;
-		string getString(int) const;
+		int getInt() const;
+		string getString() const;
 		Variable toVar(void) const;
 	};
 
