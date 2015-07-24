@@ -428,7 +428,8 @@ pair<int, int> Bot::executeCurrentLine() {
 
 			Parser::Variable *arrVar = getVariable(arrayNameArgument.strval);
 			if (!arrVar || arrVar->type != Parser::Variable::VAR_ARR) {
-				// given array name isnt an array.
+				throw_error(lineNumber, "Given variable doesn't exist or isn't an array");
+				break;
 			}
 
 			const int arrIndex = Parser::evaluateExpression(indexArgument, lineNumber, memoryMap, program->labels).getInt(lineNumber);
@@ -454,7 +455,8 @@ pair<int, int> Bot::executeCurrentLine() {
 
 			Parser::Variable *var = getVariable(arrayNameArgument.strval);
 			if (!var || var->type != Parser::Variable::VAR_ARR) {
-				// given array name isnt an array.
+				throw_error(lineNumber, "Given variable doesn't exist or isn't an array");
+				break;
 			}
 
 			auto value = Parser::evaluateExpression(valueArgument, lineNumber, memoryMap, program->labels);
@@ -476,7 +478,8 @@ pair<int, int> Bot::executeCurrentLine() {
 
 			Parser::Variable *var = getVariable(arrayNameArgument.strval);
 			if (!var || var->type != Parser::Variable::VAR_ARR) {
-				// given array name isnt an array.
+				throw_error(lineNumber, "Given variable doesn't exist or isn't an array");
+				break;
 			}
 
 			var->arrVal.erase(var->arrVal.begin() + indexArgument.intval);
@@ -495,7 +498,8 @@ pair<int, int> Bot::executeCurrentLine() {
 
 			Parser::Variable *arrVar = getVariable(arrayNameArgument.strval);
 			if (!arrVar || arrVar->type != Parser::Variable::VAR_ARR) {
-				// given array name isnt an array.
+				throw_error(lineNumber, "Given variable doesn't exist or isn't an array");
+				break;
 			}
 
 			storeVariable(varNameArgument.strval, (int)arrVar->arrVal.size(), lineNumber);
