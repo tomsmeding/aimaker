@@ -91,6 +91,15 @@ void Bot::storeVariable(const string &varName, const Parser::Variable &var, cons
 	}
 }
 
+Parser::Variable* Bot::getVariable(const string &varName) {
+	auto vari = memoryMap.find(varName);
+	if (vari == memoryMap.end()) {
+		return nullptr;
+	} else {
+		return &memoryMap.at(varName);
+	}
+}
+
 int Bot::calculateMemorySize(void) const {
 	int sum = 0;
 
@@ -405,17 +414,17 @@ pair<int, int> Bot::executeCurrentLine() {
 				break;
 			}
 
-			const Parser::Variable arrVar = memoryMap[arrayNameArgument.strval];
-			if (arrVar.type != Parser::Variable::VAR_ARR) {
+			Parser::Variable *arrVar = getVariable(arrayNameArgument.strval);
+			if (!arrVar || arrVar->type != Parser::Variable::VAR_ARR) {
 				// given array name isnt an array.
 			}
 
 			const int arrIndex = Parser::evaluateExpression(indexArgument, lineNumber, memoryMap, program->labels).getInt(lineNumber);
 
-			if (arrIndex < 0 || arrIndex >= (int)arrVar.arrVal.size()) {
+			if (arrIndex < 0 || arrIndex >= (int)arrVar->arrVal.size()) {
 				storeVariable(varNameArgument.strval, Parser::Variable::VAR_NIL, lineNumber);
 			} else {
-				const Parser::Variable var = arrVar.arrVal.at(arrIndex);
+				const Parser::Variable var = arrVar->arrVal.at(arrIndex);
 				storeVariable(varNameArgument.strval, var, lineNumber);
 			}
 
@@ -443,13 +452,13 @@ pair<int, int> Bot::executeCurrentLine() {
 				break;
 			}
 
-			Parser::Variable &var = memoryMap[arrayNameArgument.strval];
-			if (var.type != Parser::Variable::VAR_ARR) {
+			Parser::Variable *var = getVariable(arrayNameArgument.strval);
+			if (!var || var->type != Parser::Variable::VAR_ARR) {
 				// given array name isnt an array.
 			}
 
 			auto value = Parser::evaluateExpression(valueArgument, lineNumber, memoryMap, program->labels);
-			var.arrVal.push_back(value.toVar());
+			var->arrVal.push_back(value.toVar());
 			break;
 		}
 
@@ -465,12 +474,15 @@ pair<int, int> Bot::executeCurrentLine() {
 				break;
 			}
 
-			Parser::Variable &var = memoryMap[arrayNameArgument.strval];
-			if (var.type != Parser::Variable::VAR_ARR) {
+			Parser::Variable *var = getVariable(arrayNameArgument.strval);
+			if (!var || var->type != Parser::Variable::VAR_ARR) {
 				// given array name isnt an array.
 			}
 
-			var.arrVal.erase(var.arrVal.begin() + indexArgument.intval);
+			var->arrVal.erase(var->arrVal.begin() + indexArgument.intval);
+
+			break;
+		}
 
 			break;
 		}
