@@ -14,7 +14,15 @@ int Board::currentTick(void) const {
 void Board::nextTick(void) {
 	for (int i = 0; i < (int)bots.size(); i++) {
 		Bot &bot = bots[i];
-		bool died = bot.nextTick();
+		bool died = false;
+		try {
+			died = bot.nextTick();
+		} catch (char *message) {
+			cerr << "Error while nextTicking on bot with index " << bot.index << ':' << endl;
+			cerr << "\t\"" << message << '"' << endl;
+			cerr << "Bot is disqualified." << endl;
+			died = true;
+		}
 
 		if (died) {
 			bots.erase(bots.begin() + i);
