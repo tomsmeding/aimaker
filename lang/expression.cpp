@@ -3,6 +3,7 @@
 #include "../util.h"
 #include <deque>
 #include <functional>
+#include <sstream>
 #include <cstdint>
 #include <cstring>
 #include <cassert>
@@ -46,16 +47,22 @@ namespace Parser {
 	string Variable::toString(void) const {
 		switch (type) {
 		case VAR_ARR: {
-			string s = "";
-			for (const Variable &v : arrVal) {
-				s += v.toString();
+			stringstream ss;
+
+			ss << '[';
+			for (int i = 0; i < (int)arrVal.size(); i++) {
+				const Variable &v = arrVal[i];
+				if (i != 0) ss << ", ";
+				ss << v.toString();
 			}
-			return s;
+			ss << ']';
+
+			return ss.str();
 		}
 
 		case VAR_INT: return to_string(intVal);
-		case VAR_STRING: return strVal;
-		case VAR_NIL: return "[nil]";
+		case VAR_STRING: "\"" + strVal + "\"";
+		case VAR_NIL: return "-nil-";
 		}
 	}
 
@@ -75,6 +82,11 @@ namespace Parser {
 			}
 			case VAR_NIL: {
 				res.type = EvaluationResult::RES_NIL;
+				break;
+			}
+			default: {
+				res.type = EvaluationResult::RES_VAR;
+				res.varVal = this;
 				break;
 			}
 		}
@@ -600,6 +612,10 @@ namespace Parser {
 	EvaluationResult::EvaluationResult(int ln) : lineNumber(ln) {}
 
 	int EvaluationResult::getInt() const {
+		if (type == ResultType::RES_VAR && varVal->type == Variable::VAR_INT) {
+			return varVal->intVal;
+		}
+
 		if (type != ResultType::RES_NUMBER) {
 			throw_error(lineNumber, "Couldn't evaluate expression to a number.");
 		}
@@ -608,6 +624,10 @@ namespace Parser {
 	}
 
 	string EvaluationResult::getString() const {
+		if (type == ResultType::RES_VAR && varVal->type == Variable::VAR_STRING) {
+			return varVal->strVal;
+		}
+
 		if (type != ResultType::RES_STRING) {
 			throw_error(lineNumber, "Couldn't evaluate expression to a string.");
 		}
@@ -633,9 +653,28 @@ namespace Parser {
 				res.strVal = strVal;
 				break;
 			}
+			case RES_VAR: {
+				return *varVal;
+			}
 		}
 
 		return res;
+	}
+
+	string EvaluationResult::toString(void) const {
+		switch(type) {
+		case EvaluationResult::RES_NIL:
+			return "-nil-";
+
+		case EvaluationResult::RES_NUMBER:
+			return to_string(intVal);
+
+		case EvaluationResult::RES_STRING:
+			return "\"" + strVal + "\"";
+
+		case EvaluationResult::RES_VAR:
+			return varVal->toString();
+		}
 	}
 
 	int runExprNodeFunction(

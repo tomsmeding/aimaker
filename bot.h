@@ -23,6 +23,7 @@ private:
 	vector<vector<Parser::Statement>> pages;
 
 	void storeVariable(const string&, const Parser::Variable&, const int = -1);
+	Parser::Variable* getVariable(const string&);
 	int calculateMemorySize(void) const;
 	bool reachedMemoryLimit(void) const;
 	pair<int, int> executeCurrentLine(void);

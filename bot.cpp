@@ -91,6 +91,15 @@ void Bot::storeVariable(const string &varName, const Parser::Variable &var, cons
 	}
 }
 
+Parser::Variable* Bot::getVariable(const string &varName) {
+	auto vari = memoryMap.find(varName);
+	if (vari == memoryMap.end()) {
+		return nullptr;
+	} else {
+		return &memoryMap.at(varName);
+	}
+}
+
 int Bot::calculateMemorySize(void) const {
 	int sum = 0;
 
@@ -229,7 +238,7 @@ pair<int, int> Bot::executeCurrentLine() {
 			}
 
 			Parser::Variable var = Parser::evaluateExpression(valueArgument, lineNumber, memoryMap, program->labels).toVar();
-			storeVariable(varNameArgument.strval, var, curInstr);
+			storeVariable(varNameArgument.strval, var, lineNumber);
 			break;
 		}
 
@@ -270,8 +279,8 @@ pair<int, int> Bot::executeCurrentLine() {
 			Parser::Argument yTarget = currentStatement.args[1];
 
 			if (xTarget.type == Parser::EN_VARIABLE && yTarget.type == Parser::EN_VARIABLE) {
-				storeVariable(xTarget.strval, this->x);
-				storeVariable(yTarget.strval, this->y);
+				storeVariable(xTarget.strval, this->x, lineNumber);
+				storeVariable(yTarget.strval, this->y, lineNumber);
 			} else {
 				// Wrong argument type.
 			}
@@ -285,7 +294,7 @@ pair<int, int> Bot::executeCurrentLine() {
 			int direction = getDir();
 
 			if (dTarget.type == Parser::EN_VARIABLE) {
-				storeVariable(dTarget.strval, direction);
+				storeVariable(dTarget.strval, direction, lineNumber);
 			} else {
 				// Wrong argument type.
 			}
@@ -325,7 +334,7 @@ pair<int, int> Bot::executeCurrentLine() {
 					if(targetBot->isAsleep) response |= 8;
 				}
 			}
-			storeVariable(varNameArgument.strval, response);
+			storeVariable(varNameArgument.strval, response, lineNumber);
 			//cerr<<"Put "<<response<<" in "<<varNameArgument.strval<<" for bot "<<this->index<<endl;
 
 			break;
@@ -373,29 +382,128 @@ pair<int, int> Bot::executeCurrentLine() {
 		case Parser::INSTR_PRINT: {
 			Parser::Argument arg = currentStatement.args[0];
 			const Parser::EvaluationResult res = Parser::evaluateExpression(arg, lineNumber, memoryMap, program->labels);
-			string s;
+			cerr << index << '[' << curPage << '.' << curInstr << "]: " << res.toString() << endl;
+			break;
+		}
 
-			switch(res.type) {
-			case Parser::EvaluationResult::RES_NIL:
-				s = "-nil-";
-				break;
-
-			case Parser::EvaluationResult::RES_NUMBER:
-				s = to_string(res.intVal);
-				break;
-
-			case Parser::EvaluationResult::RES_STRING:
-				s = "\"" + res.strVal + "\"";
-				break;
+		case Parser::INSTR_PRINT_VARS: {
+			for (auto x : memoryMap) {
+				cerr << "- " << x.first << ": ";
+				cerr << x.second.toString();
+				cerr << endl;
 			}
-
-			cerr << index << '[' << curPage << '.' << curInstr << "]: " << s << endl;
 			break;
 		}
 
 		case Parser::INSTR_STOP_MATCH: {
 			cerr << "Bot with index " << index << " is stopping the match (INSTR_STOP_MATCH)" << endl;
 			exit(0);
+			break;
+		}
+
+		case Parser::INSTR_MAKEARR: {
+			Parser::Argument arrayNameArgument = currentStatement.args[0];
+
+			if (arrayNameArgument.type != Parser::EN_VARIABLE) {
+				// Wrong argument type.
+				break;
+			}
+
+			storeVariable(arrayNameArgument.strval, Parser::Variable::VAR_ARR, lineNumber);
+			break;
+		}
+
+		case Parser::INSTR_AT: {
+			Parser::Argument arrayNameArgument = currentStatement.args[0];
+			Parser::Argument indexArgument = currentStatement.args[1];
+			Parser::Argument varNameArgument = currentStatement.args[2];
+
+			if (
+				arrayNameArgument.type != Parser::EN_VARIABLE ||
+				varNameArgument.type != Parser::EN_VARIABLE
+			) {
+				// Wrong argument type(s).
+				break;
+			}
+
+			Parser::Variable *arrVar = getVariable(arrayNameArgument.strval);
+			if (!arrVar || arrVar->type != Parser::Variable::VAR_ARR) {
+				throw_error(lineNumber, "Given variable doesn't exist or isn't an array");
+				break;
+			}
+
+			const int arrIndex = Parser::evaluateExpression(indexArgument, lineNumber, memoryMap, program->labels).getInt();
+
+			if (arrIndex < 0 || arrIndex >= (int)arrVar->arrVal.size()) {
+				storeVariable(varNameArgument.strval, Parser::Variable::VAR_NIL, lineNumber);
+			} else {
+				const Parser::Variable var = arrVar->arrVal.at(arrIndex);
+				storeVariable(varNameArgument.strval, var, lineNumber);
+			}
+
+			break;
+		}
+
+		case Parser::INSTR_PUSH: {
+			Parser::Argument arrayNameArgument = currentStatement.args[0];
+			Parser::Argument valueArgument = currentStatement.args[1];
+
+			if (arrayNameArgument.type != Parser::EN_VARIABLE) {
+				// Wrong argument type.
+				break;
+			}
+
+			Parser::Variable *var = getVariable(arrayNameArgument.strval);
+			if (!var || var->type != Parser::Variable::VAR_ARR) {
+				throw_error(lineNumber, "Given variable doesn't exist or isn't an array");
+				break;
+			}
+
+			auto value = Parser::evaluateExpression(valueArgument, lineNumber, memoryMap, program->labels);
+			var->arrVal.push_back(value.toVar());
+			break;
+		}
+
+		case Parser::INSTR_DEL: {
+			Parser::Argument arrayNameArgument = currentStatement.args[0];
+			Parser::Argument indexArgument = currentStatement.args[1];
+
+			if (
+				arrayNameArgument.type != Parser::EN_VARIABLE ||
+				indexArgument.type != Parser::EN_NUMBER
+			) {
+				// Wrong argument type.
+				break;
+			}
+
+			Parser::Variable *var = getVariable(arrayNameArgument.strval);
+			if (!var || var->type != Parser::Variable::VAR_ARR) {
+				throw_error(lineNumber, "Given variable doesn't exist or isn't an array");
+				break;
+			}
+
+			var->arrVal.erase(var->arrVal.begin() + indexArgument.intval);
+
+			break;
+		}
+
+		case Parser::INSTR_LENGTH: {
+			Parser::Argument arrayNameArgument = currentStatement.args[0];
+			Parser::Argument varNameArgument = currentStatement.args[1];
+
+			if (arrayNameArgument.type != Parser::EN_VARIABLE) {
+				// Wrong argument type.
+				break;
+			}
+
+			Parser::Variable *arrVar = getVariable(arrayNameArgument.strval);
+			if (!arrVar || arrVar->type != Parser::Variable::VAR_ARR) {
+				throw_error(lineNumber, "Given variable doesn't exist or isn't an array");
+				break;
+			}
+
+			storeVariable(varNameArgument.strval, (int)arrVar->arrVal.size(), lineNumber);
+
 			break;
 		}
 
