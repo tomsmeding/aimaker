@@ -401,6 +401,18 @@ pair<int, int> Bot::executeCurrentLine() {
 			break;
 		}
 
+		case Parser::INSTR_MAKEARR: {
+			Parser::Argument arrayNameArgument = currentStatement.args[0];
+
+			if (arrayNameArgument.type != Parser::EN_VARIABLE) {
+				// Wrong argument type.
+				break;
+			}
+
+			storeVariable(arrayNameArgument.strval, Parser::Variable::VAR_ARR, lineNumber);
+			break;
+		}
+
 		case Parser::INSTR_AT: {
 			Parser::Argument arrayNameArgument = currentStatement.args[0];
 			Parser::Argument indexArgument = currentStatement.args[1];
@@ -428,18 +440,6 @@ pair<int, int> Bot::executeCurrentLine() {
 				storeVariable(varNameArgument.strval, var, lineNumber);
 			}
 
-			break;
-		}
-
-		case Parser::INSTR_MAKEARR: {
-			Parser::Argument arrayNameArgument = currentStatement.args[0];
-
-			if (arrayNameArgument.type != Parser::EN_VARIABLE) {
-				// Wrong argument type.
-				break;
-			}
-
-			storeVariable(arrayNameArgument.strval, Parser::Variable::VAR_ARR, lineNumber);
 			break;
 		}
 
