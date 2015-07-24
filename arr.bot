@@ -8,6 +8,9 @@
 	push arr, 8
 	push arr, 1
 	push arr, 2
+	len arr, len
+	print len
+	breakpoint
 
 	del arr, 2
 	at arr, 2, p

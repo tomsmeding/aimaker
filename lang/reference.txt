@@ -148,6 +148,13 @@ Arguments:
 Description: Creates an array on `varName`, overwriting whats already there.
 Ticks: 1
 
+Function: length/len
+Arguments:
+	- arrayVarName
+	- varName
+Description: `varName = arrayVarName.size()`
+Ticks: 1
+
 Function: push
 Arguments:
 	- arrayVarName

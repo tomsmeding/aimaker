@@ -484,6 +484,22 @@ pair<int, int> Bot::executeCurrentLine() {
 			break;
 		}
 
+		case Parser::INSTR_LENGTH: {
+			Parser::Argument arrayNameArgument = currentStatement.args[0];
+			Parser::Argument varNameArgument = currentStatement.args[1];
+
+			if (arrayNameArgument.type != Parser::EN_VARIABLE) {
+				// Wrong argument type.
+				break;
+			}
+
+			Parser::Variable *arrVar = getVariable(arrayNameArgument.strval);
+			if (!arrVar || arrVar->type != Parser::Variable::VAR_ARR) {
+				// given array name isnt an array.
+			}
+
+			storeVariable(varNameArgument.strval, (int)arrVar->arrVal.size(), lineNumber);
+
 			break;
 		}
 

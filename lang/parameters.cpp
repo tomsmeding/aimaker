@@ -56,6 +56,7 @@ map<Parser::Instruction, int> instr_tier_map = {
 	{ Parser::INSTR_MAKEARR,     0 },
 	{ Parser::INSTR_PUSH,        0 },
 	{ Parser::INSTR_DEL,         0 },
+	{ Parser::INSTR_LENGTH,      0 },
 	{ Parser::INSTR_INVALID,     0 }
 };
 

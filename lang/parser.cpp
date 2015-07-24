@@ -33,6 +33,7 @@ map<Parser::Instruction, int> instr_arity_map = {
 	{ Parser::INSTR_MAKEARR,     1 },
 	{ Parser::INSTR_PUSH,        2 },
 	{ Parser::INSTR_DEL,         2 },
+	{ Parser::INSTR_LENGTH,      2 },
 
 	{ Parser::INSTR_INVALID,     0 }
 };
@@ -91,6 +92,7 @@ namespace Parser {
 		else if (word == "makearr" || word == "arr")                   return INSTR_MAKEARR;
 		else if (word == "push")                                       return INSTR_PUSH;
 		else if (word == "del")                                        return INSTR_DEL;
+		else if (word == "length" || word == "len")                    return INSTR_LENGTH;
 		else return INSTR_INVALID;
 	}
 
@@ -117,6 +119,7 @@ namespace Parser {
 		else if (instr == INSTR_MAKEARR) return "MAKEARR";
 		else if (instr == INSTR_PUSH) return "PUSH";
 		else if (instr == INSTR_DEL) return "DEL";
+		else if (instr == INSTR_LENGTH) return "LENGTH";
 		else if (instr == INSTR_NOP || instr == INSTR_INVALID) return "-INVALID-";
 		else return "-UNKNOWN- ";
 	}

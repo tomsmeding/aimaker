@@ -37,6 +37,7 @@ namespace Parser {
 		INSTR_MAKEARR,
 		INSTR_PUSH,
 		INSTR_DEL,
+		INSTR_LENGTH,
 
 		INSTR_INVALID=255
 	};
