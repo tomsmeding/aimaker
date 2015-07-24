@@ -48,7 +48,7 @@ Function: goto
 Arguments:
 	- label
 Description: Goes to the specified `label`. `goto a` is the same as `if 1, a`.
-Ticks: 1
+Ticks: 1 (+ 2 if trans-page)
 
 Function: ifgoto/if
 Arguments:

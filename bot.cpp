@@ -215,6 +215,8 @@ pair<int, int> Bot::executeCurrentLine() {
 			jumpTo(pos.page, pos.line);
 			didJump = true;
 
+			workTimeArg = (int) pos.page != curPage; // if page is same: 0, if different: 1
+
 			break;
 		}
 
