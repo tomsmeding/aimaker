@@ -389,7 +389,7 @@ pair<int, int> Bot::executeCurrentLine() {
 		}
 
 		case Parser::INSTR_PRINT_VARS: {
-			for (auto x : memoryMap) {
+			for (const pair<string, Parser::Variable> &x : memoryMap) {
 				cerr << "- " << x.first << ": ";
 				cerr << x.second.toString();
 				cerr << endl;
