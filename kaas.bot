@@ -7,13 +7,25 @@
 #page 15
 main:
 	look res
-	if res == 1 || res == 4 || res == 12, @turn
 	if res == 2 || res == 8, @inject
-	move 1
+	if res == 0, @build
+	goto @turn // goes to begin main after the turn.
+
+build:
+	build 2
+
+	trans 0, 0
+	trans 15, 15
+	trans 14, 14
+	shake-awake
+
+	//goto _prevloc - 1
 	goto @main
+
 turn:
 	rot 1
 	goto @main
+
 inject:
 	sto i, 0
 injectloop:
