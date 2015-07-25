@@ -2,8 +2,7 @@
 #author Tom Smeding
 
 #page 0
-	//`goto` is a faster `page`
-	goto @page8
+	page 8
 
 #page 8
 page8:
