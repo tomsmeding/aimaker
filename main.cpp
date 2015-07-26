@@ -43,7 +43,7 @@ vector<string> readFile(const char *const fname) {
 }
 
 void printusage(int argc, char **argv) {
-	cerr << "Usage: " << argv[0] << " <options> <botprograms...>" << endl;
+	cerr << "Usage: " << argv[0] << " [<options>] <botprograms>" << endl;
 	cerr << "Options:" << endl;
 	cerr << "\t--boardsize=<int> (5) | Sets the size of the game board." << endl;
 	cerr << "\t--maxbotmemory=<int> (50) | Sets the max memory a bot can store." << endl;
