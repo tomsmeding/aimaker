@@ -59,7 +59,7 @@ Arguments:
 	- Condition
 	- Label
 Description: Goes to the specified `label` if the `condition` is true.
-Ticks: 2
+Ticks: 2 (+ 2 if trans-page)
 Tier: 0
 
 Function: store/sto

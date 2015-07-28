@@ -208,14 +208,12 @@ pair<int, int> Bot::executeCurrentLine() {
 		case Parser::INSTR_GOTO: {
 			const Parser::Argument target = currentStatement.args[0];
 
-			int intpos = Parser::evaluateExpression(target, lineNumber, memoryMap, program->labels).getInt();
-			Parser::Position pos = Parser::itop(intpos);
+			Parser::Position pos = Parser::itop(Parser::evaluateExpression(target, lineNumber, memoryMap, program->labels).getInt());
+			workTimeArg = (int) pos.page != curPage; // if page is same: 0, if different: 1
 
 			memoryMap["_prevloc"] = Parser::ptoi({ curPage, curInstr + 1 });
 			jumpTo(pos.page, pos.line);
 			didJump = true;
-
-			workTimeArg = (int) pos.page != curPage; // if page is same: 0, if different: 1
 
 			break;
 		}
@@ -223,10 +221,17 @@ pair<int, int> Bot::executeCurrentLine() {
 		case Parser::INSTR_IFGOTO: {
 			const Parser::Argument condition = currentStatement.args[0];
 			const Parser::Argument target = currentStatement.args[1];
-			if (!Parser::evaluateExpression(condition, lineNumber, memoryMap, program->labels).getInt()) break; // that's the `if`
-			Parser::Position targetpos = Parser::itop(Parser::evaluateExpression(target, lineNumber, memoryMap, program->labels).getInt());
-			jumpTo(targetpos.page, targetpos.line); // that's the `goto`
+
+			// If the condition evaluates to 0, break.
+			if (!Parser::evaluateExpression(condition, lineNumber, memoryMap, program->labels).getInt()) break;
+
+			Parser::Position pos = Parser::itop(Parser::evaluateExpression(target, lineNumber, memoryMap, program->labels).getInt());
+			workTimeArg = (int) pos.page != curPage; // if page is same: 0, if different: 1
+
+			memoryMap["_prevloc"] = Parser::ptoi({ curPage, curInstr + 1 });
+			jumpTo(pos.page, pos.line); // that's the `goto`
 			didJump = true;
+
 			break;
 		}
 
