@@ -128,14 +128,16 @@ pair<int, int> Bot::calculateNextLocation(bool forwards) const {
 	return make_pair(x + deltaX, y + deltaY);
 }
 
-void Bot::copyPage(int targetId, const vector<Parser::Statement> &page) {
+void Bot::copyPage(int targetId, const vector<Parser::Statement> &page, bool sameProgram) {
 	pages[targetId] = page;
 
 	//cerr << this->index << endl;
 
-	for (Parser::Statement &instr : pages[targetId]) {
-		// Reset the linenumbers, they don't make sense anymore.
-		instr.lineNumber = -1;
+	if (!sameProgram) {
+		for (Parser::Statement &instr : pages[targetId]) {
+			// Reset the linenumbers, they don't make sense anymore.
+			instr.lineNumber = -1;
+		}
 	}
 
 	if (curPage == targetId && curInstr >= (int)pages[curPage].size()) {
@@ -262,7 +264,7 @@ pair<int, int> Bot::executeCurrentLine() {
 			if (targetBot != NULL) {
 				//cerr << "copying to bot with id " << targetBot->index << endl;
 
-				targetBot->copyPage(toId, page);
+				targetBot->copyPage(toId, page, targetBot->program->id == this->program->id);
 
 				//cerr << "page copied" << endl;
 			}
@@ -351,7 +353,7 @@ pair<int, int> Bot::executeCurrentLine() {
 			Parser::Argument targetIdArgument = currentStatement.args[1];
 
 			vector<Parser::Statement> page = pages[Parser::evaluateExpression(pageIdArgument, lineNumber, memoryMap, program->labels).getInt()];
-			copyPage(Parser::evaluateExpression(targetIdArgument, lineNumber, memoryMap, program->labels).getInt(), page);
+			copyPage(Parser::evaluateExpression(targetIdArgument, lineNumber, memoryMap, program->labels).getInt(), page, true);
 			workTimeArg = page.size();
 
 			break;

@@ -44,5 +44,5 @@ public:
 	pair<int, int> getPos(void) const;
 	int getDir(void) const;
 	bool nextTick(void);
-	void copyPage(int, const vector<Parser::Statement>&);
+	void copyPage(int, const vector<Parser::Statement>&, bool);
 };
