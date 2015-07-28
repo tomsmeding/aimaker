@@ -154,7 +154,7 @@ pair<int, int> Bot::executeCurrentLine() {
 	cerr << "page: " << curPage << " | instruction: " << curInstr << ", with type " << currentStatement.instr << endl;
 	cerr << "pages size: " << pages.size() << endl;
 	cerr << "pages[" << curPage << "] size: " << pages.at(curPage).size() << endl;*/
-	if(pages.at(curPage).size()==0)return {curPage,curInstr}; //and caller will put bot to sleep
+	if (pages.at(curPage).size() == 0) return { curPage, curInstr }; // and caller will put bot to sleep
 	const Parser::Statement currentStatement = pages.at(curPage).at(curInstr);
 
 	auto tieri = instr_tier_map.find(currentStatement.instr);
@@ -169,7 +169,6 @@ pair<int, int> Bot::executeCurrentLine() {
 	// cerr << "Working for: " << _workingFor << endl;
 
 	if (canExecute) {
-
 		if((int)currentStatement.args.size() != instr_arity_map[currentStatement.instr]){
 			throw_error(lineNumber, string(
 				"Instruction " +
@@ -526,6 +525,8 @@ pair<int, int> Bot::executeCurrentLine() {
 		}
 
 		_workingFor = instructionWorkTime(currentStatement.instr, workTimeArg);
+	} else {
+		cerr << "Skipping instruction " << curInstr << " (instr_type " << currentStatement.instr << ") on bot with index " << index << " since it doesn't have an high enough tier (required: " << instr_tier_map.at(currentStatement.instr) << ", has: " << tier << ')' << endl;
 	}
 
 	return make_pair(curPage, curInstr + !didJump);
