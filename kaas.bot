@@ -19,8 +19,7 @@ build:
 	trans 14, 14
 	shake-awake
 
-	//goto _prevloc - 1
-	goto @main
+	goto _prevloc
 
 turn:
 	rot 1
@@ -29,9 +28,9 @@ turn:
 inject:
 	sto i, 0
 injectloop:
-	look res
 	trans 14, i
 	sto i, i+1
+	look res
 	if i<16 && (res == 2 || res == 8), @injectloop
 
 	goto @main
