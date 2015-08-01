@@ -1,0 +1,33 @@
+[
+	{
+		"subtitle": "Variables"
+	},
+	{
+		"content": "All variables starting with _ are immutable, which means you can't create variables which name starts with a '_'."
+	},
+	{
+		"name": "_prevloc",
+		"type": "number",
+		"description": "The location of the previous goto.The location of the previous goto.The location of the previous goto.The location of the previous goto.The location of the previous goto.The location of the previous goto.The location of the previous goto.The location of the previous goto.The location of the previous goto.",
+		"example": "`goto _prevloc`"
+	},
+	{
+		"name": "_rip",
+		"type": "number",
+		"description": "The current location in the code pages.\n(current page and current instruction)",
+		"example": "`goto _rip`"
+	},
+	{
+		"subtitle": "Meta attributes"
+	},
+	{
+		"name": "name",
+		"type": "string",
+		"description": "The name of the program."
+	},
+	{
+		"name": "author",
+		"type": "string",
+		"description": "The author of the program."
+	}
+]
