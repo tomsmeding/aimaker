@@ -23,12 +23,6 @@
 
 	var ss = new StringBuilder();
 	if (outputType === 'text' || outputType === 'markdown') {
-		var printText = function (str) {
-			ss.add('-'.repeat(str.length));
-			ss.add(str);
-			ss.add('-'.repeat(str.length));
-		};
-
 		ss.addTitle('Aimaker Reference (commit ', commit, ')');
 
 		ref.forEach(function (x) {
@@ -36,7 +30,7 @@
 				ss.addSubTitle(x.subtitle);
 				return; // prevent printing a triple '\n'.
 			} else if (x.content) {
-				printText(x.content);
+				ss.addSection(x.content);
 			} else {
 				ss.addObject(x);
 			}

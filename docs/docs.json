@@ -8,7 +8,7 @@
 	{
 		"name": "_prevloc",
 		"type": "number",
-		"description": "The location of the previous goto.The location of the previous goto.The location of the previous goto.The location of the previous goto.The location of the previous goto.The location of the previous goto.The location of the previous goto.The location of the previous goto.The location of the previous goto.",
+		"description": "The location of the previous goto.",
 		"example": "`goto _prevloc`"
 	},
 	{

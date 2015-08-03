@@ -1,4 +1,81 @@
 const MAX_LINE_LENGTH = 45;
+const MAX_DIFF = 10;
+
+function breakString (str, length) {
+	var length = length || MAX_LINE_LENGTH;
+	var chars  = '!?:;.,';
+
+	var stopIndexes    = [];
+	var spaceIndexes   = [];
+
+	var closest = function (arr, val) {
+		var closestVal = -1;
+		var diff = Infinity;
+
+		arr.forEach(function (x) {
+			var newdiff = val - x;
+
+			if (newdiff >= 0 && newdiff < diff) {
+				closestVal = x;
+				diff = newdiff;
+			}
+		});
+
+		return [ closestVal, diff ];
+	};
+
+	for (var i = 0; i < str.length; i++) {
+		var char = str[i];
+
+		if (chars.indexOf(char) > -1) {
+			stopIndexes.push(i);
+		} else if (char == ' ') {
+			spaceIndexes.push(i);
+		}
+	}
+
+	var linelength = 0;
+	var splits = [];
+	for (var i = 0; i < str.length; i++) {
+		var char         = str[i];
+		var closestStop  = closest(stopIndexes, i);
+		var closestSpace = closest(spaceIndexes, i);
+
+		if (char === '\n') {
+			splits.push(i);
+			linelength = 0;
+			continue;
+		}
+
+		if (linelength + 1 < length) {
+			linelength++;
+			continue;
+		} else if (closestStop[1] < MAX_DIFF + 5) { // cut on nearby stop
+			splits.push(closestStop[0]);
+		} else if (closestSpace[1] < MAX_DIFF) { // cut on nearby space
+			splits.push(closestSpace[0]);
+		} else { // force cut
+			splits.push(i);
+		}
+
+		linelength = 0;
+	}
+
+	var res = [];
+	var line = '';
+	for (var i = 0; i < str.length; i++) {
+		line += str[i];
+
+		if (splits.indexOf(i) > -1) {
+			res.push(line.trim());
+			line = '';
+		}
+	}
+
+	line = line.trim()
+	if (line.length) res.push(line);
+	return res;
+}
 
 module.exports = (function () {
 	"use strict";
@@ -44,26 +121,7 @@ module.exports = (function () {
 		pairs.forEach(function (p) {
 			var left  = p[0][0].toUpperCase() + p[0].substr(1);
 			var right = p[1];
-			var splitted = p[1].split('\n');
-			var rightLines = [];
-
-			splitted.forEach(function (l) {
-				if (l.length < MAX_LINE_LENGTH) {
-					rightLines.push(l);
-				} else {
-					var arr = [];
-					var left = l;
-					var i = 0;
-
-					while (left.length > 0) {
-						arr.push(left.substr(i, MAX_LINE_LENGTH));
-						left = left.substr(i + MAX_LINE_LENGTH);
-						i += MAX_LINE_LENGTH;
-					}
-
-					rightLines = rightLines.concat(arr);
-				}
-			});
+			var rightLines = breakString(p[1]);
 
 			var s = left + ': ';
 
@@ -95,6 +153,18 @@ module.exports = (function () {
 		var s = Array.prototype.slice.call(arguments).join('');
 		this.add(s);
 		this.add('-'.repeat(s.length), '\n');
+	};
+
+	StringBuilder.prototype.addSection = function (str) {
+		var self = this;
+		var lines = breakString(str);
+		var longest = lines.map(function (l) { return l.length; }).sort().reverse()[0];
+
+		self.add('-'.repeat(longest));
+		lines.forEach(function (line) {
+			self.add(line);
+		});
+		self.add('-'.repeat(longest));
 	};
 
 	StringBuilder.prototype.toString = function () {
