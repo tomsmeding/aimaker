@@ -1,19 +1,21 @@
 #!/usr/bin/env node
 
 (function () {
-	"use strict";
+	'use strict';
 
 	var fs            = require('fs');
 	var ref           = require('./docs.json');
 	var StringBuilder = require('./stringbuilder.js');
-	var commit        = fs.readFileSync('../.git/refs/heads/master', { encoding: 'ascii' }).replace(/\n$/, '').substr(0, 6);
+	var commit        = fs.readFileSync('../.git/refs/heads/master', { encoding: 'ascii' }).trim().substr(0, 6);
 
 	var args = process.argv.slice(2);
 	var getArg = function (flag, short) {
 		var flagIndex  = args.indexOf('--' + flag);
 		var shortIndex = args.indexOf('-'  + short);
 
-		return (flagIndex > -1) ? args[flagIndex + 1] : args[shortIndex + 1];
+		if (flagIndex > -1) return args[flagIndex + 1];
+		else if (shortIndex > -1) return args[shortIndex + 1];
+		else return '';
 	};
 
 	var outputLocation = getArg('output', 'o') || '';
@@ -42,10 +44,14 @@
 			ss.add();
 		});
 
-		console.log(ss.toString());
+		if (outputLocation.trim().length > 0) {
+			fs.writeFileSync(outputLocation, ss.toString());
+		} else {
+			console.log(ss.toString());
+		}
 	} else if (outputType === 'html') {
 		console.warn('not impmplemented.');
 	} else {
-		throw new Error("Ouput type '" + outputType + "' unknown.");
+		throw new Error("Output type '" + outputType + "' unknown.");
 	}
 })();
