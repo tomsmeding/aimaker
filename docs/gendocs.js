@@ -29,7 +29,7 @@
 	var s = module(ref, commit);
 
 	if (outputLocation.trim().length > 0) {
-		fs.writeFileSync(outputLocation, s)
+		fs.writeFileSync(outputLocation, s);
 	} else {
 		console.log(s);
 	}

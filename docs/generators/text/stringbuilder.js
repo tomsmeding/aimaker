@@ -73,7 +73,7 @@ function breakString (str, length) {
 		}
 	}
 
-	line = line.trim()
+	line = line.trim();
 	if (line.length) res.push(line);
 	return res;
 }
@@ -87,7 +87,7 @@ module.exports = (function () {
 			s += this;
 		}
 		return s;
-	}
+	};
 
 	var StringBuilder = function () {
 		this._str = '';
@@ -116,7 +116,7 @@ module.exports = (function () {
 			var val = obj[key];
 			if (Array.isArray(val)) {
 				if (key === 'arguments') {
-					val = val.map(function (s, i) {
+					val = val.map(function (s) {
 						return '\n- ' + s;
 					}).join('').trim();
 				} else {
@@ -134,7 +134,6 @@ module.exports = (function () {
 
 		pairs.forEach(function (p) {
 			var left  = p[0][0].toUpperCase() + p[0].substr(1) + ': ';
-			var right = p[1];
 			var rightLines = breakString(p[1], MAX_LINE_LENGTH - left.length);
 
 			var s = left;
@@ -174,7 +173,9 @@ module.exports = (function () {
 	StringBuilder.prototype.addSection = function (str) {
 		var self = this;
 		var lines = breakString(str);
-		var longest = lines.map(function (l) { return l.length; }).sort().reverse()[0];
+		var longest = lines.map(function (l) {
+			return l.length;
+		}).sort().reverse()[0];
 
 		self.add('-'.repeat(longest));
 		lines.forEach(function (line) {
