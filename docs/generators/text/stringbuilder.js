@@ -74,6 +74,10 @@ function breakString (str, length) {
 	return res;
 }
 
+function capFirst (str) {
+	return str[0].toUpperCase() + str.substr(1);
+}
+
 module.exports = (function () {
 	'use strict';
 
@@ -99,17 +103,14 @@ module.exports = (function () {
 		self._str += '\n';
 	};
 
-	StringBuilder.prototype.addObject = function (obj) {
-		var self    = this;
-		var pairs   = [];
-		var largest = [ 0, 0 ]; // [ index, length ]
+	StringBuilder.prototype.addObject = function (obj, table) {
+		var self = this;
+		var pairs = [];
+		var maxKeySize = 0;
 
 		for (var key in obj) {
-			if (key.length > largest[1]) {
-				largest = [ pairs.length, key.length ];
-			}
-
 			var val = obj[key];
+
 			if (Array.isArray(val)) {
 				if (key === 'arguments') {
 					val = val.map(function (s) {
@@ -122,36 +123,44 @@ module.exports = (function () {
 				val = val.toString();
 			}
 
-			pairs.push([ key, val ]);
+			pairs.push([key, val]);
+			if (key.length > maxKeySize) {
+				maxKeySize = key.length;
+			}
 		}
 
+		// Object is empty, nothing to print.
 		if (pairs.length === 0) return;
-		var requiredLength = largest[1];
 
-		pairs.forEach(function (p) {
-			var left  = p[0][0].toUpperCase() + p[0].substr(1) + ': ';
-			var rightLines = breakString(p[1], MAX_LINE_LENGTH - left.length);
-
-			var s = left;
-
-			var spacestring = '';
-			for (var i = 0; i < requiredLength + 2 - s.length; i++) {
-				spacestring += ' ';
-			}
-			s = spacestring + s;
-
-			s += rightLines[0];
-
-			rightLines.slice(1).forEach(function (line) {
-				s += '\n';
-				for (var i = 0; i < requiredLength + 2; i++) {
-					s += ' ';
-				}
-				s += line;
+		if (table) {
+			self.add('||||');
+			self.add('|-----------:|:------------|');
+			pairs.forEach(function (pair) {
+				self.add('|' + capFirst(pair[0]) + '|' + pair[1].replace(/\n/g, '<br>') + '|');
 			});
+		} else {
+			pairs.forEach(function (pair) {
+				var s = capFirst(pair[0]) + ': ';
 
-			self.add(s);
-		});
+				var padding = '';
+				for (var i = 0; i < maxKeySize + 2 - s.length; i++) {
+					padding += ' ';
+				}
+				s = padding + s;
+
+				var rightLines = breakString(pair[1], MAX_LINE_LENGTH - s.length);
+				s += rightLines[0];
+				rightLines.slice(1).forEach(function (line) {
+					s += '\n';
+					for (var i = 0; i < maxKeySize + 2; i++) {
+						s += ' ';
+					}
+					s += line;
+				});
+
+				self.add(s);
+			});
+		}
 	};
 
 	StringBuilder.prototype.addTitle = function () {
@@ -166,18 +175,20 @@ module.exports = (function () {
 		this.add('-'.repeat(s.length), '\n');
 	};
 
-	StringBuilder.prototype.addSection = function (str) {
+	StringBuilder.prototype.addSection = function (str, borders) {
 		var self = this;
+		var borders = borders != null ? borders : false;
 		var lines = breakString(str);
+
 		var longest = lines.map(function (l) {
 			return l.length;
 		}).sort().reverse()[0];
 
-		self.add('-'.repeat(longest));
+		if (borders) self.add('-'.repeat(longest));
 		lines.forEach(function (line) {
 			self.add(line);
 		});
-		self.add('-'.repeat(longest));
+		if (borders) self.add('-'.repeat(longest));
 	};
 
 	StringBuilder.prototype.toString = function () {

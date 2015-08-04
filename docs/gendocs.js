@@ -26,7 +26,9 @@
 		var module = require('./generators/' + outputType);
 	}
 
-	var s = module(ref, commit);
+	// outputType is given to support generators which handle multiple output
+	// types, for example, the text generator handles both text and markdown.
+	var s = module(ref, commit, outputType);
 
 	if (outputLocation.trim().length > 0) {
 		fs.writeFileSync(outputLocation, s);
