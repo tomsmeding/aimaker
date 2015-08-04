@@ -139,9 +139,11 @@ module.exports = (function () {
 
 			var s = left;
 
-			while (s.length < requiredLength + 2) {
-				s = ' ' + s;
+			var spacestring = '';
+			for (var i = 0; i < requiredLength + 2 - s.length; i++) {
+				spacestring += ' ';
 			}
+			s = spacestring + s;
 
 			s += rightLines[0];
 
