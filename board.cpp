@@ -26,7 +26,6 @@ void Board::nextTick(void) {
 
 		if (died) {
 			bots.erase(bots.begin() + i);
-			cerr << "bot " << bot.index << " erased" << endl;
 			i--;
 		}
 	}

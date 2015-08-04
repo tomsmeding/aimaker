@@ -311,7 +311,6 @@ pair<int, int> Bot::executeCurrentLine() {
 		}
 
 		case Parser::INSTR_SUICIDE: {
-			cerr << "boom said bot with index " << index << endl;
 			isDead = true;
 			break;
 		}
