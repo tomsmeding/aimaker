@@ -52,13 +52,14 @@ function breakString (str, length) {
 			continue;
 		} else if (closestStop[1] < MAX_DIFF + 5) { // cut on nearby stop
 			splits.push(closestStop[0]);
+			linelength = i - closestStop[0];
 		} else if (closestSpace[1] < MAX_DIFF) { // cut on nearby space
 			splits.push(closestSpace[0]);
+			linelength = i - closestSpace[0];
 		} else { // force cut
 			splits.push(i);
+			linelength = 0;
 		}
-
-		linelength = 0;
 	}
 
 	var res = [];
