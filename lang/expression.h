@@ -18,18 +18,15 @@ namespace Parser {
 		enum VariableType {
 			VAR_ARR,
 			VAR_INT,
-			VAR_NIL,
-			VAR_STRING
+			VAR_NIL
 		};
 
 		VariableType type;
 		vector<Variable> arrVal;
-		string strVal;
 		int32_t intVal;
 
 		Variable(void);
 		Variable(int32_t);
-		Variable(string);
 		Variable(VariableType);
 
 		int getSize(void) const;
@@ -39,7 +36,7 @@ namespace Parser {
 	};
 
 	enum ExprTokenType {
-		ETT_WORD, ETT_NUMBER, ETT_LABEL, ETT_SYMBOL, ETT_STRING
+		ETT_WORD, ETT_NUMBER, ETT_LABEL, ETT_SYMBOL
 	};
 
 	struct ExprToken {
@@ -76,7 +73,6 @@ namespace Parser {
 		EN_PAREN2, // )
 
 		EN_NUMBER, // [0-9]+
-		EN_STRING, // "[^"]*"
 		EN_VARIABLE, // [a-zA-Z_][a-zA-Z0-9_]*
 		EN_LABEL, // @[a-zA-Z0-9_]+
 
@@ -123,7 +119,6 @@ namespace Parser {
 		enum ResultType {
 			RES_NIL,
 			RES_NUMBER,
-			RES_STRING,
 			// no RES_ARR, since we don't have expressions to create an array,
 			// arrays can currently only be created using `makearr` or `arr`.
 			RES_VAR
@@ -134,11 +129,9 @@ namespace Parser {
 
 		ResultType type;
 		int intVal;
-		string strVal;
 		const Variable *varVal;
 
 		int getInt() const;
-		string getString() const;
 		Variable toVar(void) const;
 		string toString(void) const;
 	};

@@ -20,10 +20,6 @@ namespace Parser {
 		type = VAR_INT;
 		intVal = i;
 	}
-	Variable::Variable(string s) {
-		type = VAR_STRING;
-		strVal = s;
-	}
 	Variable::Variable(VariableType type) {
 		this->type = type;
 	}
@@ -39,7 +35,6 @@ namespace Parser {
 		}
 
 		case VAR_INT: return 4;
-		case VAR_STRING: return strVal.size();
 		case VAR_NIL: return 0;
 		}
 	}
@@ -61,7 +56,6 @@ namespace Parser {
 		}
 
 		case VAR_INT: return to_string(intVal);
-		case VAR_STRING: "\"" + strVal + "\"";
 		case VAR_NIL: return "-nil-";
 		}
 	}
@@ -73,11 +67,6 @@ namespace Parser {
 			case VAR_INT: {
 				res.type = EvaluationResult::RES_NUMBER;
 				res.intVal = intVal;
-				break;
-			}
-			case VAR_STRING: {
-				res.type = EvaluationResult::RES_STRING;
-				res.strVal = strVal;
 				break;
 			}
 			case VAR_NIL: {
@@ -160,7 +149,6 @@ namespace Parser {
 		if (a.type != b.type) return false;
 
 		if (a.type == EvaluationResult::RES_NUMBER) return a.intVal == b.intVal;
-		else if (a.type == EvaluationResult::RES_STRING) return a.strVal == b.strVal;
 		else if (a.type == EvaluationResult::RES_NIL) return true;
 		else {
 			char *message;
@@ -298,7 +286,6 @@ namespace Parser {
 		case EN_PAREN1: return "EN_PAREN1";
 		case EN_PAREN2: return "EN_PAREN2";
 		case EN_NUMBER: return "EN_NUMBER";
-		case EN_STRING: return "EN_STRING";
 		case EN_VARIABLE: return "EN_VARIABLE";
 		case EN_LABEL: return "EN_LABEL";
 		case EN_SUBTRACT_OR_NEGATE_CONFLICT: return "EN_SUBTRACT_OR_NEGATE_CONFLICT";
@@ -332,18 +319,6 @@ namespace Parser {
 			} else if (s[start] == '@') {
 				token.type = ETT_LABEL;
 				end = s.find_first_not_of(wordnumberchars, start + 1);
-				start++;
-			} else if (s[start] == '"' && strchr(wordchars, s[start]) != NULL) {
-				token.type = ETT_STRING;
-				auto endindex = s.find_last_of("\"", start + 1);
-
-				if (endindex == string::npos) {
-					char *buf;
-					asprintf(&buf, "String not ended correctly.");
-					throw_error(lineIndex, buf);
-				}
-
-				end = endindex;
 				start++;
 			} else if (strchr(wordchars, s[start]) != NULL) {
 				token.type = ETT_WORD;
@@ -429,11 +404,6 @@ namespace Parser {
 				} else {
 					nodedeq.emplace_back(EN_VARIABLE, token.val);
 				}
-				lastWasOperator = false;
-				break;
-
-			case ETT_STRING:
-				nodedeq.emplace_back(EN_STRING, token.val);
 				lastWasOperator = false;
 				break;
 
@@ -623,18 +593,6 @@ namespace Parser {
 		return intVal;
 	}
 
-	string EvaluationResult::getString() const {
-		if (type == ResultType::RES_VAR && varVal->type == Variable::VAR_STRING) {
-			return varVal->strVal;
-		}
-
-		if (type != ResultType::RES_STRING) {
-			throw_error(lineNumber, "Couldn't evaluate expression to a string.");
-		}
-
-		return strVal;
-	}
-
 	Variable EvaluationResult::toVar(void) const {
 		Variable res;
 
@@ -646,11 +604,6 @@ namespace Parser {
 			case RES_NUMBER: {
 				res.type = Variable::VAR_INT;
 				res.intVal = intVal;
-				break;
-			}
-			case RES_STRING: {
-				res.type = Variable::VAR_STRING;
-				res.strVal = strVal;
 				break;
 			}
 			case RES_VAR: {
@@ -668,9 +621,6 @@ namespace Parser {
 
 		case EvaluationResult::RES_NUMBER:
 			return to_string(intVal);
-
-		case EvaluationResult::RES_STRING:
-			return "\"" + strVal + "\"";
 
 		case EvaluationResult::RES_VAR:
 			return varVal->toString();
