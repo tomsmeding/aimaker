@@ -1,12 +1,12 @@
 const MAX_LINE_LENGTH = 65;
-const MAX_DIFF = 10;
+const MAX_STOP_DIFF = 15;
 
 function breakString (str, length) {
 	var length = length || MAX_LINE_LENGTH;
-	var chars  = '!?:;.,';
+	var chars  = '!?:;.-';
 
-	var stopIndexes    = [];
-	var spaceIndexes   = [];
+	var stopIndexes  = [];
+	var spaceIndexes = [];
 
 	var closest = function (arr, val) {
 		var closestVal = -1;
@@ -29,7 +29,7 @@ function breakString (str, length) {
 
 		if (chars.indexOf(char) > -1) {
 			stopIndexes.push(i);
-		} else if (char == ' ') {
+		} else if (char == ' ' || char == '\t') {
 			spaceIndexes.push(i);
 		}
 	}
@@ -50,10 +50,10 @@ function breakString (str, length) {
 		if (linelength + 1 < length) {
 			linelength++;
 			continue;
-		} else if (closestStop[1] < MAX_DIFF + 5) { // cut on nearby stop
+		} else if (closestStop[1] < MAX_STOP_DIFF) { // cut on nearby previous stop
 			splits.push(closestStop[0]);
 			linelength = i - closestStop[0];
-		} else if (closestSpace[1] < MAX_DIFF) { // cut on nearby space
+		} else if (closestSpace[1] < Infinity) { // cut on previous space, if it exists.
 			splits.push(closestSpace[0]);
 			linelength = i - closestSpace[0];
 		} else { // force cut
