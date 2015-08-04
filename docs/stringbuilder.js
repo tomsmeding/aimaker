@@ -1,4 +1,4 @@
-const MAX_LINE_LENGTH = 45;
+const MAX_LINE_LENGTH = 65;
 const MAX_DIFF = 10;
 
 function breakString (str, length) {
