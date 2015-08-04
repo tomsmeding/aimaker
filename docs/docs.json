@@ -104,14 +104,14 @@
 		"function": ["transfer", "trans"],
 		"arguments": ["page ID", "target ID"],
 		"description": "Copies the page at the given `pageId` on the current bot to the given `targetId` on the bot directly in front of the current bot, overwriting everything that was there originally. If there isn't any other bot there, this function does nothing, but doesn't take any shorter.",
-		"ticks": "floor(5 + log10(pagesize + 1))",
+		"ticks": "`floor(5 + log10(pagesize + 1))`",
 		"tier": 1
 	},
 	{
 		"function": ["transferlocal", "translocal"],
 		"arguments": ["page ID", "target ID"],
 		"description": "Copies the page at the given `pageId` on the current bot to the given `targetId` on the current bot, overwriting everything that was there originally.",
-		"ticks": "floor(3 + log10(pagesize + 1))",
+		"ticks": "`floor(3 + log10(pagesize + 1))`",
 		"tier": 1
 	},
 	{
