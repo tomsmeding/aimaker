@@ -133,11 +133,11 @@ module.exports = (function () {
 		var requiredLength = largest[1];
 
 		pairs.forEach(function (p) {
-			var left  = p[0][0].toUpperCase() + p[0].substr(1);
+			var left  = p[0][0].toUpperCase() + p[0].substr(1) + ': ';
 			var right = p[1];
-			var rightLines = breakString(p[1]);
+			var rightLines = breakString(p[1], MAX_LINE_LENGTH - left.length);
 
-			var s = left + ': ';
+			var s = left;
 
 			while (s.length < requiredLength + 2) {
 				s += ' ';
