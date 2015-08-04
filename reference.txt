@@ -124,7 +124,7 @@ Tier: 0
 Function: look
 Arguments:
 	- varName
-Description: Looks whats infront of the bot and sets the value to `varName`,
+Description: Looks what's infront of the bot and sets the value to `varName`,
 each bit of the value that is set to `varName` has a special meaning:
    - bit 1: is_wall
    - bit 2: is_bot
@@ -165,7 +165,7 @@ Tier: 0
 Function: makearr/arr
 Arguments:
 	- varName
-Description: Creates an array on `varName`, overwriting whats already there.
+Description: Creates an array on `varName`, overwriting what's already there.
 Ticks: 1
 Tier: 0
 
@@ -208,7 +208,7 @@ Tier: 0
 .--- Debugging functions ---.
 | Requires you to use the   |
 | --allowdebug flag         |
-.---------------------------.
+'---------------------------'
 
 Function: stop-match
 Description: Stops the current match.
