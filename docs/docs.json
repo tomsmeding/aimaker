@@ -3,12 +3,12 @@
 		"subtitle": "Variables"
 	},
 	{
-		"content": "All variables starting with _ are immutable, which means you can't create variables which name starts with a '_'."
+		"content": "All variables starting with `_` are immutable, which means you can't create variables whose name starts with an `_`."
 	},
 	{
 		"name": "_prevloc",
 		"type": "number",
-		"description": "The location of the previous goto.",
+		"description": "The source location of the previous goto; jumping to `_prevloc` starts execution after that `goto` statement.",
 		"example": "`goto _prevloc`"
 	},
 	{
@@ -23,11 +23,13 @@
 	{
 		"name": "name",
 		"type": "string",
-		"description": "The name of the program."
+		"description": "The name of the program.",
+		"example": "#name My cool bot"
 	},
 	{
 		"name": "author",
 		"type": "string",
-		"description": "The author of the program."
+		"description": "The author of the program.",
+		"example": "#author Hacker"
 	}
 ]
