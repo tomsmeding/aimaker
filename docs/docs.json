@@ -17,6 +17,7 @@
 		"description": "The current location in the code pages.\n(current page and current instruction)",
 		"example": "`goto _rip`"
 	},
+
 	{
 		"subtitle": "Meta attributes"
 	},
@@ -24,12 +25,44 @@
 		"name": "name",
 		"type": "string",
 		"description": "The name of the program.",
-		"example": "#name My cool bot"
+		"example": "`#name My cool bot`"
 	},
 	{
 		"name": "author",
 		"type": "string",
 		"description": "The author of the program.",
-		"example": "#author Hacker"
+		"example": "`#author Hacker`"
+	},
+
+	{
+		"subtitle": "Functions"
+	},
+	{
+		"content": "All function names are case insensitive."
+	},
+	{
+		"function": ["move", "walk"],
+		"description": "Moves the current bot forwards (1) or backwards (0).",
+		"ticks": 5,
+		"tier": 0
+	},
+	{
+		"function": ["rotate", "rot", "turn"],
+		"description": "Rotates the current bot clockwise (1) or counter-clockwise (-1).",
+		"ticks": 5,
+		"tier": 0
+	},
+	{
+		"function": ["nop"],
+		"description": "Waits a tick.",
+		"ticks": 1,
+		"tier": 0
+	},
+	{
+		"function": ["goto"],
+		"arguments": ["label", "swag"],
+		"description": "Goes to the specified `label`.\n`goto a` is the same as `if 1, a`.",
+		"ticks": "1 (+ 2 if trans-page)",
+		"tier": 0
 	}
 ]
