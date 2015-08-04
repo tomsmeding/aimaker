@@ -6,7 +6,7 @@
 	var fs            = require('fs');
 	var ref           = require('./docs.json');
 	var StringBuilder = require('./stringbuilder.js');
-	var commit        = fs.readFileSync('../.git/refs/heads/master', { encoding: 'ascii' }).trim().substr(0, 6);
+	var commit        = fs.readFileSync('../.git/refs/heads/master', { encoding: 'ascii' }).trim().substr(0, 7);
 
 	var args = process.argv.slice(2);
 	var getArg = function (flag, short) {
