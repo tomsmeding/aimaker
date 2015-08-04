@@ -79,7 +79,7 @@ function breakString (str, length) {
 }
 
 module.exports = (function () {
-	"use strict";
+	'use strict';
 
 	String.prototype.repeat = function (times) {
 		var s = '';
@@ -113,7 +113,20 @@ module.exports = (function () {
 				largest = [ pairs.length, key.length ];
 			}
 
-			pairs.push([ key, obj[key] ]);
+			var val = obj[key];
+			if (Array.isArray(val)) {
+				if (key === 'arguments') {
+					val = val.map(function (s, i) {
+						return '\n- ' + s;
+					}).join('').trim();
+				} else {
+					val = val.join('/');
+				}
+			} else if (typeof val !== 'string') {
+				val = val.toString();
+			}
+
+			pairs.push([ key, val ]);
 		}
 
 		if (pairs.length === 0) return;
