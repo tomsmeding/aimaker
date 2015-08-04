@@ -140,7 +140,7 @@ module.exports = (function () {
 			var s = left;
 
 			while (s.length < requiredLength + 2) {
-				s += ' ';
+				s = ' ' + s;
 			}
 
 			s += rightLines[0];
