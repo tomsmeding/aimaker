@@ -44,12 +44,8 @@ function breakString (str, length) {
 		if (char === '\n') {
 			splits.push(i);
 			linelength = 0;
-			continue;
-		}
-
-		if (linelength + 1 < length) {
+		} else if (linelength + 1 < length) {
 			linelength++;
-			continue;
 		} else if (closestStop[1] < MAX_STOP_DIFF) { // cut on nearby previous stop
 			splits.push(closestStop[0]);
 			linelength = i - closestStop[0];
