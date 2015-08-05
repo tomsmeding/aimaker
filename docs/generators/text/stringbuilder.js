@@ -133,7 +133,7 @@ module.exports = (function () {
 		if (pairs.length === 0) return;
 
 		if (table) {
-			self.add('||||');
+			self.add('| | |');
 			self.add('|-----------:|:------------|');
 			pairs.forEach(function (pair) {
 				self.add('|' + capFirst(pair[0]) + '|' + pair[1].replace(/\n/g, '<br>') + '|');
