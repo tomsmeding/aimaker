@@ -4,8 +4,9 @@
 	'use strict';
 
 	var fs     = require('fs');
+	var path   = require('path');
 	var ref    = require('./docs.json');
-	var commit = fs.readFileSync('../.git/refs/heads/master', { encoding: 'ascii' }).trim().substr(0, 7);
+	var commit = fs.readFileSync(path.join(__dirname, '../.git/refs/heads/master'), { encoding: 'ascii' }).trim().substr(0, 7);
 
 	var args = process.argv.slice(2);
 	var getArg = function (flag, short) {
