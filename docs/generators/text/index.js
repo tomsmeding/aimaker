@@ -1,5 +1,7 @@
 var StringBuilder = require('./stringbuilder.js');
 
+'use strict';
+
 module.exports = function (ref, commit, outputType) {
 	var ss = new StringBuilder();
 

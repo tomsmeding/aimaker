@@ -1,6 +1,8 @@
 const MAX_LINE_LENGTH = 80;
 const MAX_STOP_DIFF = 15;
 
+'use strict';
+
 function breakString (str, length) {
 	var length = length || MAX_LINE_LENGTH;
 	var chars  = '!?:;.-';
@@ -79,8 +81,6 @@ function capFirst (str) {
 }
 
 module.exports = (function () {
-	'use strict';
-
 	String.prototype.repeat = function (times) {
 		var s = '';
 		for (var i = 0; i < times; i++) {
