@@ -136,7 +136,12 @@ module.exports = (function () {
 			self.add('| | |');
 			self.add('|-----------:|:------------|');
 			pairs.forEach(function (pair) {
-				self.add('|' + capFirst(pair[0]) + '|' + pair[1].replace(/\n/g, '<br>') + '|');
+				var value = pair[1].replace(/\n/g, '<br>');
+				if (pair[0] === 'function' || pair[0] === 'name') {
+					value = '<div id="' + pair[1].split('/')[0] + '">' + value + '</div>';
+				}
+
+				self.add('|' + capFirst(pair[0]) + '|' + value + '|');
 			});
 		} else {
 			pairs.forEach(function (pair) {
