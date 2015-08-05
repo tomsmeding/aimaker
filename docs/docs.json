@@ -123,7 +123,7 @@
 	{
 		"function": ["look"],
 		"arguments": ["var name"],
-		"description": "Looks whats infront of the bot and sets the value to `varName`, each bit of the value that is set to `varName` has a special meaning:\n- bit 1: is_wall\n- bit 2: is_bot\n- bit 4: is_my_bot\n- bit 8: is_bot_sleeping",
+		"description": "Looks what's infront of the bot and sets the value to `varName`, each bit of the value that is set to `varName` has a special meaning:\n- bit 1: is_wall\n- bit 2: is_bot\n- bit 4: is_my_bot\n- bit 8: is_bot_sleeping",
 		"ticks": 3,
 		"tier": 0
 	},
