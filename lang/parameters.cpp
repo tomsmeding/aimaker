@@ -6,7 +6,7 @@
 int instructionWorkTime (const Parser::Instruction instr, const int arg) {
 	switch (instr) {
 	case Parser::INSTR_GOTO:       return arg == 0 ? 1 : 3;
-	case Parser::INSTR_IFGOTO:     return 2;
+	case Parser::INSTR_IFGOTO:     return arg == 0 ? 2 : 4;
 	case Parser::INSTR_LOC:        return 2;
 	case Parser::INSTR_LOOK:       return 3;
 	case Parser::INSTR_MOVE:       return 5;
