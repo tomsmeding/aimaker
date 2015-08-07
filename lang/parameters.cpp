@@ -9,18 +9,18 @@ int instructionWorkTime (const Parser::Instruction instr, const int arg) {
 	case Parser::INSTR_IFGOTO:     return arg == 0 ? 2 : 4;
 	case Parser::INSTR_LOC:        return 2;
 	case Parser::INSTR_LOOK:       return 3;
-	case Parser::INSTR_MOVE:       return 5;
+	case Parser::INSTR_MOVE:       return arg == 0 ? 3 : 4;
 	case Parser::INSTR_NOP:        return 1;
 	case Parser::INSTR_PAGE:       return 2;
-	case Parser::INSTR_ROT:        return 5;
+	case Parser::INSTR_ROT:        return 2;
 	case Parser::INSTR_STO:        return 1;
 
 	// arg is page size
 	case Parser::INSTR_TRANS:      return floor(5 + log10(arg + 1));
 	case Parser::INSTR_TRANSLOCAL: return floor(3 + log10(arg + 1));
 
-	case Parser::INSTR_BUILD:      return 7 + 4 * arg;
-	case Parser::INSTR_WAKE:       return 3;
+	case Parser::INSTR_BUILD:      return floor(20 + pow(7, arg));
+	case Parser::INSTR_WAKE:       return 4;
 	case Parser::INSTR_SLEEP:      return 1;
 	case Parser::INSTR_PRINT:      return 1;
 	case Parser::INSTR_PRINT_VARS: return 1;
