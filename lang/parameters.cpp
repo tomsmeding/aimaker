@@ -19,7 +19,7 @@ int instructionWorkTime (const Parser::Instruction instr, const int arg) {
 	case Parser::INSTR_TRANS:      return floor(5 + log10(arg + 1));
 	case Parser::INSTR_TRANSLOCAL: return floor(3 + log10(arg + 1));
 
-	case Parser::INSTR_BUILD:      return 7 + pow(4, arg + 1);
+	case Parser::INSTR_BUILD:      return floor(7 + pow(5.5f, arg + .5f));
 	case Parser::INSTR_WAKE:       return 4;
 	case Parser::INSTR_SLEEP:      return 1;
 	case Parser::INSTR_PRINT:      return 1;

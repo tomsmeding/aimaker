@@ -131,7 +131,7 @@
 		"function": ["build"],
 		"arguments": ["tier (one of: 0, 1, 2)"],
 		"description": "Builds a bot infront of the current bot, if there's a bot in front of the current bot, this function will do nothing but will take the same amount of time. The higher the given `tier` tier is, the more the created bot can do.  See the `Tier` property of each function in the reference for more information.",
-		"ticks": "7 + 4^(tier + 1)",
+		"ticks": "floor(7 + 5.5^(tier + .5))",
 		"tier": 2
 	},
 	{
