@@ -187,6 +187,8 @@ pair<int, int> Bot::executeCurrentLine() {
 			const Parser::Argument argument = currentStatement.args[0];
 			const bool forwards = (bool) Parser::evaluateExpression(argument, lineNumber, memoryMap, program->labels).getInt();
 
+			workTimeArg = (int) !forwards;
+
 			const pair<int, int> newLocation = calculateNextLocation(forwards);
 			const int x = newLocation.first;
 			const int y = newLocation.second;
