@@ -1,4 +1,4 @@
-Aimaker Reference (commit 6bf615c)
+Aimaker Reference (commit cdf8de0)
 ==================================
 
 Variables
@@ -47,7 +47,7 @@ All function names are case insensitive.
 |-----------:|:------------|
 |Function|<div id="move">move/walk</div>|
 |Description|Moves the current bot forwards (1) or backwards (0).|
-|Ticks|5|
+|Ticks|If moving forewards: 3, otherwise 4|
 |Tier|0|
 
 | | |
@@ -148,14 +148,14 @@ All function names are case insensitive.
 |Function|<div id="build">build</div>|
 |Arguments|- tier (one of: 0, 1, 2)|
 |Description|Builds a bot infront of the current bot, if there's a bot in front of the current bot, this function will do nothing but will take the same amount of time. The higher the given `tier` tier is, the more the created bot can do.  See the `Tier` property of each function in the reference for more information.|
-|Ticks|7 + 4 * tier|
+|Ticks|floor(20 + pow(7, arg))|
 |Tier|2|
 
 | | |
 |-----------:|:------------|
 |Function|<div id="wake">wake/shake-awake</div>|
 |Description|Wakes the bot in front of you.|
-|Ticks|3|
+|Ticks|4|
 |Tier|1|
 
 | | |
