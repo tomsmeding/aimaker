@@ -7,36 +7,7 @@
 #include "../util.h"
 
 extern Params params;
-
-map<Parser::Instruction, int> instr_arity_map = {
-	{ Parser::INSTR_GOTO,        1 },
-	{ Parser::INSTR_IFGOTO,      2 },
-	{ Parser::INSTR_LOC,         2 },
-	{ Parser::INSTR_DIR,         1 },
-	{ Parser::INSTR_LOOK,        1 },
-	{ Parser::INSTR_MOVE,        1 },
-	{ Parser::INSTR_NOP,         0 },
-	{ Parser::INSTR_PAGE,        1 },
-	{ Parser::INSTR_ROT,         1 },
-	{ Parser::INSTR_STO,         2 },
-	{ Parser::INSTR_SUICIDE,     0 },
-	{ Parser::INSTR_TRANS,       2 },
-	{ Parser::INSTR_TRANSLOCAL,  2 },
-	{ Parser::INSTR_BUILD,       1 },
-	{ Parser::INSTR_WAKE,        0 },
-	{ Parser::INSTR_SLEEP,       0 },
-	{ Parser::INSTR_STOP_MATCH,  0 },
-	{ Parser::INSTR_PRINT,       1 },
-	{ Parser::INSTR_PRINT_VARS,  0 },
-	{ Parser::INSTR_BREAK,       0 },
-	{ Parser::INSTR_AT,          3 },
-	{ Parser::INSTR_MAKEARR,     1 },
-	{ Parser::INSTR_PUSH,        2 },
-	{ Parser::INSTR_DEL,         2 },
-	{ Parser::INSTR_LENGTH,      2 },
-
-	{ Parser::INSTR_INVALID,     0 }
-};
+extern map<Parser::Instruction, int> instr_arity_map;
 
 namespace Parser {
 
