@@ -1,6 +1,8 @@
 Aimaker
 =======
 
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/aimaker/aimaker?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+
 A robot competition suite with its own language.
 
 To (re)compile everything:
