@@ -63,21 +63,21 @@ namespace Parser {
 	EvaluationResult Variable::toER(int lineNumber) const {
 		EvaluationResult res(lineNumber);
 
-		switch(this->type) {
-			case VAR_INT: {
-				res.type = EvaluationResult::RES_NUMBER;
-				res.intVal = intVal;
-				break;
-			}
-			case VAR_NIL: {
-				res.type = EvaluationResult::RES_NIL;
-				break;
-			}
-			default: {
-				res.type = EvaluationResult::RES_VAR;
-				res.varVal = this;
-				break;
-			}
+		switch (this->type) {
+		case VAR_INT: {
+			res.type = EvaluationResult::RES_NUMBER;
+			res.intVal = intVal;
+			break;
+		}
+		case VAR_NIL: {
+			res.type = EvaluationResult::RES_NIL;
+			break;
+		}
+		default: {
+			res.type = EvaluationResult::RES_VAR;
+			res.varVal = this;
+			break;
+		}
 		}
 
 		return res;
@@ -135,7 +135,7 @@ namespace Parser {
 
 	ExprNode::~ExprNode(void) {
 #if EXPRESSION_DEBUG==2
-		cerr<<"\x1B[33mDestructing\x1B[0m exprnode "<<*this<<endl;
+		cerr << "\x1B[33mDestructing\x1B[0m exprnode " << *this << endl;
 #endif
 		if (left != NULL) delete left;
 		if (right != NULL) delete right;
@@ -145,7 +145,7 @@ namespace Parser {
 		left = right = NULL;
 	}
 
-	bool resultsEqual(const EvaluationResult &a, const EvaluationResult &b, const int lineNumber=-1) {
+	bool resultsEqual(const EvaluationResult &a, const EvaluationResult &b, const int lineNumber = -1) {
 		if (a.type != b.type) return false;
 
 		if (a.type == EvaluationResult::RES_NUMBER) return a.intVal == b.intVal;
@@ -542,13 +542,13 @@ namespace Parser {
 			throw_error(lineIndex, buf);
 		}
 #if EXPRESSION_DEBUG==2
-		cerr<<"\x1B[33mReturning now...\x1B[0m"<<endl;
+		cerr << "\x1B[33mReturning now...\x1B[0m" << endl;
 #endif
 		*root = nodedeq[0];
 		nodedeq[0].setNullChildren();
 		nodedeq.clear();
 #if EXPRESSION_DEBUG==2
-		cerr<<"Really returning..."<<endl;
+		cerr << "Really returning..." << endl;
 #endif
 	}
 
@@ -596,26 +596,26 @@ namespace Parser {
 	Variable EvaluationResult::toVar(void) const {
 		Variable res;
 
-		switch(this->type) {
-			case RES_NIL: {
-				res.type = Variable::VAR_NIL;
-				break;
-			}
-			case RES_NUMBER: {
-				res.type = Variable::VAR_INT;
-				res.intVal = intVal;
-				break;
-			}
-			case RES_VAR: {
-				return *varVal;
-			}
+		switch (this->type) {
+		case RES_NIL: {
+			res.type = Variable::VAR_NIL;
+			break;
+		}
+		case RES_NUMBER: {
+			res.type = Variable::VAR_INT;
+			res.intVal = intVal;
+			break;
+		}
+		case RES_VAR: {
+			return *varVal;
+		}
 		}
 
 		return res;
 	}
 
 	string EvaluationResult::toString(void) const {
-		switch(type) {
+		switch (type) {
 		case EvaluationResult::RES_NIL:
 			return "-nil-";
 
@@ -644,8 +644,8 @@ namespace Parser {
 		}
 
 		// use the special function for equality.
-		if (type == ExprNodeType::EN_EQUALS) return resultsEqual(left,right,lineNumber);
-		else if (type == ExprNodeType::EN_NOTEQUAL) return !resultsEqual(left,right,lineNumber);
+		if (type == ExprNodeType::EN_EQUALS) return resultsEqual(left, right, lineNumber);
+		else if (type == ExprNodeType::EN_NOTEQUAL) return !resultsEqual(left, right, lineNumber);
 
 		if ((a != NULL && left.type != EvaluationResult::RES_NUMBER) ||
 			(b != NULL && right.type != EvaluationResult::RES_NUMBER)) {

@@ -25,14 +25,14 @@ vector<string> split(const string &s, const char delim, int numsplits) {
 vector<string> split(const string &s, const char *delims, int numsplits) {
 	string::size_type cursor = 0;
 	unsigned long long idx = UINT_MAX;
-	for(const char *p = delims; *p; p++) idx = min(idx, (unsigned long long)s.find(*p));
+	for (const char *p = delims; *p; p++) idx = min(idx, (unsigned long long)s.find(*p));
 	vector<string> vec;
 	while (idx != string::npos && numsplits != 0) {
 		vec.push_back(s.substr(cursor, idx - cursor));
 		numsplits--;
 		cursor = idx + 1;
 		idx = UINT_MAX;
-		for(const char *p = delims; *p; p++) idx = min(idx, (unsigned long long)s.find(*p));
+		for (const char *p = delims; *p; p++) idx = min(idx, (unsigned long long)s.find(*p));
 	}
 	vec.push_back(s.substr(cursor, string::npos));
 	return vec;

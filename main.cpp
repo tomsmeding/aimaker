@@ -225,7 +225,7 @@ int main(int argc, char **argv) {
 			}
 
 			if (stillthereCount <= 1) {
-				cerr << "Only " << stillthereCount << " program" << (stillthereCount==1 ? "" : "s") << " left, closing game" << (stillthereCount==0 ? '.' : ':') << endl;
+				cerr << "Only " << stillthereCount << " program" << (stillthereCount == 1 ? "" : "s") << " left, closing game" << (stillthereCount == 0 ? '.' : ':') << endl;
 				for (i = 0; i < numprogs; i++) {
 					if (stillthere[i]) {
 						cerr << "> " << programs[i].name << endl;

@@ -45,7 +45,7 @@ namespace Parser {
 	}
 
 	int ptoi(const Position &pos) {
-		return (pos.page<<24) + pos.line;
+		return (pos.page << 24) + pos.line;
 	}
 
 	Position LabelInfo::getPosition(void) const {
@@ -58,11 +58,11 @@ namespace Parser {
 
 	bool isDebugInstr(Instruction instr) {
 		switch (instr) {
-			case INSTR_STOP_MATCH:
-			case INSTR_BREAK:
-				return true;
-			default:
-				return false;
+		case INSTR_STOP_MATCH:
+		case INSTR_BREAK:
+			return true;
+		default:
+			return false;
 		}
 	}
 
@@ -168,32 +168,32 @@ namespace Parser {
 
 	void inlineLabels (ExprNode *node, const LabelMap &labels, const int lineNumber) {
 		assert(node);
-		if(node->type==EN_LABEL){
-			if(node->hasval!=1){
-				throw_error(lineNumber,"Label node at %p does not have a strval (internal error)",node);
+		if (node->type == EN_LABEL) {
+			if (node->hasval != 1) {
+				throw_error(lineNumber, "Label node at %p does not have a strval (internal error)", node);
 			}
-			if(node->left||node->right){
-				throw_error(lineNumber,"Label node at %p has unexpected children (internal error)",node);
+			if (node->left || node->right) {
+				throw_error(lineNumber, "Label node at %p has unexpected children (internal error)", node);
 			}
-			LabelMap::const_iterator it=labels.find(node->strval);
-			if(it==labels.cend()){
-				throw_error(lineNumber,"Label not found: '%s'",node->strval.c_str());
+			LabelMap::const_iterator it = labels.find(node->strval);
+			if (it == labels.cend()) {
+				throw_error(lineNumber, "Label not found: '%s'", node->strval.c_str());
 			}
-			node->type=EN_NUMBER;
-			node->hasval=2; //int
+			node->type = EN_NUMBER;
+			node->hasval = 2; //int
 			node->strval.clear();
-			node->intval=it->second.intval;
+			node->intval = it->second.intval;
 		} else {
-			if(node->left)inlineLabels(node->left,labels,lineNumber);
-			if(node->right)inlineLabels(node->right,labels,lineNumber);
+			if (node->left)inlineLabels(node->left, labels, lineNumber);
+			if (node->right)inlineLabels(node->right, labels, lineNumber);
 		}
 	}
 
 	void inlineLabels (Program &program) {
-		for(Codepage &page : program.pages){
-			for(Statement &stmt : page){
-				for(ExprNode &node : stmt.args){
-					inlineLabels(&node,program.labels,stmt.lineNumber);
+		for (Codepage &page : program.pages) {
+			for (Statement &stmt : page) {
+				for (ExprNode &node : stmt.args) {
+					inlineLabels(&node, program.labels, stmt.lineNumber);
 				}
 			}
 		}

@@ -50,7 +50,7 @@ Bot* Board::at(int x, int y) {
 }
 
 string Board::render(void) const {
-	const int linelen = 4*size+2;
+	const int linelen = 4 * size + 2;
 	stringstream ss;
 	int x, y;
 	ss << '+';
@@ -85,8 +85,8 @@ string Board::render(void) const {
 		s[idx + linelen + 0] = dirchars[dir][3];
 		s[idx + linelen + 1] = dirchars[dir][4];
 		s[idx + linelen + 2] = dirchars[dir][5];
-		s[idx+1]="0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"[b.index%62];
-		s[idx+linelen+1]=" 0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"[b.index/62];
+		s[idx + 1] = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"[b.index % 62];
+		s[idx + linelen + 1] = " 0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"[b.index / 62];
 	}
 	return s;
 }
@@ -97,7 +97,7 @@ bool Board::canMoveTo(int x, int y) const {
 
 		if (location.first == x && location.second == y) return false;
 	}
-	return insideBounds(x,y);
+	return insideBounds(x, y);
 }
 
 bool Board::insideBounds(int x, int y) const {
@@ -109,5 +109,5 @@ void Board::addBot(Bot bot) {
 }
 
 int Board::nextIndex(void) const {
-	return this->bots.size()+this->botqueue.size();
+	return this->bots.size() + this->botqueue.size();
 }

@@ -334,13 +334,13 @@ pair<int, int> Bot::executeCurrentLine() {
 			Bot *targetBot = board->at(targetLocation.first, targetLocation.second);
 
 			int response = 0;
-			if(!this->board->insideBounds(targetLocation.first, targetLocation.second)){
+			if (!this->board->insideBounds(targetLocation.first, targetLocation.second)) {
 				response |= 1;
 			} else {
-				if(targetBot){
+				if (targetBot) {
 					response |= 2;
-					if(targetBot->program->id == this->program->id) response |= 4;
-					if(targetBot->isAsleep) response |= 8;
+					if (targetBot->program->id == this->program->id) response |= 4;
+					if (targetBot->isAsleep) response |= 8;
 				}
 			}
 			storeVariable(varNameArgument.strval, response, lineNumber);
@@ -549,10 +549,10 @@ bool Bot::nextTick(void) {
 
 		curPage = pair.first;
 		curInstr = pair.second;
-		if(curPage >= (int)pages.size()){
+		if (curPage >= (int)pages.size()) {
 			assert(false);
 		}
-		if(curInstr >= (int)pages[curPage].size()){
+		if (curInstr >= (int)pages[curPage].size()) {
 			isAsleep = true;
 			curInstr = 0;
 		}
