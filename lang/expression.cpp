@@ -36,6 +36,7 @@ namespace Parser {
 
 		case VAR_INT: return 4;
 		case VAR_NIL: return 0;
+		default: throw "this->type has an incorrect value.";
 		}
 	}
 
@@ -57,6 +58,7 @@ namespace Parser {
 
 		case VAR_INT: return to_string(intVal);
 		case VAR_NIL: return "-nil-";
+		default: throw "this->type has an incorrect value.";
 		}
 	}
 
@@ -624,6 +626,9 @@ namespace Parser {
 
 		case EvaluationResult::RES_VAR:
 			return varVal->toString();
+
+		default:
+			throw "this->type has an incorrect value.";
 		}
 	}
 
