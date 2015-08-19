@@ -184,12 +184,14 @@ namespace Parser {
 		// printf("\n");
 		for (int lineIndex = 0; lineIndex < (int)lines.size(); lineIndex++) {
 			// printf("%d: %s\n", lineIndex, lines[lineIndex].c_str());
-
 			string line = lines[lineIndex];
+
+			// Find comment in the current line, and remove it
 			size_t pos = line.find("//");
 			if (pos != string::npos) {
 				line.erase(pos);
 			}
+
 			line = trim(line);
 			if (line.size() == 0) continue;
 			vector<string> words = split(line, ' ', 1);
