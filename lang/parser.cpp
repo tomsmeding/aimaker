@@ -38,8 +38,6 @@ namespace Parser {
 	}
 
 	Instruction convertInstruction (string word) {
-		to_lower(word); // Function calls are case insensitive.
-
 		if      (word == "move" || word == "walk")                     return INSTR_MOVE;
 		else if (word == "getloc" || word == "loc")                    return INSTR_LOC;
 		else if (word == "getdir" || word == "dir")                    return INSTR_DIR;
@@ -97,6 +95,8 @@ namespace Parser {
 
 	// Parses the given `functionName` and `arguments` to a Statement.
 	Statement parseStatement (string functionName, string arguments, const int lineIndex) {
+		to_lower(functionName); // Function calls are case insensitive.
+
 		int i;
 		Statement statement;
 		statement.lineNumber = lineIndex;
