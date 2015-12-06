@@ -60,7 +60,7 @@
 	},
 	{
 		"function": ["goto"],
-		"arguments": ["label", "swag"],
+		"arguments": ["label"],
 		"description": "Goes to the specified `label`.\n`goto a` is the same as `if 1, a`.",
 		"ticks": "1 (+ 2 if trans-page)",
 		"tier": 0
