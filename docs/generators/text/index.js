@@ -2,8 +2,9 @@ var StringBuilder = require('./stringbuilder.js');
 
 'use strict';
 
-module.exports = function (ref, commit, outputType) {
-	var ss = new StringBuilder();
+module.exports = function (ref, commit, outputType, getArg) {
+	var maxLineLength = getArg('maxlinelength', 'l') || 80;
+	var ss = new StringBuilder(maxLineLength);
 
 	ss.addTitle('Aimaker Reference (commit ', commit, ')');
 

@@ -1,10 +1,8 @@
-const MAX_LINE_LENGTH = 80;
 const MAX_STOP_DIFF = 15;
 
 'use strict';
 
 function breakString (str, length) {
-	var length = length || MAX_LINE_LENGTH;
 	var chars  = '!?:;.-';
 
 	var stopIndexes  = [];
@@ -89,8 +87,9 @@ module.exports = (function () {
 		return s;
 	};
 
-	var StringBuilder = function () {
+	var StringBuilder = function (maxLineLength) {
 		this._str = '';
+		this.maxLineLength = maxLineLength;
 	};
 
 	StringBuilder.prototype.add = function (/* strings */) {
@@ -153,7 +152,7 @@ module.exports = (function () {
 				}
 				s = padding + s;
 
-				var rightLines = breakString(pair[1], MAX_LINE_LENGTH - s.length);
+				var rightLines = breakString(pair[1], self.maxLineLength - s.length);
 				s += rightLines[0];
 				rightLines.slice(1).forEach(function (line) {
 					s += '\n';
@@ -183,7 +182,7 @@ module.exports = (function () {
 	StringBuilder.prototype.addSection = function (str, borders) {
 		var self = this;
 		var borders = borders != null ? borders : false;
-		var lines = breakString(str);
+		var lines = breakString(str, self.maxLineLength);
 
 		var longest = lines.map(function (l) {
 			return l.length;

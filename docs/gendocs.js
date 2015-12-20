@@ -27,7 +27,7 @@ if (outputType === 'text' || outputType === 'markdown') {
 
 // outputType is given to support generators which handle multiple output
 // types, for example, the text generator handles both text and markdown.
-var s = module(ref, commit, outputType);
+var s = module(ref, commit, outputType, getArg);
 
 if (outputLocation.trim().length > 0) {
 	fs.writeFileSync(outputLocation, s);
