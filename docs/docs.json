@@ -61,7 +61,7 @@
 	{
 		"function": ["goto"],
 		"arguments": ["label"],
-		"description": "Goes to the specified `label`.\n`goto a` is the same as `if 1, a`.",
+		"description": "Goes to the specified `label`.\n`goto a` is the same as `if 1, a`, but faster.",
 		"ticks": "1 (+ 2 if trans-page)",
 		"tier": 0
 	},
