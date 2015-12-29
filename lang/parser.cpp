@@ -194,10 +194,10 @@ namespace Parser {
 
 			line = trim(line);
 			if (line.size() == 0) continue;
-			vector<string> words = split(line, ' ', 1);
+			vector<string> splitted = split(line, ' ', 1);
 
-			if (words[0] == "#page") { // page
-				int id = stoi(words[1]);
+			if (splitted[0] == "#page") { // page
+				int id = stoi(splitted[1]);
 
 				if (!seenPages[id]) {
 					seenPages[id] = true;
@@ -209,13 +209,13 @@ namespace Parser {
 				}
 
 				curInstr = 0;
-			} else if (words[0] == "#name") { // name
-				program.name = words[1];
-			} else if (words[0] == "#author") { // author
-				program.author = words[1];
-			} else if (words[0][0] == '#') { // unknown meta attribute
+			} else if (splitted[0] == "#name") { // name
+				program.name = splitted[1];
+			} else if (splitted[0] == "#author") { // author
+				program.author = splitted[1];
+			} else if (splitted[0][0] == '#') { // unknown meta attribute
 				char *message;
-				asprintf(&message, "Unrecognised meta-attribute '%s'.", words[0].c_str());
+				asprintf(&message, "Unrecognised meta-attribute '%s'.", splitted[0].c_str());
 				throw_error(lineIndex, message);
 			} else if (line[line.size() - 1] == ':') { // label
 				string labelName = line.substr(0, line.size() - 1);
@@ -228,8 +228,8 @@ namespace Parser {
 
 				program.labels.emplace(labelName, labelInfo);
 			} else { // function call
-				const string args = words.size() == 1 ? "" : words[1];
-				program.pages[curPage].push_back(parseStatement(words[0], args, lineIndex + 1));
+				const string args = splitted.size() == 1 ? "" : splitted[1];
+				program.pages[curPage].push_back(parseStatement(splitted[0], args, lineIndex + 1));
 
 				curInstr++;
 			}
