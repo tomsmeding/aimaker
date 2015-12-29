@@ -3,7 +3,8 @@
 #include <string>
 #include <vector>
 #include <cstring>
-#include "unistd.h"
+#include <unistd.h>
+#include <sys/time.h>
 #include "lang/parameters.h"
 #include "lang/parser.h"
 #include "board.h"
@@ -160,7 +161,9 @@ int main(int argc, char **argv) {
 
 		cerr << "Done reading in programs" << endl;
 
-		srand(time(NULL));
+		struct timeval tv;
+		gettimeofday(&tv,NULL);
+		srand(tv.tv_sec*1000000+tv.tv_usec);
 		vector<int> botDist = makeBotDistribution(params.boardSize, params.boardSize, board.bots.size());
 		for (i = 0; i < (int)botDist.size(); i++) {
 			int loc = botDist[i];
