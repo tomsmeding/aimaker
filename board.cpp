@@ -92,12 +92,13 @@ string Board::render(void) const {
 }
 
 bool Board::canMoveTo(int x, int y) const {
+	if (!insideBounds(x, y)) return false;
 	for (const Bot &bot : bots) {
 		pair<int, int> location = bot.getPos();
 
 		if (location.first == x && location.second == y) return false;
 	}
-	return insideBounds(x, y);
+	return true;
 }
 
 bool Board::insideBounds(int x, int y) const {
