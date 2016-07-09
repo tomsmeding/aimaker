@@ -1,4 +1,4 @@
-Aimaker Reference (commit cdf8de0)
+Aimaker Reference (commit 042cf5c)
 ==================================
 
 Variables
@@ -67,8 +67,8 @@ All function names are case insensitive.
 | | |
 |-----------:|:------------|
 |Function|<div id="goto">goto</div>|
-|Arguments|- label<br>- swag|
-|Description|Goes to the specified `label`.<br>`goto a` is the same as `if 1, a`.|
+|Arguments|- label|
+|Description|Goes to the specified `label`.<br>`goto a` is the same as `if 1, a`, but faster.|
 |Ticks|1 (+ 2 if trans-page)|
 |Tier|0|
 
@@ -148,7 +148,7 @@ All function names are case insensitive.
 |Function|<div id="build">build</div>|
 |Arguments|- tier (one of: 0, 1, 2)|
 |Description|Builds a bot infront of the current bot, if there's a bot in front of the current bot, this function will do nothing but will take the same amount of time. The higher the given `tier` tier is, the more the created bot can do.  See the `Tier` property of each function in the reference for more information.|
-|Ticks|floor(20 + pow(7, arg))|
+|Ticks|`floor(20 + pow(7, arg))`|
 |Tier|2|
 
 | | |
@@ -223,7 +223,7 @@ All function names are case insensitive.
 Debugging functions
 -------------------
 
-Requires you to use the --allowdebug flag.
+Requires you to use the `--allowdebug` flag.
 
 | | |
 |-----------:|:------------|
