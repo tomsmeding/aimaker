@@ -111,13 +111,13 @@ int main(int argc, char **argv) {
 	try {
 		vector<string> programNames;
 		int i;
-		bool ignore = false;
+		bool ignoreFlags = false;
 		for (i = 1; i < argc; i++) {
 			try {
 				if (string(argv[i]) == string("--")) {
-					ignore = true;
+					ignoreFlags = true;
 					continue;
-				} else if (!ignore && parseFlagOption(argv[i])) {
+				} else if (!ignoreFlags && parseFlagOption(argv[i])) {
 					// Correct flag given. Continue since this isn't a bot.
 					continue;
 				}
