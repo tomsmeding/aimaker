@@ -235,7 +235,7 @@ namespace Parser {
 			}
 		}
 
-		inlineLabels (program);
+		inlineLabels(program);
 
 		return program;
 	}

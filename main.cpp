@@ -166,8 +166,8 @@ int main(int argc, char **argv) {
 		cerr << "Done reading in programs" << endl;
 
 		struct timeval tv;
-		gettimeofday(&tv,NULL);
-		srand(tv.tv_sec*1000000+tv.tv_usec);
+		gettimeofday(&tv, NULL);
+		srand(tv.tv_sec * 1000000 + tv.tv_usec);
 		vector<int> botDist = makeBotDistribution(params.boardSize, params.boardSize, board.bots.size());
 		for (i = 0; i < (int)botDist.size(); i++) {
 			int loc = botDist[i];

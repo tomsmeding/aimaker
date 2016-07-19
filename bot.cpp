@@ -91,7 +91,7 @@ void Bot::storeVariable(const string &varName, const Parser::Variable &var, cons
 	}
 }
 
-Parser::Variable* Bot::getVariable(const string &varName) {
+Parser::Variable *Bot::getVariable(const string &varName) {
 	auto vari = memoryMap.find(varName);
 	if (vari == memoryMap.end()) {
 		return nullptr;
@@ -171,7 +171,7 @@ pair<int, int> Bot::executeCurrentLine() {
 	// cerr << "Working for: " << _workingFor << endl;
 
 	if (canExecute) {
-		if((int)currentStatement.args.size() != instr_arity_map[currentStatement.instr]){
+		if ((int)currentStatement.args.size() != instr_arity_map[currentStatement.instr]) {
 			throw_error(lineNumber, string(
 				"Instruction " +
 				Parser::convertInstructionReverse(currentStatement.instr) +

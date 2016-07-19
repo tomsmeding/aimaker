@@ -264,7 +264,7 @@ namespace Parser {
 		return EN_INVALID;
 	}
 
-	const char* operatorToString(ExprNodeType type) {
+	const char *operatorToString(ExprNodeType type) {
 		switch (type) {
 		case EN_ADD: return "EN_ADD";
 		case EN_SUBTRACT: return "EN_SUBTRACT";
