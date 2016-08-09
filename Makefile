@@ -6,8 +6,8 @@ else
 endif
 CXX = g++
 
-CXX_FILES = $(shell echo *.cpp **/*.cpp)
-H_FILES = *.h **/*.h
+CXX_FILES = $(wildcard *.cpp **/*.cpp)
+H_FILES = $(wildcard *.h **/*.h)
 OBJ_FILES = $(CXX_FILES:.cpp=.o)
 
 .PHONY: all clean remake
