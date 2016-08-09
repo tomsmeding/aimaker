@@ -18,22 +18,12 @@ string trim(const string&);
 
 bool is_numeric(const string&);
 
-void throw_error(int, const char*);
-
+void throw_error(int lineNumber, const char *message);
 template <typename... Args>
 void throw_error(int lineNumber, const char *message, Args... parameters){
-	string errorstr;
 	char *error;
-
 	asprintf(&error, message, parameters...);
-
-	if (lineNumber > -1) {
-		errorstr = "Error at line " + to_string(lineNumber) + ": " + error;
-		free(error);
-		error = new char[errorstr.size()];
-		memcpy(error, errorstr.c_str(), errorstr.size() * sizeof(char));
-	}
-	throw error;
+	throw_error(lineNumber, error);
 }
 
 void to_lower(string&);
