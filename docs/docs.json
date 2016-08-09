@@ -17,6 +17,9 @@
 		"description": "The current location in the code pages.\n(current page and current instruction)",
 		"example": "`goto _rip`"
 	},
+	{
+		"content": "Every variable that doesn't exist evaluates to 'nil', this means that it's legal to insert an nonexistent variable into an array; 'nil' will be inserted."
+	},
 
 	{
 		"subtitle": "Meta attributes"

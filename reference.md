@@ -1,4 +1,4 @@
-Aimaker Reference (commit 042cf5c)
+Aimaker Reference (commit a3064d9)
 ==================================
 
 Variables
@@ -20,6 +20,9 @@ variables whose name starts with an `_`.
 |Type|number|
 |Description|The current location in the code pages.<br>(current page and current instruction)|
 |Example|`goto _rip`|
+
+Every variable that doesn't exist evaluates to 'nil', this means that it's
+legal to insert an nonexistent variable into an array; 'nil' will be inserted.
 
 Meta attributes
 ---------------
