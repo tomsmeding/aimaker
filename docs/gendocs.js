@@ -19,18 +19,24 @@ var getArg = function (flag, short) {
 var outputLocation = getArg('output', 'o') || '';
 var outputType     = getArg('type'  , 't') || 'text';
 
-if (outputType === 'text' || outputType === 'markdown') {
-	var module = require('./generators/text');
-} else {
-	var module = require('./generators/' + outputType);
+var generatorsDir = path.join(__dirname, '/generators/');
+var generators = fs.readdirSync(generatorsDir);
+var module = generators.map(function (generator) {
+	return require(path.join(generatorsDir, generator));
+}).find(function (module) {
+	return module.TYPES.indexOf(outputType) > -1;
+});
+
+if (module === undefined) {
+	throw new Error(`no module supporting outputType '${outputType}' found`);
 }
 
 // outputType is given to support generators which handle multiple output
 // types, for example, the text generator handles both text and markdown.
-var s = module(ref, commit, outputType, getArg);
+var res = module(ref, commit, outputType, getArg);
 
 if (outputLocation.trim().length > 0) {
-	fs.writeFileSync(outputLocation, s);
+	fs.writeFileSync(outputLocation, res);
 } else {
-	console.log(s);
+	console.log(res);
 }

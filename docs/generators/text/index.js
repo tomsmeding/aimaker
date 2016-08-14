@@ -23,3 +23,8 @@ module.exports = function (ref, commit, outputType, getArg) {
 
 	return ss.toString();
 };
+
+module.exports.TYPES = [
+	'text',
+	'markdown',
+];
