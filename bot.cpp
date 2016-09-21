@@ -36,7 +36,9 @@ Bot::Bot(Bot *parent, int _tier, pair<int, int> startingPos, int _index) :
 	_workingFor(0),
 	board(parent->board),
 
-	//pages(parent->pages), //on purpose commented out
+	// when a bot creates a bot, we don't want the newly created bot to contain
+	// any pages. Another bot can later copy pages to it.
+	//pages(parent->pages),
 
 	x(startingPos.first), y(startingPos.second),
 	dir(parent->dir),
